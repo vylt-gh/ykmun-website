@@ -1,0 +1,33 @@
+body {
+    margin: 0;
+    background: linear-gradient(45deg, white, lightblue);
+    min-height: 100vh;
+    color: black;
+    font-family: 'Liberation Serif', 'Times New Roman', Times, serif;
+}
+
+.stack {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+}
+
+.title {
+    position: relative;
+    text-align: center;
+}
+
+.title p {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    right: 0;
+    margin: 0;
+    font-size: 4vw;
+}
+
+.title h1 {
+    margin: 0;
+    font-size: 10vw;
+}
