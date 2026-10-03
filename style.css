@@ -1,6 +1,6 @@
 body {
     margin: 0;
-    background: linear-gradient(45deg, white, lightblue);
+    background: white;
     min-height: 100vh;
     color: black;
     font-family: 'Liberation Serif', 'Times New Roman', Times, serif;
