@@ -22,6 +22,14 @@
 
     const pointer = { x: 0, y: 0, vx: 0, vy: 0, active: false };
     const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    // The force field needs a hovering, fine pointer. On touch devices the field
+    // fights page scrolling and covers a large share of a small screen, so those
+    // get a plain static starfield instead.
+    const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
+
+    function canAnimate() {
+        return finePointer.matches && !reduced.matches;
+    }
 
     let stars = [];
     let source = { w: 1, h: 1 };
@@ -67,12 +75,15 @@
         sprite = buildSprite(CONFIG.spriteSize);
         resize();
         window.addEventListener('resize', resize);
-        window.addEventListener('pointermove', onPointerMove, { passive: true });
-        window.addEventListener('pointerdown', onPointerMove, { passive: true });
-        window.addEventListener('pointerleave', onPointerLeave);
-        window.addEventListener('blur', onPointerLeave);
+        if (finePointer.matches) {
+            window.addEventListener('pointermove', onPointerMove, { passive: true });
+            window.addEventListener('pointerdown', onPointerMove, { passive: true });
+            window.addEventListener('pointerleave', onPointerLeave);
+            window.addEventListener('blur', onPointerLeave);
+        }
         document.addEventListener('visibilitychange', onVisibilityChange);
         reduced.addEventListener('change', render);
+        finePointer.addEventListener('change', render);
         render();
     }
 
@@ -151,7 +162,7 @@
     }
 
     function start() {
-        if (frame || reduced.matches || !stars.length) return;
+        if (frame || !canAnimate() || !stars.length) return;
         last = performance.now();
         frame = requestAnimationFrame(tick);
     }
@@ -263,7 +274,7 @@
     }
 
     function render() {
-        if (reduced.matches) {
+        if (!canAnimate()) {
             stop();
             for (const star of stars) {
                 star.x = star.hx;
@@ -273,6 +284,6 @@
             }
         }
         draw();
-        if (pointer.active && !reduced.matches) start();
+        if (pointer.active && canAnimate()) start();
     }
 })();

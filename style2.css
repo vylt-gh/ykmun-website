@@ -1,3 +1,12 @@
+html {
+    /* The page is a fixed splash with nothing to scroll, so suppress the
+       browser gestures that would otherwise hijack a finger drag:
+       overscroll = pull-to-refresh reload, touch-action = double-tap zoom. */
+    overscroll-behavior: none;
+    touch-action: manipulation;
+    -webkit-text-size-adjust: 100%;
+}
+
 body {
     margin: 0;
     background: linear-gradient(45deg, #012265, #000c24);
