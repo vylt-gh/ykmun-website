@@ -1,0 +1,53 @@
+html {
+    /* The page is a fixed splash with nothing to scroll, so suppress the
+       browser gestures that would otherwise hijack a finger drag:
+       overscroll = pull-to-refresh reload, touch-action = double-tap zoom. */
+    overscroll-behavior: none;
+    touch-action: manipulation;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    margin: 0;
+    background: linear-gradient(45deg, #012265, #000c24);
+    min-height: 100vh;
+    color: white;
+    font-family: 'Liberation Serif', 'Times New Roman', Times, serif;
+}
+
+#stars {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+}
+
+.stack {
+    position: fixed;
+    inset: 0;
+    display: grid;
+    place-items: center;
+    z-index: 1;
+}
+
+.title {
+    position: relative;
+    text-align: center;
+    pointer-events: none;
+}
+
+.title p {
+    position: absolute;
+    bottom: 100%;
+    left: 0;
+    right: 0;
+    margin: 0;
+    font-size: 4vw;
+}
+
+.title h1 {
+    margin: 0;
+    font-size: 10vw;
+}
