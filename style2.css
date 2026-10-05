@@ -1,7 +1,49 @@
+/* YKMUN landing page — night-sky splash with a live countdown plate. */
+
+:root {
+    --navy-1: #012265;
+    --navy-2: #000c24;
+    --cream: #f2ece0;
+    --star-opacity: 0.2;
+
+    /* Plate artwork is 1556x2783. The original plate was 1556x1383, but its
+       rope only spanned the top 35.2% of it, which tied rope coverage to plate
+       size: shrinking the plate shortened the rope faster than the layout could
+       hide it, and the rope's free end dangled in mid-air. The asset now carries
+       1400px of extra rope (tiled from the strand's own 28px repeat period), so
+       the rope spans 70% of the plate and the two are independent.
+
+       Digits are positioned in percentages of the plate so they stay glued to
+       the painted cards at any scale. */
+    --plate-aspect: 0.55911;
+
+    --cta-bottom: clamp(18px, 5vmin, 54px);
+    --cta-clear: clamp(64px, 15vmin, 130px);
+
+    /* Side gutters kept clear of the plate, in vw so the same value can drive
+       both the width and the top offset below. Without them the plate went
+       edge-to-edge (measured 99-100% of viewport width) on square-ish and
+       narrow screens, which read as too large. */
+    --plate-gutter: 4vw;
+
+    /* Portrait only: how far the plate is lifted above the viewport top so the
+       hanging rope exits the top edge instead of ending in mid-air. The rope
+       fills the top 39.6% of the artwork (rows 0-547 of 1383), so cutting less
+       than that leaves its free end visible. */
+    --rope-cut: clamp(40px, 12vmin, 120px);
+
+    /* Portrait only: gap between the plate's top and the emblem, so the lifted
+       plate does not collide with the emblem in the top-left corner. */
+    --portrait-drop: clamp(8px, 4vmin, 40px);
+}
+
+* {
+    box-sizing: border-box;
+}
+
 html {
-    /* The page is a fixed splash with nothing to scroll, so suppress the
-       browser gestures that would otherwise hijack a finger drag:
-       overscroll = pull-to-refresh reload, touch-action = double-tap zoom. */
+    /* Single-viewport splash with nothing to scroll: suppress pull-to-refresh
+       and double-tap zoom, which would otherwise hijack a finger drag. */
     overscroll-behavior: none;
     touch-action: manipulation;
     -webkit-text-size-adjust: 100%;
@@ -9,10 +51,23 @@ html {
 
 body {
     margin: 0;
-    background: linear-gradient(45deg, #012265, #000c24);
     min-height: 100vh;
-    color: white;
+    background: linear-gradient(45deg, var(--navy-1), var(--navy-2));
+    color: var(--cream);
     font-family: 'Liberation Serif', 'Times New Roman', Times, serif;
+    overflow: hidden;
+}
+
+/* Static starfield plate behind the interactive canvas, at the brief's 20%. */
+.sky {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: url('stars.png');
+    background-size: cover;
+    background-position: center;
+    opacity: var(--star-opacity);
 }
 
 #stars {
@@ -20,34 +75,263 @@ body {
     inset: 0;
     width: 100%;
     height: 100%;
-    z-index: 0;
+    z-index: 1;
     pointer-events: none;
 }
 
-.stack {
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+/* Emblem, top-left. */
+.emblem {
+    position: fixed;
+    top: clamp(12px, 2.4vmin, 28px);
+    left: clamp(12px, 2.4vmin, 28px);
+    z-index: 3;
+    display: block;
+    width: clamp(56px, 9vmin, 104px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+}
+
+.emblem img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+.stage {
     position: fixed;
     inset: 0;
-    display: grid;
-    place-items: center;
-    z-index: 1;
+    z-index: 2;
 }
 
-.title {
-    position: relative;
-    text-align: center;
+/* The rope fills the top 35.2% of the artwork (rows 0-547 of 1383) and the
+   painted cards sit at 56.8% of the plate height. Positioning the plate by its
+   bottom edge left the composition sitting low with a long stretch of rope
+   showing, so the plate is sized and placed relative to where the CARDS should
+   land instead.
+
+   --focus-y is where the plate's horizontal divider -- the seam where the
+   card housings meet the "DAYS TO" panel, row 893 of 1383 = 64.57% of the
+   artwork -- should sit, as a fraction of viewport height. Centring that seam
+   rather than the cards is what reads as balanced: it is the visual hinge of
+   the whole object, so the rivet band above and the painted panel below carry
+   equal weight on either side of the screen's midline.
+
+   At exactly 50% the rope cannot be covered at all (the rope is the top 35.2%
+   of the artwork), so the seam sits just above centre, which also reads better
+   optically. Raising --focus-y pushes the plate down and uncovers more rope.
+
+   Solving bottom = focus_y + (1 - 0.6457) * H <= 100dvh - cta_clear gives the
+   height cap, but on its own that cap is far too permissive: it let the plate
+   grow to 78% of the viewport width on a 1440x900 screen, which dominated the
+   page. --plate-max-w caps the plate at a fixed fraction of the viewport so it
+   stays a modest object with sky around it; the height cap only becomes the
+   binding constraint on short landscape screens.
+
+   --plate-w is a variable because the same expression drives both the width and
+   the top offset, and it must stay free of percentages, which would resolve
+   against the wrong axis in each place. */
+.counter {
+    --focus-y: 0.46;
+    --plate-max-w: 46vw;
+    --plate-cap-h: calc(
+        (100dvh - var(--focus-y) * 100dvh - var(--cta-clear)) / 0.17607
+    );
+    --plate-w: min(
+        calc(100vw - 2 * var(--plate-gutter)),
+        calc(var(--plate-cap-h) * var(--plate-aspect)),
+        var(--plate-max-w)
+    );
+
+    position: absolute;
+    left: 50%;
+    top: calc(var(--focus-y) * 100dvh - 1.47365 * var(--plate-w));
+    transform: translateX(-50%);
+    width: var(--plate-w);
+    container-type: inline-size;
+}
+
+.counter-plate {
+    display: block;
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 1.5vmin 2.5vmin rgba(0, 0, 0, 0.55));
+    /* Explicit eager decode: with decoding="async" the plate could still be
+       undecoded when first paint happened, leaving the digit windows floating
+       over the starfield with no plate behind them. */
+    /* No decoding=async attribute (see HTML); this is the CSS-side guard. */
+    content-visibility: visible;
+}
+
+.windows {
+    position: absolute;
+    inset: 0;
     pointer-events: none;
 }
 
-.title p {
+/* Card centres measured from counter_ext.png (1556x2783) by isolating the cream
+   card regions and taking each bounding box centre. Horizontal positions are
+   unchanged from the original plate; the vertical ones shift because the
+   artwork gained 1400px of rope above them. cqw keeps the digit size tied to
+   the plate. */
+.window {
     position: absolute;
-    bottom: 100%;
-    left: 0;
-    right: 0;
-    margin: 0;
-    font-size: 4vw;
+    font-family: "Burton's Nightmare", serif;
+    font-size: 8.6cqw;
+    line-height: 1;
+    color: #241f1b;
+    text-shadow: 0 0.06em 0.08em rgba(120, 96, 72, 0.5);
+    transform: translate(-50%, -50%);
 }
 
-.title h1 {
-    margin: 0;
-    font-size: 10vw;
+.window[data-slot='0'] {
+    left: 33.61%;
+    top: 78.75%;
+}
+
+.window[data-slot='1'] {
+    left: 46.53%;
+    top: 78.58%;
+}
+
+.window[data-slot='2'] {
+    left: 59.74%;
+    top: 78.55%;
+}
+
+/* Portrait layout is defined at the end of this file, after the base .cta
+   rules. Media queries add no specificity, so a portrait override placed
+   earlier would be beaten by a later same-specificity base rule. */
+
+/* Apply CTA: aged parchment pill, gothic face.
+
+   The fill is deliberately a muted parchment rather than white. Pure white
+   measured 14.1:1 against the label and a luminance gap of 0.89 from the navy
+   background, which glares on a dark page. This fill sits at 9.1:1 label
+   contrast and cuts the luminance gap by ~66%, picking up the weathered
+   cream of the painted cards so it belongs to the artwork. */
+.cta {
+    position: absolute;
+    left: 50%;
+    bottom: var(--cta-bottom);
+    transform: translateX(-50%);
+    display: inline-block;
+    padding: clamp(9px, 1.9vmin, 20px) clamp(26px, 6.5vmin, 68px);
+    border-radius: 999px;
+    background: #d8c9a6;
+    color: #1b2740;
+    text-decoration: none;
+    font-family: 'Pirata One', serif;
+    font-size: clamp(21px, 4.7vmin, 48px);
+    line-height: 1.05;
+    text-transform: uppercase;
+    white-space: nowrap;
+    /* Soft inner warmth instead of a hard drop shadow. */
+    border: 1px solid rgba(255, 250, 235, 0.35);
+    box-shadow: 0 0.4vmin 1.4vmin rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 252, 240, 0.4);
+    transition: transform 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
+}
+
+.cta:hover,
+.cta:focus-visible {
+    background: #e0d2b0;
+    transform: translateX(-50%) translateY(-2px);
+    box-shadow: 0 0.7vmin 1.8vmin rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 252, 240, 0.45);
+}
+
+.cta:active {
+    transform: translateX(-50%);
+}
+
+.cta:focus-visible {
+    outline: 2px solid var(--cream);
+    outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cta {
+        transition: none;
+    }
+
+    .cta:hover,
+    .cta:focus-visible {
+        transform: translateX(-50%);
+    }
+}
+
+/* Portrait: the artwork is wider than it is tall (aspect 1.125), so a full-width
+   plate is only ~347px tall on a 390px phone. Centring it left the rope's free
+   end dangling in mid-air with sky above it.
+
+   Reaching the top edge forces the plate upward, which unavoidably opens space
+   below it, so the layout is rebalanced here: the plate and CTA become one
+   top-anchored column with the CTA directly under the plate, and the plate is
+   lifted by --rope-cut so the rope exits the top. Pinning the CTA to the
+   viewport bottom instead stranded it far below the plate.
+
+   This block must stay last: it overrides same-specificity base rules, and a
+   media query adds no specificity of its own. */
+@media (orientation: portrait) {
+    .stage {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: flex-start;
+        padding: 0 clamp(14px, 4vmin, 40px);
+    }
+
+    .counter {
+        position: relative;
+        top: auto;
+        bottom: auto;
+        left: auto;
+        transform: none;
+        flex: 0 0 auto;
+        width: min(
+            calc(100% - 2 * var(--plate-gutter)),
+            calc(52vh * var(--plate-aspect))
+        );
+        margin-top: calc(-1 * var(--rope-cut));
+    }
+
+    .cta {
+        position: relative;
+        left: auto;
+        bottom: auto;
+        transform: none;
+        flex: 0 0 auto;
+        margin-top: clamp(20px, 5vmin, 46px);
+    }
+
+    .cta:hover,
+    .cta:focus-visible {
+        transform: translateY(-2px);
+    }
+
+    .cta:active {
+        transform: none;
+    }
+}
+
+@media (orientation: portrait) and (prefers-reduced-motion: reduce) {
+
+    .cta:hover,
+    .cta:focus-visible {
+        transform: none;
+    }
 }

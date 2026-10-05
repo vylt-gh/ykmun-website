@@ -1,0 +1,22 @@
+/* Pirata One — Gothic display face. Used where Turkish diacritics matter
+   (the "Başvur" CTA); Burton's Nightmare has no Ş/Ğ/Ü/Ç and silently
+   falls back mid-word, so it is reserved for the counter digits.
+   SIL Open Font License 1.1. */
+@font-face {
+    font-family: 'Pirata One';
+    src: url('fonts/PirataOne-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
+
+/* Burton's Nightmare — display face for the countdown digits and YKMUN.
+   Digit-safe glyph coverage only (no Turkish diacritics).
+   Freeware, redistributed as-is with the author's original file. */
+@font-face {
+    font-family: "Burton's Nightmare";
+    src: url('fonts/BurtonsNightmare-Regular.ttf') format('truetype');
+    font-weight: 400;
+    font-style: normal;
+    font-display: swap;
+}
