@@ -1,7 +1,8 @@
 (() => {
     'use strict';
 
-    // MUN opens 15 January 2027 at 09:00 local time.
+    // The MUN opens on this date, at 09:00 local time. Change this one line to
+    // move the countdown; everything else derives from it.
     const TARGET = new Date(2027, 0, 15, 9, 0, 0);
     const DAY_MS = 86400000;
 
@@ -38,8 +39,10 @@
         if (text === lastText) return;
         lastText = text;
 
-        // Three painted cards, so the day count is zero-padded to three digits.
-        const padded = text.length < 3 ? text.padStart(3, '0') : text;
+        // The plate has three painted cards, so the day count is zero-padded to
+        // three digits. A count above 999 would overflow the windows and needs
+        // revisiting then, not now.
+        const padded = text.padStart(3, '0');
         slots.forEach((slot, i) => {
             slot.textContent = padded[i];
         });

@@ -14,8 +14,11 @@ import sys
 from PIL import Image
 import numpy as np
 
-ALPHA_FLOOR = 24   # must match CONFIG.alphaFloor in stars.js
-MIN_PIXELS = 4     # must match CONFIG.minPixels in stars.js
+# Pixels at or above this alpha count as part of a star. Kept here only: the
+# runtime in stars.js receives the baked centroids and never re-thresholds, so
+# these two values are build-time settings with no JS counterpart to match.
+ALPHA_FLOOR = 24
+MIN_PIXELS = 4
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 

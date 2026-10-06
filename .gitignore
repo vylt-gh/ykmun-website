@@ -1,0 +1,7 @@
+# Source artwork for counter.webp. The deployed plate is the 337 KB WebP; this
+# 2.7 MB PNG is only needed to regenerate it, so it is kept out of the repo to
+# keep it out of the Pages deployment.
+counter.png
+
+# Scratch render/preview output from local screenshot tooling.
+*.tmp.png

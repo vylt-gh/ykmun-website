@@ -27,14 +27,10 @@
     --plate-gutter: 4vw;
 
     /* Portrait only: how far the plate is lifted above the viewport top so the
-       hanging rope exits the top edge instead of ending in mid-air. The rope
-       fills the top 39.6% of the artwork (rows 0-547 of 1383), so cutting less
-       than that leaves its free end visible. */
+       hanging rope exits the top edge instead of ending in mid-air. Any positive
+       cut now suffices: the deployed artwork carries 1400px of extended rope
+       (see --plate-aspect), so its free end sits far above the plate top. */
     --rope-cut: clamp(40px, 12vmin, 120px);
-
-    /* Portrait only: gap between the plate's top and the emblem, so the lifted
-       plate does not collide with the emblem in the top-left corner. */
-    --portrait-drop: clamp(8px, 4vmin, 40px);
 }
 
 * {
@@ -117,34 +113,33 @@ body {
     z-index: 2;
 }
 
-/* The rope fills the top 35.2% of the artwork (rows 0-547 of 1383) and the
-   painted cards sit at 56.8% of the plate height. Positioning the plate by its
-   bottom edge left the composition sitting low with a long stretch of rope
-   showing, so the plate is sized and placed relative to where the CARDS should
-   land instead.
+/* The plate is positioned by where its horizontal divider lands on screen,
+   not by its own edges.
 
-   --focus-y is where the plate's horizontal divider -- the seam where the
-   card housings meet the "DAYS TO" panel, row 893 of 1383 = 64.57% of the
-   artwork -- should sit, as a fraction of viewport height. Centring that seam
-   rather than the cards is what reads as balanced: it is the visual hinge of
-   the whole object, so the rivet band above and the painted panel below carry
-   equal weight on either side of the screen's midline.
+   --focus-y is the target height of that divider -- the seam where the card
+   housings meet the "DAYS TO" panel, row 2293 of the 2783px artwork = 82.39% of
+   the plate -- as a fraction of viewport height. Centring the seam rather than
+   the digits reads as balanced because it is the visual hinge of the object:
+   the rivet band above and the painted panel below then carry equal weight
+   either side of the screen's midline. It sits just above centre because
+   centring the digits themselves left the whole plate looking low.
 
-   At exactly 50% the rope cannot be covered at all (the rope is the top 35.2%
-   of the artwork), so the seam sits just above centre, which also reads better
-   optically. Raising --focus-y pushes the plate down and uncovers more rope.
+   All the fractions below are measured from the artwork, not guessed:
+     0.82393  seam (divider)          -> 1 - this = height-cap divisor
+     0.17607  plate height below seam
+     1.47365  seam / aspect          -> coefficient in the top offset
+     0.69960  rope end (row 1947)
+   Solving bottom = focus_y + (1 - 0.82393) * H <= 100dvh - cta_clear bounds
+   the height, but that bound alone let the plate grow to 78% of viewport
+   width and dominate the page, so --plate-max-w caps it independently and the
+   height cap only binds on short landscape screens.
 
-   Solving bottom = focus_y + (1 - 0.6457) * H <= 100dvh - cta_clear gives the
-   height cap, but on its own that cap is far too permissive: it let the plate
-   grow to 78% of the viewport width on a 1440x900 screen, which dominated the
-   page. --plate-max-w caps the plate at a fixed fraction of the viewport so it
-   stays a modest object with sky around it; the height cap only becomes the
-   binding constraint on short landscape screens.
-
-   --plate-w is a variable because the same expression drives both the width and
-   the top offset, and it must stay free of percentages, which would resolve
-   against the wrong axis in each place. */
+   --plate-w is a variable because one expression drives both the width and the
+   top offset, and it must stay free of percentages: those would resolve
+   against the wrong axis in each of the two places. */
 .counter {
+    /* Layout dials. --focus-y moves the plate vertically, --plate-max-w sizes
+       it; the rest of the geometry is derived from the artwork. */
     --focus-y: 0.46;
     --plate-max-w: 46vw;
     --plate-cap-h: calc(
@@ -169,11 +164,10 @@ body {
     width: 100%;
     height: auto;
     filter: drop-shadow(0 1.5vmin 2.5vmin rgba(0, 0, 0, 0.55));
-    /* Explicit eager decode: with decoding="async" the plate could still be
-       undecoded when first paint happened, leaving the digit windows floating
-       over the starfield with no plate behind them. */
-    /* No decoding=async attribute (see HTML); this is the CSS-side guard. */
-    content-visibility: visible;
+    /* The plate is the page's main content and must paint on first frame, so it
+       carries fetchpriority="high" in the HTML and deliberately avoids
+       decoding="async": an async decode could still be pending at first paint,
+       which left the digit windows floating over the bare starfield. */
 }
 
 .windows {
