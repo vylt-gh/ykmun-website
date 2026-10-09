@@ -41,6 +41,9 @@
     /* Space kept clear at the bottom for the CTA. */
     --cta-bottom: clamp(18px, 5vmin, 54px);
     --cta-clear: clamp(64px, 15vmin, 130px);
+    /* Gap between the plate's bottom edge and the CTA, in portrait where the
+       CTA is seated under the plate rather than on the viewport floor. */
+    --cta-gap: clamp(24px, 7vmin, 64px);
 
     --plate-gutter: 4vw;
 }
@@ -122,6 +125,22 @@ body {
     position: fixed;
     inset: 0;
     z-index: 2;
+
+    /* Plate width, shared so .cta can position itself relative to the plate
+       instead of the viewport floor. Declared here rather than on .counter
+       because .counter and .cta are siblings: a custom property set on .counter
+       is invisible to .cta.
+
+       --plate-cap-h must be defined in this same block, not on .counter — it is
+       used here, and a custom property cannot read one from a descendant. */
+    --plate-cap-h: calc(
+        (100dvh - var(--focus-y) * 100dvh - var(--cta-clear)) / var(--body)
+    );
+    --plate-w: min(
+        calc(100vw - 2 * var(--plate-gutter)),
+        calc(var(--plate-cap-h) * var(--plate-aspect)),
+        var(--plate-max-w)
+    );
 }
 
 /* The plate is placed by where its divider lands, not by its own edges.
@@ -138,15 +157,6 @@ body {
    top offset. It is written without percentages: those resolve against
    different axes in the two places, which silently broke the layout once. */
 .counter {
-    --plate-cap-h: calc(
-        (100dvh - var(--focus-y) * 100dvh - var(--cta-clear)) / var(--body)
-    );
-    --plate-w: min(
-        calc(100vw - 2 * var(--plate-gutter)),
-        calc(var(--plate-cap-h) * var(--plate-aspect)),
-        var(--plate-max-w)
-    );
-
     position: absolute;
     left: 50%;
     top: calc(
@@ -272,8 +282,26 @@ body {
    vertical space: the gutters bound it at 92% and the body still clears the
    CTA. */
 @media (orientation: portrait) {
-    .counter {
+    .stage {
         --plate-max-w: 100vw;
+    }
+
+    /* Seat the CTA just under the plate instead of on the viewport floor.
+
+       The plate's bottom edge is top + H, and with the base rule that works out
+       to focus_y*vh + (body / aspect) * --plate-w. Anchoring the CTA there
+       closes a 200-300px gap that bottom-pinning left on tall screens. Landscape
+       is untouched: it still uses --cta-bottom.
+
+       --plate-w comes from .stage, since .cta cannot see a property declared on
+       its sibling .counter. */
+    .cta {
+        bottom: auto;
+        top: calc(
+            var(--focus-y) * 100dvh
+            + (var(--body) / var(--plate-aspect)) * var(--plate-w)
+            + var(--cta-gap)
+        );
     }
 }
 
@@ -281,7 +309,7 @@ body {
    square-ish windows. These keep a 46vw cap that reads too small here, so raise
    it; wider ratios keep the tighter cap. */
 @media (orientation: landscape) and (max-aspect-ratio: 3 / 2) {
-    .counter {
+    .stage {
         --plate-max-w: var(--plate-max-w-narrow);
     }
 }
