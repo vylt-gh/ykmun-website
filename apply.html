@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>YKMUN - Başvuru</title>
+    <meta name="description" content="YKMUN başvuru formu.">
+    <link rel="icon" type="image/png" sizes="256x256" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="stylesheet" href="fonts.css">
+    <link rel="stylesheet" href="apply.css">
+</head>
+<body>
+
+<!--
+    The interactive canvas starfield is deliberately omitted on this page. It is
+    a page for reading and filling in a form, and a pointer-reactive starfield
+    would sit under the text and react to every scroll. The static starfield
+    (.sky) stays, at the same 20% opacity as the landing page.
+
+    The form fields below are PROVISIONAL. They were chosen because nearly every
+    MUN application needs them, not because the committee has specified them.
+
+    They are deliberately NOT database columns yet. Everything except the email
+    is submitted into the `details` jsonb column from 0001, so changing or
+    removing a field is a one-line edit in apply.js and needs no migration.
+    When the real fields are decided, promote the ones worth querying into real
+    columns in a new numbered migration and move them out of `details` there.
+
+    Database side: db/migrations/0001 (table), 0002 (staff roles and RLS).
+-->
+
+<div class="sky" aria-hidden="true"></div>
+
+<a class="emblem" href="/" aria-label="YKMUN ana sayfa">
+    <img src="icon.png" alt="" width="256" height="256">
+</a>
+
+<main class="page">
+
+    <header class="head">
+        <p class="kicker">YKMUN</p>
+        <h1>Başvuru</h1>
+        <p class="note">
+            Başvuru formu. <span class="tentative">Bu alanlar geçicidir ve
+            değişebilir.</span>
+        </p>
+    </header>
+
+    <form class="form" id="apply-form" novalidate>
+
+        <div class="row">
+            <label for="f-name">Ad Soyad <span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="f-name" name="full_name" autocomplete="name"
+                   required minlength="2" maxlength="120">
+            <p class="err" data-err-for="f-name" role="alert"></p>
+        </div>
+
+        <div class="row">
+            <label for="f-email">E-posta <span class="req" aria-hidden="true">*</span></label>
+            <input type="email" id="f-email" name="email" autocomplete="email"
+                   required maxlength="200">
+            <p class="hint">Başvuru sonucunu bu adrese göndereceğiz.</p>
+            <p class="err" data-err-for="f-email" role="alert"></p>
+        </div>
+
+        <div class="row">
+            <label for="f-phone">Telefon</label>
+            <input type="tel" id="f-phone" name="phone" autocomplete="tel"
+                   maxlength="40">
+            <p class="err" data-err-for="f-phone" role="alert"></p>
+        </div>
+
+        <div class="row">
+            <label for="f-school">Okul / Üniversite <span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="f-school" name="school" autocomplete="organization"
+                   required maxlength="160">
+            <p class="err" data-err-for="f-school" role="alert"></p>
+        </div>
+
+        <div class="row">
+            <label for="f-grade">Sınıf / Düzey</label>
+            <input type="text" id="f-grade" name="grade_level" maxlength="60">
+            <p class="err" data-err-for="f-grade" role="alert"></p>
+        </div>
+
+        <div class="row">
+            <label for="f-committee">Tercih Edilen Komite</label>
+            <input type="text" id="f-committee" name="committee" maxlength="120"
+                   list="committee-options">
+            <datalist id="committee-options">
+                <!-- Provisional. Komite listesi kesinleşmedi. -->
+                <option value="Güvenlik Kurulu"></option>
+                <option value="İnsan Hakları"></option>
+                <option value="Çevre"></option>
+                <option value="Ekonomik ve Finansal"></option>
+                <option value="Başbakanlık Konseyi"></option>
+            </datalist>
+            <p class="err" data-err-for="f-committee" role="alert"></p>
+        </div>
+
+        <div class="row">
+            <label for="f-motivation">Neden Katılmak İstiyorsun?</label>
+            <textarea id="f-motivation" name="motivation" rows="5"
+                      maxlength="2000"></textarea>
+            <p class="err" data-err-for="f-motivation" role="alert"></p>
+        </div>
+
+        <div class="row">
+            <label for="f-experience">Daha Önceki MUN Deneyimin</label>
+            <textarea id="f-experience" name="experience" rows="3"
+                      maxlength="1000"></textarea>
+            <p class="hint">Yoksa boş bırakabilirsin.</p>
+            <p class="err" data-err-for="f-experience" role="alert"></p>
+        </div>
+
+        <div class="actions">
+            <button class="submit" type="submit" id="submit-btn">Başvur</button>
+            <p class="status" id="status" role="status" aria-live="polite"></p>
+        </div>
+
+    </form>
+
+</main>
+
+<script src="supabase-config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="apply.js"></script>
+</body>
+</html>

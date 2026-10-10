@@ -1,0 +1,273 @@
+/* YKMUN application page.
+
+   Currently the page carries only the shared starfield and emblem, so this
+   stylesheet exists to define that shell. Everything here is reused by the
+   landing page where it overlaps (palette, starfield opacity, emblem) so the
+   two pages stay visually identical in the parts they share.
+
+   The layout is a scrolling document rather than the landing page's fixed
+   viewport-fitted splash, because this page grows as the form is built out.
+   Nothing here assumes a single-viewport fit. */
+
+:root {
+    --navy-1: #012265;
+    --navy-2: #000c24;
+    --cream: #f2ece0;
+    --parchment: #d8c9a6;
+    --star-opacity: 0.2;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(45deg, var(--navy-1), var(--navy-2));
+    color: var(--cream);
+    font-family: 'Liberation Serif', 'Times New Roman', Times, serif;
+}
+
+/* Static starfield plate. The landing page's interactive canvas starfield is
+   intentionally absent here — see the note in apply.html. */
+.sky {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: url('stars.png');
+    background-size: cover;
+    background-position: center;
+    opacity: var(--star-opacity);
+}
+
+.emblem {
+    position: fixed;
+    top: clamp(12px, 2.4vmin, 28px);
+    left: clamp(12px, 2.4vmin, 28px);
+    z-index: 1;
+    display: block;
+    width: clamp(56px, 9vmin, 104px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+}
+
+.emblem img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+.emblem:focus-visible {
+    outline: 2px solid var(--cream);
+    outline-offset: 3px;
+}
+
+/* ---------------------------------------------------------------------------
+   Form
+   ---------------------------------------------------------------------------
+   Fields are provisional (see apply.html). Styling targets .row/.form etc.
+   rather than individual ids so a renamed field keeps its appearance.
+   --------------------------------------------------------------------------- */
+
+.page {
+    position: relative;
+    z-index: 1;
+    width: min(100% - 2 * clamp(16px, 5vw, 48px), 34rem);
+    margin-inline: auto;
+    padding: clamp(88px, 16vmin, 132px) 0 clamp(48px, 10vmin, 96px);
+}
+
+.head {
+    margin-bottom: clamp(22px, 5vmin, 38px);
+}
+
+.kicker {
+    margin: 0 0 0.25em;
+    font-family: 'Pirata One', serif;
+    font-size: clamp(14px, 2.4vmin, 19px);
+    letter-spacing: 0.16em;
+    color: rgba(242, 236, 224, 0.7);
+}
+
+h1 {
+    margin: 0 0 0.45em;
+    font-size: clamp(28px, 6.4vmin, 46px);
+    line-height: 1.1;
+    font-weight: normal;
+}
+
+.note {
+    margin: 0;
+    color: rgba(242, 236, 224, 0.82);
+}
+
+/* Marks the fields as provisional without shouting about it. */
+.tentative {
+    color: rgba(242, 236, 224, 0.58);
+    font-style: italic;
+}
+
+.form {
+    display: grid;
+    gap: clamp(14px, 2.6vmin, 22px);
+}
+
+.row {
+    display: grid;
+    gap: 0.4em;
+}
+
+label {
+    font-size: clamp(15px, 2.5vmin, 18px);
+    letter-spacing: 0.02em;
+}
+
+.req {
+    color: #d98b7a;
+}
+
+input,
+textarea {
+    width: 100%;
+    padding: 0.7em 0.85em;
+    border: 1px solid rgba(242, 236, 224, 0.26);
+    border-radius: 8px;
+    background: rgba(3, 12, 32, 0.6);
+    color: var(--cream);
+    font: inherit;
+    line-height: 1.45;
+}
+
+/* 16px minimum: anything smaller makes iOS Safari zoom on focus. */
+@media (max-width: 40rem) {
+
+    input,
+    textarea {
+        font-size: 16px;
+    }
+}
+
+input:focus,
+textarea:focus {
+    outline: 2px solid rgba(242, 236, 224, 0.75);
+    outline-offset: 1px;
+    border-color: transparent;
+}
+
+textarea {
+    resize: vertical;
+    min-height: 4.5em;
+}
+
+/* Chrome autofill repaints the background; force it back to the dark field so
+   text stays readable rather than becoming dark-on-white. */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill {
+    -webkit-text-fill-color: var(--cream);
+    -webkit-box-shadow: 0 0 0 1000px #06122e inset;
+    caret-color: var(--cream);
+}
+
+.hint {
+    margin: 0;
+    font-size: 0.86em;
+    color: rgba(242, 236, 224, 0.58);
+}
+
+.err {
+    margin: 0;
+    min-height: 1.2em;
+    font-size: 0.88em;
+    color: #e79a86;
+}
+
+.is-invalid {
+    border-color: #d98b7a;
+}
+
+.actions {
+    display: grid;
+    gap: 0.7em;
+    margin-top: 0.5em;
+}
+
+.submit {
+    justify-self: start;
+    padding: 0.72em 1.9em;
+    border: 1px solid rgba(255, 250, 235, 0.35);
+    border-radius: 999px;
+    background: var(--parchment);
+    color: #1b2740;
+    font-family: 'Pirata One', serif;
+    font-size: clamp(17px, 3.1vmin, 24px);
+    line-height: 1.1;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background-color 140ms ease, transform 140ms ease;
+}
+
+.submit:hover:not(:disabled) {
+    background: #e6dcc2;
+    color: #101a2e;
+    transform: translateY(-1px);
+}
+
+.submit:disabled {
+    opacity: 0.55;
+    cursor: default;
+}
+
+.submit:focus-visible {
+    outline: 2px solid var(--cream);
+    outline-offset: 3px;
+}
+
+.status {
+    margin: 0;
+    min-height: 1.4em;
+    font-size: 0.94em;
+    color: rgba(242, 236, 224, 0.8);
+}
+
+.status-ok {
+    color: #a8d5b5;
+}
+
+.status-error {
+    color: #e79a86;
+}
+
+a {
+    color: var(--parchment);
+}
+
+a:hover,
+a:focus-visible {
+    color: #fff;
+}
+
+a:focus-visible {
+    outline: 2px solid var(--cream);
+    outline-offset: 3px;
+    border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .submit {
+        transition: none;
+    }
+
+    .submit:hover:not(:disabled) {
+        transform: none;
+    }
+}
