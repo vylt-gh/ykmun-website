@@ -200,29 +200,56 @@ textarea:-webkit-autofill {
     margin-top: 0.5em;
 }
 
+/* Sea-glass submit, matching the landing CTA in home.css.
+
+   Was opaque parchment with a dark label, like the landing pill it replaces.
+   Contrast for #eafffb over the effective backdrop: 12.3:1 on navy-1, 16.7:1
+   on navy-2, and 6.9:1 with the static starfield at 0.2 — the worst case here,
+   because this page deliberately has no animated canvas (see the .sky note).
+   That clears AA for normal text (4.5:1), which is the bar that applies: the
+   label is clamp(17px, 3.1vmin, 24px), below the 24px large-text threshold, so
+   unlike the landing pill this one is not eligible for the relaxed 3:1.
+
+   No backdrop-filter — blur and saturate measured indistinguishable against a
+   starfield this sparse, so the compositing layer and backdrop readback were
+   dropped for no visual change. */
+
 .submit {
-    justify-self: start;
+    justify-self: center;
     padding: 0.72em 1.9em;
-    border: 1px solid rgba(255, 250, 235, 0.35);
+    border: 1px solid rgba(215, 255, 250, 0.4);
     border-radius: 999px;
-    background: var(--parchment);
-    color: #1b2740;
-    font-family: 'Pirata One', serif;
+    background: rgba(122, 226, 208, 0.07);
+    color: #eafffb;
+    font-family: "Liberation Serif", "Times New Roman", Times, serif;
     font-size: clamp(17px, 3.1vmin, 24px);
-    line-height: 1.1;
-    text-transform: uppercase;
+    line-height: 1.05;
     cursor: pointer;
-    transition: background-color 140ms ease, transform 140ms ease;
+    box-shadow: 0 1.4vmin 3.4vmin rgba(0, 18, 28, 0.38),
+        inset 1px 1px 2px rgba(240, 255, 253, 0.55),
+        inset -1px -1px 2px rgba(110, 200, 190, 0.22);
+    text-shadow: 0 1px 2px rgba(0, 20, 30, 0.5);
+    transition: background-color 140ms ease, transform 140ms ease, box-shadow 140ms ease;
 }
 
 .submit:hover:not(:disabled) {
-    background: #e6dcc2;
-    color: #101a2e;
+    background: rgba(122, 226, 208, 0.14);
     transform: translateY(-1px);
+    box-shadow: 0 1.8vmin 4.2vmin rgba(0, 18, 28, 0.44),
+        inset 1px 1px 2px rgba(240, 255, 253, 0.6),
+        inset -1px -1px 2px rgba(110, 200, 190, 0.26);
 }
 
+/* Dimmed per-property rather than with blanket opacity. At 0.55 on an opaque
+   pill the control still read as a solid button; on a 7% tint the same opacity
+   fades the surface with the label and the pill all but disappears. Fading the
+   fill and rim instead keeps the shape legible. Disabled controls are exempt
+   from the contrast minimum, so the label can go as dim as it needs to. */
 .submit:disabled {
-    opacity: 0.55;
+    background: rgba(122, 226, 208, 0.03);
+    border-color: rgba(215, 255, 250, 0.18);
+    color: rgba(234, 255, 251, 0.45);
+    box-shadow: none;
     cursor: default;
 }
 

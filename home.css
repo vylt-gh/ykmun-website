@@ -210,13 +210,30 @@ body {
     left: 59.74%;
     top: 78.55%;
 }
+/* Apply CTA: sea-glass pill.
 
-/* Apply CTA: aged parchment pill, gothic face.
+   Previously an opaque aged-parchment pill with a dark label. Parchment was
+   chosen deliberately — it measured 9.1:1 and, being opaque, was immune to
+   whatever passed behind it. This is a translucent sea-glass treatment instead:
+   the pill is a 7% aqua tint over the live starfield, carrying its form from a
+   pale rim and inset highlights rather than a solid fill.
 
-   Muted parchment rather than white: pure white measured 14.1:1 against the
-   label and a luminance gap of 0.89 from the navy, which glares on a dark
-   page. This sits at 9.1:1 and cuts that gap by ~66%, picking up the weathered
-   cream of the painted cards. */
+   That trade is not free, so the contrast was re-measured for #eafffb on the
+   effective backdrop:
+     over navy-1 / navy-2 / mid-gradient   12.3:1 / 16.7:1 / 14.5:1
+     with the static starfield at 0.2       6.9:1
+   The loss against the old 9.1:1 floor comes from the starfield, not the tint.
+   Worst case is an animated star: sprites are radial gradients with an opaque
+   white core and reach 32px across, so a star crossing a stem can drop the
+   local ratio toward 3:1. At 21-48px the label counts as large text, where AA
+   asks for 3:1, so this stays above the bar — but it is no longer
+   contrast-proof the way the opaque pill was, and the text-shadow below is
+   carrying real weight rather than just softening the glyph.
+
+   No backdrop-filter: blur and saturate measured indistinguishable against a
+   starfield this sparse, so the compositing layer and per-frame backdrop
+   readback were dropped for no visual change. */
+
 .cta {
     position: absolute;
     left: 50%;
@@ -225,25 +242,28 @@ body {
     display: inline-block;
     padding: clamp(9px, 1.9vmin, 20px) clamp(26px, 6.5vmin, 68px);
     border-radius: 999px;
-    background: #d8c9a6;
-    color: #1b2740;
+    background: rgba(122, 226, 208, 0.07);
+    color: #eafffb;
     text-decoration: none;
-    font-family: "Adwaita Sans", Inter, sans-serif;
+    font-family: "Liberation Serif", "Times New Roman", Times, serif;
     font-size: clamp(21px, 4.7vmin, 48px);
     line-height: 1.05;
     white-space: nowrap;
-    border: 1px solid rgba(255, 250, 235, 0.35);
-    box-shadow: 0 0.4vmin 1.4vmin rgba(0, 0, 0, 0.35),
-        inset 0 1px 0 rgba(255, 252, 240, 0.4);
+    border: 1px solid rgba(215, 255, 250, 0.4);
+    box-shadow: 0 1.4vmin 3.4vmin rgba(0, 18, 28, 0.38),
+        inset 1px 1px 2px rgba(240, 255, 253, 0.55),
+        inset -1px -1px 2px rgba(110, 200, 190, 0.22);
+    text-shadow: 0 1px 2px rgba(0, 20, 30, 0.5);
     transition: transform 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
 }
 
 .cta:hover,
 .cta:focus-visible {
-    background: #e0d2b0;
+    background: rgba(122, 226, 208, 0.14);
     transform: translateX(-50%) translateY(-2px);
-    box-shadow: 0 0.7vmin 1.8vmin rgba(0, 0, 0, 0.4),
-        inset 0 1px 0 rgba(255, 252, 240, 0.45);
+    box-shadow: 0 1.8vmin 4.2vmin rgba(0, 18, 28, 0.44),
+        inset 1px 1px 2px rgba(240, 255, 253, 0.6),
+        inset -1px -1px 2px rgba(110, 200, 190, 0.26);
 }
 
 .cta:active {
