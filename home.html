@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>YKMUN - Başvur</title>
+    <meta name="description" content="YKMUN'a başvur. Günler sayacı ile kalan süreyi takip et.">
+    <link rel="icon" type="image/png" sizes="256x256" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="stylesheet" href="fonts.css">
+    <link rel="stylesheet" href="home.css">
+</head>
+<body>
+
+<div class="sky" aria-hidden="true"></div>
+<canvas id="stars" aria-hidden="true"></canvas>
+
+<a class="emblem" href="/" aria-label="YKMUN ana sayfa">
+    <img src="icon.png" alt="" width="256" height="256">
+</a>
+
+<main class="stage">
+
+    <div class="counter">
+        <img class="counter-plate" src="counter.webp" alt="YKMUN'a kalan gün sayacı"
+             width="1556" height="2783" fetchpriority="high">
+
+        <div class="windows" aria-hidden="true">
+            <span class="window" data-slot="0"></span>
+            <span class="window" data-slot="1"></span>
+            <span class="window" data-slot="2"></span>
+        </div>
+
+        <p class="sr-only" id="countdown-text" role="status" aria-live="polite"></p>
+    </div>
+
+    <!-- Placeholder target: the application form is not built yet. -->
+    <a class="cta" href="#">Başvur</a>
+
+</main>
+
+<script src="stars-data.js"></script>
+<script src="stars.js"></script>
+<script src="countdown.js"></script>
+</body>
+</html>

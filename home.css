@@ -1,0 +1,315 @@
+/* YKMUN landing page — night-sky splash with a live countdown plate. */
+
+:root {
+    --navy-1: #012265;
+    --navy-2: #000c24;
+    --cream: #f2ece0;
+    --star-opacity: 0.2;
+
+    /* counter.webp is 1556x2783, so aspect (width/height) = 0.559.
+       The artwork is mostly rope: it fills the top 70% and the metal body the
+       bottom 30%. Every position below is a measured fraction of that image:
+
+         --seam      0.82393  the divider between card housings and DAYS TO
+         --body      0.17607  metal body height below that divider (1 - seam)
+         --rope-end  0.69960  where the rope meets the metal (row 1947)
+
+       The rope was extended from its original 35% so it can run off-screen
+       independently of how large the plate is. */
+    --plate-aspect: 0.55911;
+    --seam: 0.82393;
+    --body: 0.17607;
+    --rope-end: 0.69960;
+
+    /* The divider's resting height on screen, as a fraction of the viewport.
+       It sits just above centre because centring the digits left the plate
+       looking low; the divider is the visual hinge of the object, so aligning
+       it reads as balanced. */
+    --focus-y: 0.46;
+
+    /* Largest the plate may be, as a fraction of viewport width. Without this
+       the height budget below grew the plate until it dominated the screen. */
+    --plate-max-w: 46vw;
+
+    /* Slightly-landscape screens (aspect below ~3:2) have vertical headroom the
+       wide layouts spend on rope, so the same 46vw cap leaves the plate looking
+       undersized there. Loosening it only for those ratios keeps the approved
+       size on wide desktop and portrait untouched. The height budget still
+       binds wherever it needs to, so this cannot overflow into the CTA. */
+    --plate-max-w-narrow: 58vw;
+
+    /* Space kept clear at the bottom for the CTA. */
+    --cta-bottom: clamp(18px, 5vmin, 54px);
+    --cta-clear: clamp(64px, 15vmin, 130px);
+    /* Gap between the plate's bottom edge and the CTA, in portrait where the
+       CTA is seated under the plate rather than on the viewport floor. */
+    --cta-gap: clamp(24px, 7vmin, 64px);
+
+    --plate-gutter: 4vw;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    /* Single-viewport splash with nothing to scroll: suppress pull-to-refresh
+       and double-tap zoom, which would otherwise hijack a finger drag. */
+    overscroll-behavior: none;
+    touch-action: manipulation;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(45deg, var(--navy-1), var(--navy-2));
+    color: var(--cream);
+    font-family: 'Liberation Serif', 'Times New Roman', Times, serif;
+    overflow: hidden;
+}
+
+/* Static starfield plate behind the interactive canvas, at the brief's 20%. */
+.sky {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: url('stars.png');
+    background-size: cover;
+    background-position: center;
+    opacity: var(--star-opacity);
+}
+
+#stars {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    pointer-events: none;
+}
+
+.sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+.emblem {
+    position: fixed;
+    top: clamp(12px, 2.4vmin, 28px);
+    left: clamp(12px, 2.4vmin, 28px);
+    z-index: 3;
+    display: block;
+    width: clamp(56px, 9vmin, 104px);
+    aspect-ratio: 1;
+    border-radius: 50%;
+}
+
+.emblem img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+}
+
+.stage {
+    position: fixed;
+    inset: 0;
+    z-index: 2;
+
+    /* Plate width, shared so .cta can position itself relative to the plate
+       instead of the viewport floor. Declared here rather than on .counter
+       because .counter and .cta are siblings: a custom property set on .counter
+       is invisible to .cta.
+
+       --plate-cap-h must be defined in this same block, not on .counter — it is
+       used here, and a custom property cannot read one from a descendant. */
+    --plate-cap-h: calc(
+        (100dvh - var(--focus-y) * 100dvh - var(--cta-clear)) / var(--body)
+    );
+    --plate-w: min(
+        calc(100vw - 2 * var(--plate-gutter)),
+        calc(var(--plate-cap-h) * var(--plate-aspect)),
+        var(--plate-max-w)
+    );
+}
+
+/* The plate is placed by where its divider lands, not by its own edges.
+
+   Two limits decide the width:
+     - height. The bottom must clear the CTA, and the bottom is
+       focus_y*vh + body*H, so  H <= (vh - focus_y*vh - cta_clear) / body.
+     - width.  --plate-max-w, so it never dominates the screen.
+
+   The top then falls out of the divider's target position: the divider sits
+   at top + seam*H = focus_y*vh, giving  top = focus_y*vh - (seam/aspect)*width.
+
+   --plate-w is a variable because the same expression feeds the width and the
+   top offset. It is written without percentages: those resolve against
+   different axes in the two places, which silently broke the layout once. */
+.counter {
+    position: absolute;
+    left: 50%;
+    top: calc(
+        var(--focus-y) * 100dvh - (var(--seam) / var(--plate-aspect)) * var(--plate-w)
+    );
+    transform: translateX(-50%);
+    width: var(--plate-w);
+    container-type: inline-size;
+}
+
+.counter-plate {
+    display: block;
+    width: 100%;
+    height: auto;
+    filter: drop-shadow(0 1.5vmin 2.5vmin rgba(0, 0, 0, 0.55));
+    /* fetchpriority="high" and no decoding="async" in the HTML: an async decode
+       could still be pending at first paint, which left the digit windows
+       floating over the bare starfield with no plate behind them. */
+}
+
+/* Digit windows, positioned over the three painted cards. Centres measured by
+   isolating the cream card regions in the artwork and taking each bounding box
+   centre. cqw keeps the digit size tied to the plate. */
+.windows {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+}
+
+.window {
+    position: absolute;
+    font-family: "Burton's Nightmare", serif;
+    font-size: 8.6cqw;
+    line-height: 1;
+    color: #241f1b;
+    text-shadow: 0 0.06em 0.08em rgba(120, 96, 72, 0.5);
+    transform: translate(-50%, -50%);
+}
+
+.window[data-slot='0'] {
+    left: 33.61%;
+    top: 78.75%;
+}
+
+.window[data-slot='1'] {
+    left: 46.53%;
+    top: 78.58%;
+}
+
+.window[data-slot='2'] {
+    left: 59.74%;
+    top: 78.55%;
+}
+
+/* Apply CTA: aged parchment pill, gothic face.
+
+   Muted parchment rather than white: pure white measured 14.1:1 against the
+   label and a luminance gap of 0.89 from the navy, which glares on a dark
+   page. This sits at 9.1:1 and cuts that gap by ~66%, picking up the weathered
+   cream of the painted cards. */
+.cta {
+    position: absolute;
+    left: 50%;
+    bottom: var(--cta-bottom);
+    transform: translateX(-50%);
+    display: inline-block;
+    padding: clamp(9px, 1.9vmin, 20px) clamp(26px, 6.5vmin, 68px);
+    border-radius: 999px;
+    background: #d8c9a6;
+    color: #1b2740;
+    text-decoration: none;
+    font-family: "Adwaita Sans", Inter, sans-serif;
+    font-size: clamp(21px, 4.7vmin, 48px);
+    line-height: 1.05;
+    white-space: nowrap;
+    border: 1px solid rgba(255, 250, 235, 0.35);
+    box-shadow: 0 0.4vmin 1.4vmin rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 252, 240, 0.4);
+    transition: transform 140ms ease, box-shadow 140ms ease, background-color 140ms ease;
+}
+
+.cta:hover,
+.cta:focus-visible {
+    background: #e0d2b0;
+    transform: translateX(-50%) translateY(-2px);
+    box-shadow: 0 0.7vmin 1.8vmin rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 252, 240, 0.45);
+}
+
+.cta:active {
+    transform: translateX(-50%);
+}
+
+.cta:focus-visible {
+    outline: 2px solid var(--cream);
+    outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .cta {
+        transition: none;
+    }
+
+    .cta:hover,
+    .cta:focus-visible {
+        transform: translateX(-50%);
+    }
+}
+
+/* Portrait: drop the width cap and let the gutters decide.
+
+   The base positioning already works at every aspect ratio — the plate is
+   placed by where its divider lands, which is height-relative, and the rope's
+   free end is at artwork row 0, so whenever the plate is large enough to push
+   its top above the viewport the rope runs off the top edge on its own. That is
+   why portrait needs no lift: an earlier version shifted the plate with a
+   negative margin-top, but in a flex-end column that margin cancels out of the
+   layout position and had no effect at all.
+
+   The cap only earns its keep in landscape, where the height budget would
+   otherwise grow the plate to ~80% of the screen width. In portrait, 70% of
+   the artwork is rope rendering off-screen, so a full-width plate costs no
+   vertical space: the gutters bound it at 92% and the body still clears the
+   CTA. */
+@media (orientation: portrait) {
+    .stage {
+        --plate-max-w: 100vw;
+    }
+
+    /* Seat the CTA just under the plate instead of on the viewport floor.
+
+       The plate's bottom edge is top + H, and with the base rule that works out
+       to focus_y*vh + (body / aspect) * --plate-w. Anchoring the CTA there
+       closes a 200-300px gap that bottom-pinning left on tall screens. Landscape
+       is untouched: it still uses --cta-bottom.
+
+       --plate-w comes from .stage, since .cta cannot see a property declared on
+       its sibling .counter. */
+    .cta {
+        bottom: auto;
+        top: calc(
+            var(--focus-y) * 100dvh
+            + (var(--body) / var(--plate-aspect)) * var(--plate-w)
+            + var(--cta-gap)
+        );
+    }
+}
+
+/* Landscape between roughly 1:1 and 3:2 — tablets in landscape, small laptops,
+   square-ish windows. These keep a 46vw cap that reads too small here, so raise
+   it; wider ratios keep the tighter cap. */
+@media (orientation: landscape) and (max-aspect-ratio: 3 / 2) {
+    .stage {
+        --plate-max-w: var(--plate-max-w-narrow);
+    }
+}
