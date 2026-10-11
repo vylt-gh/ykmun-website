@@ -33,6 +33,13 @@ body {
     font-family: 'Liberation Serif', 'Times New Roman', Times, serif;
 }
 
+
+u {
+  text-decoration-thickness: 2px;
+  text-underline-offset: 4px;
+  /* thanks mdn i love you mwah */
+}
+
 /* Static starfield plate. The landing page's interactive canvas starfield is
    intentionally absent here — see the note in apply.html. */
 .sky {
