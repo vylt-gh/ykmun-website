@@ -5,26 +5,23 @@
     const status = document.getElementById('status');
     const submitBtn = document.getElementById('submit-btn');
 
-    // Input id for the one field that has a real database column. Everything
-    // else lands in the `details` jsonb column from migration 0001, because the
-    // real field list has not been decided. That keeps a field change to a
-    // one-line edit here instead of a schema migration.
+    // Input id for the one field that has always had a real column.
     const EMAIL_INPUT = 'f-email';
 
-    // Everything except the email, as key -> input id. Key is the name used
-    // inside `details`, so keep it stable: it is what the admin table shows.
-    const DETAIL_FIELDS = {
+    // The whole form. Each key is a column name as of migration 0003, so keep
+    // them stable — they are what the table editor shows as columns.
+    const COLUMN_FIELDS = {
         full_name: 'f-name',
         phone: 'f-phone',
-        school: 'f-school',
-        grade_level: 'f-grade',
-        committee: 'f-committee',
-        motivation: 'f-motivation',
-        experience: 'f-experience'
+        committee: 'f-committee'
     };
 
+    // payment_state is deliberately absent from every map here. It is not an
+    // application field: the applicant is never asked for it. The column
+    // defaults to 'unpaid' and staff change it as fees come in.
+
     // All validated inputs, for the validation pass.
-    const FIELDS = { email: EMAIL_INPUT, ...DETAIL_FIELDS };
+    const FIELDS = { email: EMAIL_INPUT, ...COLUMN_FIELDS };
 
     let client;
 
@@ -90,20 +87,20 @@
 
     function collect() {
         const emailEl = document.getElementById(EMAIL_INPUT);
-        const details = {};
+        const row = {};
 
-        for (const [key, id] of Object.entries(DETAIL_FIELDS)) {
+        for (const [key, id] of Object.entries(COLUMN_FIELDS)) {
             const el = document.getElementById(id);
             if (!el) continue;
             const value = el.value.trim();
             // Empty optional fields are omitted rather than sent as "", so the
             // admin table does not fill with blank-looking cells.
-            if (value) details[key] = value;
+            if (value) row[key] = value;
         }
 
         return {
             email: emailEl ? emailEl.value.trim() : '',
-            details
+            ...row
         };
     }
 

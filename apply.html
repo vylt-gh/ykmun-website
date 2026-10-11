@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>YKMUN - Başvuru</title>
+    <title>YKMUN - Apply</title>
     <meta name="description" content="YKMUN başvuru formu.">
     <link rel="icon" type="image/png" sizes="256x256" href="icon.png">
     <link rel="apple-touch-icon" href="icon.png">
@@ -58,7 +58,6 @@
             <label for="f-email">E-posta <span class="req" aria-hidden="true">*</span></label>
             <input type="email" id="f-email" name="email" autocomplete="email"
                    required maxlength="200">
-            <p class="hint">Başvuru sonucunu bu adrese göndereceğiz.</p>
             <p class="err" data-err-for="f-email" role="alert"></p>
         </div>
 
@@ -67,19 +66,6 @@
             <input type="tel" id="f-phone" name="phone" autocomplete="tel"
                    maxlength="40">
             <p class="err" data-err-for="f-phone" role="alert"></p>
-        </div>
-
-        <div class="row">
-            <label for="f-school">Okul / Üniversite <span class="req" aria-hidden="true">*</span></label>
-            <input type="text" id="f-school" name="school" autocomplete="organization"
-                   required maxlength="160">
-            <p class="err" data-err-for="f-school" role="alert"></p>
-        </div>
-
-        <div class="row">
-            <label for="f-grade">Sınıf / Düzey</label>
-            <input type="text" id="f-grade" name="grade_level" maxlength="60">
-            <p class="err" data-err-for="f-grade" role="alert"></p>
         </div>
 
         <div class="row">
@@ -95,21 +81,6 @@
                 <option value="Başbakanlık Konseyi"></option>
             </datalist>
             <p class="err" data-err-for="f-committee" role="alert"></p>
-        </div>
-
-        <div class="row">
-            <label for="f-motivation">Neden Katılmak İstiyorsun?</label>
-            <textarea id="f-motivation" name="motivation" rows="5"
-                      maxlength="2000"></textarea>
-            <p class="err" data-err-for="f-motivation" role="alert"></p>
-        </div>
-
-        <div class="row">
-            <label for="f-experience">Daha Önceki MUN Deneyimin</label>
-            <textarea id="f-experience" name="experience" rows="3"
-                      maxlength="1000"></textarea>
-            <p class="hint">Yoksa boş bırakabilirsin.</p>
-            <p class="err" data-err-for="f-experience" role="alert"></p>
         </div>
 
         <div class="actions">
