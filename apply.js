@@ -8,20 +8,70 @@
     // Input id for the one field that has always had a real column.
     const EMAIL_INPUT = 'f-email';
 
-    // The whole form. Each key is a column name as of migration 0003, so keep
-    // them stable — they are what the table editor shows as columns.
+    // key -> column name (migration 0005). Keep stable.
     const COLUMN_FIELDS = {
         full_name: 'f-name',
         phone: 'f-phone',
-        committee: 'f-committee'
+        tc_number: 'f-tc',
+        committee_1: 'f-committee-1',
+        committee_2: 'f-committee-2',
+        committee_3: 'f-committee-3',
+        motivation: 'f-motivation'
     };
 
-    // payment_state is deliberately absent from every map here. It is not an
-    // application field: the applicant is never asked for it. The column
-    // defaults to 'unpaid' and staff change it as fees come in.
+    // payment_state is absent on purpose: applicants are never asked for it.
 
     // All validated inputs, for the validation pass.
     const FIELDS = { email: EMAIL_INPUT, ...COLUMN_FIELDS };
+
+    // Bump when kvkk.html changes what is being consented to.
+    const CONSENT_VERSION = '2026-10-13';
+
+    const CONSENT_INPUT = 'f-consent';
+
+    // Single source of truth for the committee list. The three selects are
+    // empty in the HTML and filled from here, so finalising the list is one
+    // edit instead of fifteen <option> tags kept in sync across three
+    // elements. The list is not settled yet — replace this array and nothing
+    // else needs to change.
+    const COMMITTEES = [
+        'Güvenlik Kurulu',
+        'İnsan Hakları',
+        'Çevre',
+        'Ekonomik ve Finansal',
+        'Başbakanlık Konseyi'
+    ];
+
+    for (const id of ['f-committee-1', 'f-committee-2', 'f-committee-3']) {
+        const select = document.getElementById(id);
+        if (!select) continue;
+        for (const name of COMMITTEES) {
+            const option = document.createElement('option');
+            option.textContent = name;
+            select.appendChild(option);
+        }
+    }
+
+    // Pass the checksum but never actually issued.
+    const TC_NEVER_ISSUED = new Set([
+        '11111111110', '22222222220', '33333333330', '44444444440',
+        '55555555550', '66666666660', '77777777770', '88888888880',
+        '99999999990'
+    ]);
+
+    // TC Kimlik No checksum: 10th digit is (odd-position sum x 7) - (even-position
+    // sum) mod 10; 11th is the sum of the first ten, mod 10. The first expression
+    // can go negative, hence the +10.
+    function isValidTC(value) {
+        if (!/^[1-9][0-9]{10}$/.test(value)) return false;
+        if (TC_NEVER_ISSUED.has(value)) return false;
+        const d = value.split('').map(Number);
+        const odd = d[0] + d[2] + d[4] + d[6] + d[8];
+        const even = d[1] + d[3] + d[5] + d[7];
+        const tenth = ((odd * 7 - even) % 10 + 10) % 10;
+        const eleventh = d.slice(0, 10).reduce((a, b) => a + b, 0) % 10;
+        return d[9] === tenth && d[10] === eleventh;
+    }
 
     let client;
 
@@ -52,11 +102,20 @@
         }
     }
 
-    // Reports the browser's own validation messages in Turkish where we can,
-    // and always marks the field so the styling follows.
+    // Marks the offending field so the styling follows.
     function validate() {
         clearErrors();
         let firstBad = null;
+
+        const flag = (id, message) => {
+            const el = document.getElementById(id);
+            const err = form.querySelector(`[data-err-for="${id}"]`);
+            if (err) err.textContent = message;
+            if (el) {
+                el.classList.add('is-invalid');
+                if (!firstBad) firstBad = el;
+            }
+        };
 
         for (const [name, id] of Object.entries(FIELDS)) {
             const el = document.getElementById(id);
@@ -73,12 +132,28 @@
                 message = 'Biraz daha uzun yazmalısın.';
             }
 
-            if (message) {
-                const err = form.querySelector(`[data-err-for="${id}"]`);
-                if (err) err.textContent = message;
-                el.classList.add('is-invalid');
-                if (!firstBad) firstBad = el;
-            }
+            if (message) flag(id, message);
+        }
+
+        // Only once a number has been typed; an empty field has no checksum.
+        const tcEl = document.getElementById('f-tc');
+        if (tcEl && tcEl.value.trim() && !isValidTC(tcEl.value.trim())) {
+            flag('f-tc', 'T.C. Kimlik No geçersiz. 11 haneli ve algoritmik olarak doğru olmalı.');
+        }
+
+        // A repeated pick means one committee three times, not three preferences.
+        const picks = ['f-committee-1', 'f-committee-2', 'f-committee-3']
+            .map((id) => (document.getElementById(id) || {}).value)
+            .filter(Boolean);
+        if (picks.length !== new Set(picks).size) {
+            flag('f-committee-1', 'Aynı komiteyi birden fazla kez seçemezsin.');
+        }
+
+        // Art. 6 special-category data needs explicit consent; `required` alone
+        // would block silently.
+        const consentEl = document.getElementById(CONSENT_INPUT);
+        if (consentEl && !consentEl.checked) {
+            flag(CONSENT_INPUT, 'Başvuru için açık rıza vermen gerekiyor.');
         }
 
         if (firstBad) firstBad.focus();
@@ -97,6 +172,10 @@
             // admin table does not fill with blank-looking cells.
             if (value) row[key] = value;
         }
+
+        // Stamped here, never read from the form.
+        row.consent_at = new Date().toISOString();
+        row.consent_version = CONSENT_VERSION;
 
         return {
             email: emailEl ? emailEl.value.trim() : '',

@@ -40,11 +40,6 @@
 
     <header class="head">
         <h1><u><i>Başvuru</i></u></h1>
-        <!--
-        <p class="note tentative">
-            Bu alanlar geçicidir ve değişebilir.
-        </p>
-        -->
     </header>
 
     <form class="form" id="apply-form" novalidate>
@@ -71,18 +66,53 @@
         </div>
 
         <div class="row">
-            <label for="f-committee">Tercih Edilen Komite</label>
-            <input type="text" id="f-committee" name="committee" maxlength="120"
-                   list="committee-options">
-            <datalist id="committee-options">
-                <!-- Provisional. Komite listesi kesinleşmedi. -->
-                <option value="Güvenlik Kurulu"></option>
-                <option value="İnsan Hakları"></option>
-                <option value="Çevre"></option>
-                <option value="Ekonomik ve Finansal"></option>
-                <option value="Başbakanlık Konseyi"></option>
-            </datalist>
-            <p class="err" data-err-for="f-committee" role="alert"></p>
+            <label for="f-tc">T.C. Kimlik No <span class="req" aria-hidden="true">*</span></label>
+            <input type="text" id="f-tc" name="tc_number" inputmode="numeric"
+                   autocomplete="off" required maxlength="11" pattern="[0-9]*"
+                   aria-describedby="hint-tc">
+            <p class="hint" id="hint-tc">
+                Konferans öncesi imzalanacak katılım belgesi için gerekli.
+                <a href="kvkk.html" target="_blank" rel="noopener">Aydınlatma metni</a>
+            </p>
+            <p class="err" data-err-for="f-tc" role="alert"></p>
+        </div>
+
+        <fieldset class="row prefs">
+            <legend>Tercih Edilen Komiteler</legend>
+            <p class="hint">En fazla üç tane seçebilirsin. Sıralaman öncelik belirtir.</p>
+            <div class="pref-grid">
+                <label for="f-committee-1">1. tercih</label>
+                <!-- Options injected from COMMITTEES in apply.js -->
+                <select id="f-committee-1" name="committee_1">
+                    <option value="">—</option></select>
+
+                <label for="f-committee-2">2. tercih</label>
+                <select id="f-committee-2" name="committee_2">
+                    <option value="">—</option></select>
+
+                <label for="f-committee-3">3. tercih</label>
+                <select id="f-committee-3" name="committee_3">
+                    <option value="">—</option></select>
+            </div>
+            <p class="err" data-err-for="f-committee-1" role="alert"></p>
+        </fieldset>
+
+        <div class="row">
+            <label for="f-motivation">Neden Katılmak İstiyorsun?</label>
+            <textarea id="f-motivation" name="motivation" rows="5"
+                      maxlength="2000"></textarea>
+            <p class="hint">Komite dağıtımında işimize yarar.</p>
+            <p class="err" data-err-for="f-motivation" role="alert"></p>
+        </div>
+
+        <div class="row consent">
+            <input type="checkbox" id="f-consent" name="consent" required>
+            <label for="f-consent">
+                <a href="kvkk.html" target="_blank" rel="noopener">Aydınlatma metnini</a>
+                okudum; T.C. Kimlik Numaramın, katılım belgesinin düzenlenmesi amacıyla
+                işlenmesine açık rıza veriyorum.
+            </label>
+            <p class="err" data-err-for="f-consent" role="alert"></p>
         </div>
 
         <div class="actions">

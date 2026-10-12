@@ -154,10 +154,63 @@ textarea {
 }
 
 input:focus,
-textarea:focus {
+textarea:focus,
+select:focus {
     outline: 2px solid rgba(242, 236, 224, 0.75);
     outline-offset: 1px;
     border-color: transparent;
+}
+
+/* A fieldset is a .row, so the browser's default border and padding are undone. */
+.prefs {
+    border: 0;
+    padding: 0;
+    margin: 0;
+}
+
+.prefs legend {
+    padding: 0;
+    font-size: clamp(15px, 2.5vmin, 18px);
+    letter-spacing: 0.02em;
+}
+
+.pref-grid {
+    display: grid;
+    grid-template-columns: max-content 1fr;
+    gap: 0.5em 0.8em;
+    align-items: center;
+}
+
+.pref-grid label {
+    font-size: 0.9em;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgba(242, 236, 224, 0.62);
+    white-space: nowrap;
+}
+
+select {
+    width: 100%;
+    padding: 0.62em 0.7em;
+    border: 1px solid rgba(242, 236, 224, 0.26);
+    border-radius: 8px;
+    background: rgba(3, 12, 32, 0.6);
+    color: var(--cream);
+    font: inherit;
+    line-height: 1.45;
+    appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, rgba(242, 236, 224, 0.75) 50%),
+        linear-gradient(135deg, rgba(242, 236, 224, 0.75) 50%, transparent 50%);
+    background-position: right 1.05em center, right 0.75em center;
+    background-size: 0.3em 0.3em, 0.3em 0.3em;
+    background-repeat: no-repeat;
+    padding-right: 2.4em;
+}
+
+/* Safari renders the native select in its own light chrome unless asked not to. */
+select option {
+    background: #06122e;
+    color: var(--cream);
 }
 
 textarea {
@@ -193,10 +246,145 @@ textarea:-webkit-autofill {
     border-color: #d98b7a;
 }
 
+/* KVKK consent. Written as a sentence beside the box rather than as a stacked
+   field. The box borrows the landing CTA's sea-glass treatment: the default
+   native checkbox renders as a solid white square, which is the brightest thing
+   on an otherwise dark page and reads as a browser artefact rather than part
+   of the design. */
+.consent {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 0.2em 0.75em;
+    align-items: start;
+}
+
+.consent input[type="checkbox"] {
+    -webkit-appearance: none;
+    appearance: none;
+    /* The blanket `input, textarea` rule above also matches this box, and its
+       0.7em/0.85em padding is asymmetric — which with border-box sizing stretches
+       the box wider than it is tall and throws off the centre alignment. Reset
+       it here; the size below is then the whole box. */
+    padding: 0;
+    width: 1.35em;
+    height: 1.35em;
+    min-width: 0;
+    min-height: 0;
+    margin: 0.2em 0 0;
+    border: 1px solid rgba(215, 255, 250, 0.4);
+    border-radius: 5px;
+    background: rgba(122, 226, 208, 0.07);
+    box-shadow: inset 1px 1px 1px rgba(240, 255, 253, 0.4);
+    cursor: pointer;
+    display: grid;
+    place-content: center;
+}
+
+.consent input[type="checkbox"]::after {
+    content: "";
+    width: 0.62em;
+    height: 0.3em;
+    border-left: 2px solid #eafffb;
+    border-bottom: 2px solid #eafffb;
+    transform: rotate(-45deg) scale(0);
+    transition: transform 110ms ease;
+}
+
+.consent input[type="checkbox"]:checked {
+    background: rgba(122, 226, 208, 0.3);
+}
+
+.consent input[type="checkbox"]:checked::after {
+    transform: rotate(-45deg) scale(1);
+}
+
+.consent label {
+    font-size: 0.9em;
+    line-height: 1.5;
+    font-family: inherit;
+    letter-spacing: 0;
+}
+
+.consent a {
+    color: var(--cream);
+}
+
+.consent .err {
+    grid-column: 2;
+}
+
+.consent input.is-invalid {
+    border-color: #d98b7a;
+    box-shadow: inset 0 0 0 1px rgba(217, 139, 122, 0.4);
+}
+
 .actions {
     display: grid;
     gap: 0.7em;
     margin-top: 0.5em;
+}
+
+/* KVKK notice (kvkk.html), reusing this page's palette. */
+.legal {
+    gap: 1.6em;
+    margin-top: 1.2em;
+}
+
+.legal .row {
+    display: grid;
+    gap: 0.4em;
+}
+
+.legal h2 {
+    margin: 0;
+    font-size: clamp(15px, 2.2vmin, 18px);
+    font-weight: normal;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(242, 236, 224, 0.72);
+}
+
+.legal-body {
+    margin: 0;
+    font-size: 0.95em;
+    line-height: 1.6;
+    color: rgba(242, 236, 224, 0.84);
+}
+
+.legal ul.legal-body {
+    padding-left: 1.2em;
+    display: grid;
+    gap: 0.35em;
+}
+
+.legal ul.legal-body li::marker {
+    color: rgba(242, 236, 224, 0.45);
+}
+
+.legal strong {
+    color: var(--cream);
+    font-weight: normal;
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+    text-decoration-color: rgba(242, 236, 224, 0.35);
+}
+
+.legal a {
+    color: var(--cream);
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+}
+
+/* Loud on purpose: the notice must not look finished while unconfirmed. */
+.legal .todo {
+    border-left: 3px solid #d98b7a;
+    padding: 0.6em 0 0.6em 0.85em;
+    background: rgba(217, 139, 122, 0.07);
+    color: rgba(242, 236, 224, 0.8);
+}
+
+.legal h2 {
+    scroll-margin-top: 5rem;
 }
 
 /* Sea-glass submit, matching the landing CTA in home.css.
