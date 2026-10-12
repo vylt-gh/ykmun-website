@@ -5,3 +5,6 @@ counter.png
 
 # Scratch render/preview output from local screenshot tooling.
 *.tmp.png
+
+# ignore vscode workspace file
+*.code-workspace

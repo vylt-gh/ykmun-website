@@ -1,3 +1,7 @@
+:root {
+    --star-opacity: 0.2;
+}
+
 html {
     /* The page is a fixed splash with nothing to scroll, so suppress the
        browser gestures that would otherwise hijack a finger drag:
@@ -15,12 +19,25 @@ body {
     font-family: 'Liberation Serif', 'Times New Roman', Times, serif;
 }
 
+/* Static starfield plate behind the interactive canvas, at the same 20% the
+   other pages use so the three read as one site. */
+.sky {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: url('stars.png');
+    background-size: cover;
+    background-position: center;
+    opacity: var(--star-opacity);
+}
+
 #stars {
     position: fixed;
     inset: 0;
     width: 100%;
     height: 100%;
-    z-index: 0;
+    z-index: 1;
     pointer-events: none;
 }
 
@@ -29,7 +46,7 @@ body {
     inset: 0;
     display: grid;
     place-items: center;
-    z-index: 1;
+    z-index: 2;
 }
 
 .title {
@@ -38,13 +55,16 @@ body {
     pointer-events: none;
 }
 
-.title p {
+/* Sits above the wordmark the same way the old <p>YKMUN</p> did. aspect-ratio
+   reserves the box before the bitmap decodes, so the h1 does not jump. */
+.title .mark {
     position: absolute;
     bottom: 100%;
-    left: 0;
-    right: 0;
-    margin: 0;
-    font-size: 4vw;
+    left: 50%;
+    transform: translateX(-50%);
+    width: clamp(64px, 13vw, 190px);
+    height: auto;
+    aspect-ratio: 1;
 }
 
 .title h1 {
