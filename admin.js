@@ -141,7 +141,15 @@
 
         const meta = document.createElement('div');
         meta.className = 'card-meta';
-        for (const value of [row.email, row.phone, row.committee_1].filter(Boolean)) {
+
+        // All three preferences, not just the first. The form collects them as
+        // ranked choices and committee allocation needs the whole ordering —
+        // showing only committee_1 hid the applicant's second and third.
+        const preferences = [row.committee_1, row.committee_2, row.committee_3].filter(Boolean);
+        const details = [row.email, row.phone].filter(Boolean);
+        if (preferences.length) details.push('Tercih: ' + preferences.join(' · '));
+
+        for (const value of details) {
             const span = document.createElement('span');
             span.textContent = value;
             meta.appendChild(span);
@@ -152,7 +160,7 @@
         actions.append(
             selectRow('Durum', 'status', row.id, status,
                 [['pending', 'Bekliyor'], ['accepted', 'Kabul edildi'], ['rejected', 'Reddedildi']]),
-            textRow('Komite', 'committee_1', row.id, row.committee_1 || ''),
+            textRow('1. tercih', 'committee_1', row.id, row.committee_1 || ''),
             selectRow('Ödeme', 'payment_state', row.id, row.payment_state || 'unpaid',
                 [['unpaid', 'Ödenmedi'], ['partial', 'Kısmi'], ['paid_card', 'Kart'],
                  ['paid_transfer', 'Havale'], ['paid_cash', 'Nakit'], ['waived', 'İmkanlı']])
