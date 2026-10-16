@@ -157,10 +157,16 @@
 
         const actions = document.createElement('div');
         actions.className = 'card-actions';
+
+        // All three preferences are editable. They are applicant-supplied so
+        // edits should be rare, but there is no reason one of the three should
+        // be correctable while the other two are not.
         actions.append(
             selectRow('Durum', 'status', row.id, status,
                 [['pending', 'Bekliyor'], ['accepted', 'Kabul edildi'], ['rejected', 'Reddedildi']]),
             textRow('1. tercih', 'committee_1', row.id, row.committee_1 || ''),
+            textRow('2. tercih', 'committee_2', row.id, row.committee_2 || ''),
+            textRow('3. tercih', 'committee_3', row.id, row.committee_3 || ''),
             selectRow('Ödeme', 'payment_state', row.id, row.payment_state || 'unpaid',
                 [['unpaid', 'Ödenmedi'], ['partial', 'Kısmi'], ['paid_card', 'Kart'],
                  ['paid_transfer', 'Havale'], ['paid_cash', 'Nakit'], ['waived', 'İmkanlı']])
