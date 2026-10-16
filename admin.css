@@ -3,6 +3,14 @@
     --cream: #f2ece0;
 }
 
+/* Without this every element is content-box, so `width: 100%` on an input
+   means 100% of the content box and then adds its own padding and border on
+   top — which pushed the login fields 28px past the card's padding edge and
+   into the border. Same reset apply.css carries. */
+* {
+    box-sizing: border-box;
+}
+
 html {
     overscroll-behavior: none;
     touch-action: manipulation;
