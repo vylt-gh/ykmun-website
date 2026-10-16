@@ -77,7 +77,30 @@
 
     try {
         const { url, publishableKey } = window.YKMUN_CONFIG;
-        client = window.supabase.createClient(url, publishableKey);
+        // A storage adapter that never yields anything, which pins this client to the
+        // `anon` role no matter what is in the browser.
+        //
+        // Supabase keeps its session in localStorage under the origin, and the
+        // admin panel lives on this same origin — so signing in at /admin used
+        // to make this public form send its insert as `authenticated`. That role
+        // has no INSERT grant on applications by design (migration 0002 grants
+        // insert to anon only), so every submission failed with 42501 once
+        // anyone had logged into the admin panel on that browser.
+        //
+        // persistSession:false alone is NOT enough here: measured against a
+        // seeded session it still picked one up, because that flag governs
+        // writing, not reading. Passing a storage adapter that always returns
+        // null is what actually keeps the form anonymous.
+        const ANON_STORAGE = { getItem: () => null, setItem: () => {}, removeItem: () => {} };
+
+        client = window.supabase.createClient(url, publishableKey, {
+            auth: {
+                storage: ANON_STORAGE,
+                persistSession: false,
+                autoRefreshToken: false,
+                detectSessionInUrl: false
+            }
+        });
     } catch (err) {
         // Almost always the CDN script failing to load, which a real visitor on
         // a flaky connection can hit. Say so rather than failing on submit.
