@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>YKMUN - Başvuru Yönetimi</title>
+    <link rel="icon" type="image/png" sizes="256x256" href="icon.png">
+    <link rel="apple-touch-icon" href="icon.png">
+    <link rel="stylesheet" href="fonts.css">
+    <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+<div class="sky" aria-hidden="true"></div>
+
+<!-- Login screen -->
+<div class="login" id="login">
+    <div class="card">
+        <div class="brand">
+            <img src="icon.png" alt="YKMUN" width="96" height="96">
+            <h2>YKMUN</h2>
+        </div>
+        <form id="login-form">
+            <div class="row">
+                <label for="lemail">E-posta <span class="req" aria-hidden="true">*</span></label>
+                <input type="email" id="lemail" name="email" autocomplete="email" required>
+            </div>
+            <div class="row">
+                <label for="lpass">Şifre <span class="req" aria-hidden="true">*</span></label>
+                <input type="password" id="lpass" name="password" autocomplete="current-password" required>
+            </div>
+            <p class="err" id="login-err" role="alert"></p>
+            <button class="submit" type="submit">Giriş yap</button>
+        </form>
+    </div>
+</div>
+
+<!-- App shell (shown after login) -->
+<div class="app" id="app" style="display:none">
+    <header class="app-head">
+        <div class="brand">
+            <img src="icon.png" alt="YKMUN" width="40" height="40">
+            <span class="app-title">Başvurular</span>
+        </div>
+        <div class="app-actions">
+            <span class="user-badge" id="user-badge"></span>
+            <button class="submit outline" id="signout">Çıkış yap</button>
+        </div>
+    </header>
+
+    <div class="toolbar">
+        <input type="search" id="search" placeholder="İsim, e-posta, telefon ara...">
+        <select id="status-filter">
+            <option value="">Tüm durumlar</option>
+            <option value="pending">Bekleyen</option>
+            <option value="accepted">Kabul edildi</option>
+            <option value="rejected">Reddedildi</option>
+        </select>
+        <span class="count" id="count">0 başvuru</span>
+    </div>
+
+    <div class="list" id="list"></div>
+    <p class="empty" id="empty" style="display:none">Eşleşen başvuru yok.</p>
+</div>
+
+<script src="supabase-config.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<script src="admin.js"></script>
+</body>
+</html>

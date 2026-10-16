@@ -1,0 +1,382 @@
+/* YKMUN admin panel — same theme as the landing page */
+:root {
+    --cream: #f2ece0;
+}
+
+html {
+    overscroll-behavior: none;
+    touch-action: manipulation;
+    -webkit-text-size-adjust: 100%;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    background: linear-gradient(45deg, #012265, #000c24);
+    color: var(--cream);
+    font-family: 'Liberation Serif', 'Times New Roman', Times, serif;
+}
+
+.sky {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background-image: url('stars.png');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.2;
+}
+
+.app {
+    position: relative;
+    z-index: 2;
+    padding: clamp(24px, 4vmin, 40px);
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.app-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: clamp(16px, 3vmin, 28px);
+}
+
+.brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.brand img {
+    width: 40px;
+    height: 40px;
+}
+
+.app-title {
+    font-size: clamp(20px, 4vmin, 28px);
+    font-weight: normal;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+}
+
+.app-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.user-badge {
+    font-size: 0.85em;
+    color: rgba(242, 236, 224, 0.6);
+    padding: 0.4em 0.9em;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 40vw;
+}
+
+/* The signed-in email is only useful when something is wrong with it, and on a
+   phone it competes with the sign-out button for a single row. Drop it rather
+   than shrink the button below a comfortable tap target. */
+@media (max-width: 30rem) {
+    .user-badge {
+        display: none;
+    }
+}
+
+.submit {
+    padding: 0.72em 1.9em;
+    border-radius: 999px;
+    background: rgba(122, 226, 208, 0.07);
+    color: #eafffb;
+    font-family: "Adwaita Sans", Inter, sans-serif;
+    font-size: clamp(17px, 3.1vmin, 21px);
+    line-height: 1.05;
+    white-space: nowrap;
+    border: 1px solid rgba(215, 255, 250, 0.4);
+    cursor: pointer;
+    transition: background-color 140ms ease;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    font: inherit;
+}
+
+.submit.outline {
+    background: transparent;
+}
+
+.toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: clamp(14px, 3vmin, 24px);
+    align-items: center;
+}
+
+.toolbar input[type=search] {
+    flex: 1;
+    min-width: 200px;
+    padding: 0.62em 0.85em;
+    border: 1px solid rgba(242, 236, 224, 0.26);
+    border-radius: 8px;
+    background: rgba(3, 12, 32, 0.6);
+    color: var(--cream);
+    font: inherit;
+}
+
+.toolbar select {
+    width: auto;
+    padding: 0.62em 2.4em 0.62em 0.85em;
+    border: 1px solid rgba(242, 236, 224, 0.26);
+    border-radius: 8px;
+    background: rgba(3, 12, 32, 0.6);
+    color: var(--cream);
+    font: inherit;
+    cursor: pointer;
+}
+
+.count {
+    font-size: 0.9em;
+    color: rgba(242, 236, 224, 0.6);
+    white-space: nowrap;
+}
+
+.list {
+    display: grid;
+    gap: 12px;
+}
+
+.card {
+    position: relative;
+    background: rgba(3, 12, 32, 0.55);
+    border: 1px solid rgba(242, 236, 224, 0.18);
+    border-radius: 14px;
+    padding: 16px 18px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+.card-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    margin-bottom: 8px;
+}
+
+.card-name {
+    font-size: 17px;
+    font-weight: normal;
+    letter-spacing: 0.02em;
+}
+
+.card-meta {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    font-size: 13px;
+    color: rgba(242, 236, 224, 0.7);
+    margin-bottom: 8px;
+}
+
+.status-pill {
+    font-size: 0.78em;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.2em 0.7em;
+    border-radius: 999px;
+    border: 1px solid;
+}
+
+.status-pending {
+    color: #ffd9a3;
+    border-color: rgba(255, 217, 163, 0.4);
+    background: rgba(255, 217, 163, 0.06);
+}
+
+.status-accepted {
+    color: #a8d5b5;
+    border-color: rgba(168, 213, 181, 0.4);
+    background: rgba(168, 213, 181, 0.06);
+}
+
+.status-rejected {
+    color: #e79a86;
+    border-color: rgba(231, 154, 134, 0.4);
+    background: rgba(231, 154, 134, 0.06);
+}
+
+.card-actions {
+    display: grid;
+    gap: 8px;
+    margin-top: 10px;
+}
+
+.edit-row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+}
+
+.edit-row label {
+    font-size: 0.82em;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(242, 236, 224, 0.5);
+    min-width: 70px;
+}
+
+.edit-row input,
+.edit-row select {
+    flex: 1;
+    min-width: 110px;
+    padding: 0.45em 0.6em;
+    border: 1px solid rgba(242, 236, 224, 0.26);
+    border-radius: 6px;
+    background: rgba(3, 12, 32, 0.6);
+    color: var(--cream);
+    font: inherit;
+    font-size: 0.95em;
+}
+
+/* Only selects get the arrow. Sharing this selector with the text input gave
+   a dropdown chevron to Komite, which is a free-text field because the
+   committee list is not settled. */
+.edit-row select,
+.toolbar select {
+    appearance: none;
+    background-image: linear-gradient(45deg, transparent 50%, rgba(242, 236, 224, 0.75) 50%),
+        linear-gradient(135deg, rgba(242, 236, 224, 0.75) 50%, transparent 50%);
+    background-position: right 0.8em center, right 0.6em center;
+    background-size: 0.3em 0.3em, 0.3em 0.3em;
+    background-repeat: no-repeat;
+    padding-right: 2em;
+}
+
+.edit-row select option,
+.toolbar select option {
+    background: #06122e;
+    color: var(--cream);
+}
+
+.save-btn {
+    background: rgba(111, 227, 208, 0.2);
+    color: #eafffb;
+    border: 1px solid rgba(111, 227, 208, 0.4);
+    padding: 0.4em 1em;
+    border-radius: 6px;
+    font: inherit;
+    font-size: 0.85em;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.save-btn.saving {
+    opacity: 0.6;
+    cursor: wait;
+}
+
+.empty {
+    text-align: center;
+    color: rgba(242, 236, 224, 0.5);
+    margin-top: 40px;
+    font-size: 16px;
+}
+
+/* Login */
+.login {
+    position: relative;
+    z-index: 2;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+
+.login .card {
+    max-width: 400px;
+    width: 100%;
+    background: rgba(3, 12, 32, 0.6);
+    border: 1px solid rgba(242, 236, 224, 0.18);
+    border-radius: 18px;
+    padding: 32px 28px;
+    box-shadow: 0 2px 20px rgba(0, 0, 0, 0.4);
+}
+
+.login .brand {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.login .brand img {
+    width: 72px;
+    height: 72px;
+}
+
+.login h2 {
+    margin: 0;
+    font-size: 26px;
+    font-weight: normal;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.login .row {
+    margin-bottom: 16px;
+}
+
+.login label {
+    display: block;
+    font-size: 0.9em;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgba(242, 236, 224, 0.7);
+    margin-bottom: 6px;
+}
+
+.login input {
+    width: 100%;
+    padding: 0.7em 0.85em;
+    border: 1px solid rgba(242, 236, 224, 0.26);
+    border-radius: 8px;
+    background: rgba(3, 12, 32, 0.4);
+    color: var(--cream);
+    font: inherit;
+    font-size: 16px;
+}
+
+.login .err {
+    margin: 12px 0 0;
+    font-size: 0.88em;
+    color: #e79a86;
+}
+
+.login .submit {
+    width: 100%;
+    margin-top: 8px;
+    font-size: 18px;
+}
+
+@media (min-width: 640px) {
+    .list {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (min-width: 1000px) {
+    .list {
+        grid-template-columns: 1fr 1fr 1fr;
+    }
+}
