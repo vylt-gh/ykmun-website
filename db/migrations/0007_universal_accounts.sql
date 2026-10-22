@@ -42,12 +42,16 @@ $$;
 
 commit;
 
--- Expected result: exactly two rows.
+-- To verify, run this separately:
 --
 --   select u.email, s.role
 --   from private.staff s
 --   join auth.users u on u.id = s.user_id
 --   order by s.role;
 --
---   editor@ykmun.org  | editor
---   viewer@ykmun.org  | viewer
+-- It should return exactly two rows, meaning:
+--   editor@ykmun.org  has role  editor
+--   viewer@ykmun.org  has role  viewer
+--
+-- (The two lines above are expected output, not SQL. Pasting them into the
+-- editor fails with a syntax error near "editor".)
