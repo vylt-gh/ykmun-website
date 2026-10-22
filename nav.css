@@ -1,0 +1,110 @@
+/* Shared site menu.
+ *
+ * A hamburger in the top-right corner opening a full-screen drawer. The button
+ * and drawer are injected by nav.js so the markup is not repeated in four
+ * pages, and so adding a page later is one line rather than four edits.
+ *
+ * Loaded after each page's own stylesheet; the palette is restated here so the
+ * menu does not depend on which page loaded it. */
+
+.nav-toggle {
+    position: fixed;
+    top: clamp(12px, 2.4vmin, 28px);
+    right: clamp(12px, 2.4vmin, 28px);
+    z-index: 40;
+    display: grid;
+    place-content: center;
+    gap: 5px;
+    width: 44px;
+    height: 44px;
+    padding: 0;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.nav-toggle span {
+    display: block;
+    width: 24px;
+    height: 2px;
+    border-radius: 1px;
+    background: rgba(242, 236, 224, 0.82);
+    transition: transform 160ms ease, opacity 160ms ease;
+}
+
+.nav-toggle:hover span {
+    background: #f2ece0;
+}
+
+.nav-toggle:focus-visible {
+    outline: 2px solid rgba(215, 255, 250, 0.6);
+    outline-offset: 2px;
+}
+
+.nav-drawer {
+    position: fixed;
+    inset: 0;
+    z-index: 45;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: rgba(0, 8, 22, 0.93);
+}
+
+/* `display: grid` above beats the UA stylesheet's `[hidden] { display: none }`,
+   so the attribute alone left the drawer permanently open. */
+.nav-drawer[hidden] {
+    display: none;
+}
+
+.nav-drawer nav {
+    display: grid;
+    gap: clamp(14px, 3.4vmin, 26px);
+    text-align: center;
+}
+
+.nav-drawer a {
+    color: #f2ece0;
+    text-decoration: none;
+    font-family: 'Liberation Serif', 'Times New Roman', Times, serif;
+    font-size: clamp(26px, 6vmin, 44px);
+    line-height: 1.1;
+    letter-spacing: 0.04em;
+}
+
+.nav-drawer a:hover,
+.nav-drawer a:focus-visible {
+    text-decoration: underline;
+    text-underline-offset: 0.18em;
+    text-decoration-color: rgba(215, 255, 250, 0.55);
+}
+
+/* Keep the button above the drawer so it can close it, and turn the bars into
+   a cross. The bar spacing is 5px gap + 2px height, so the offset is 7px. */
+body.nav-open .nav-toggle {
+    z-index: 46;
+}
+
+body.nav-open .nav-toggle span:nth-child(1) {
+    transform: translateY(7px) rotate(45deg);
+}
+
+body.nav-open .nav-toggle span:nth-child(2) {
+    opacity: 0;
+}
+
+body.nav-open .nav-toggle span:nth-child(3) {
+    transform: translateY(-7px) rotate(-45deg);
+}
+
+body.nav-open {
+    overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .nav-toggle span {
+        transition: none;
+    }
+}
