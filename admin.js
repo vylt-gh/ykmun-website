@@ -61,7 +61,7 @@
             // Almost always the CDN script failing to load.
             console.error('supabase client init failed', err);
             app.style.display = 'block';
-            emptyEl.textContent = 'Bağlantı kurulamadı. Sayfayı yenileyip tekrar dene.';
+            emptyEl.textContent = 'Could not connect. Refresh the page and try again.';
             emptyEl.style.display = 'block';
             return;
         }
@@ -91,7 +91,7 @@
 
         if (error) {
             listEl.textContent = '';
-            emptyEl.textContent = 'Başvurular yüklenemedi.';
+            emptyEl.textContent = 'Could not load applications.';
             emptyEl.style.display = 'block';
             console.error('load failed', error);
             return;
@@ -113,7 +113,7 @@
             );
         });
 
-        countEl.textContent = rows.length + ' başvuru';
+        countEl.textContent = rows.length + (rows.length === 1 ? ' application' : ' applications');
         listEl.textContent = '';
         emptyEl.style.display = rows.length ? 'none' : 'block';
 
@@ -131,7 +131,7 @@
 
         const name = document.createElement('div');
         name.className = 'card-name';
-        name.textContent = row.full_name || '(ad yok)';
+        name.textContent = row.full_name || '(no name)';
 
         const pill = document.createElement('span');
         const status = row.status || 'pending';
@@ -148,7 +148,7 @@
         // showing only committee_1 hid the applicant's second and third.
         const preferences = [row.committee_1, row.committee_2, row.committee_3].filter(Boolean);
         const details = [row.email, row.phone].filter(Boolean);
-        if (preferences.length) details.push('Tercih: ' + preferences.join(' · '));
+        if (preferences.length) details.push('Preference: ' + preferences.join(' · '));
 
         for (const value of details) {
             const span = document.createElement('span');
@@ -163,14 +163,14 @@
         // edits should be rare, but there is no reason one of the three should
         // be correctable while the other two are not.
         actions.append(
-            selectRow('Durum', 'status', row.id, status,
-                [['pending', 'Bekliyor'], ['accepted', 'Kabul edildi'], ['rejected', 'Reddedildi']]),
-            textRow('1. tercih', 'committee_1', row.id, row.committee_1 || ''),
-            textRow('2. tercih', 'committee_2', row.id, row.committee_2 || ''),
-            textRow('3. tercih', 'committee_3', row.id, row.committee_3 || ''),
-            selectRow('Ödeme', 'payment_state', row.id, row.payment_state || 'unpaid',
-                [['unpaid', 'Ödenmedi'], ['partial', 'Kısmi'], ['paid_card', 'Kart'],
-                 ['paid_transfer', 'Havale'], ['paid_cash', 'Nakit'], ['waived', 'İmkanlı']])
+            selectRow('Status', 'status', row.id, status,
+                [['pending', 'Pending'], ['accepted', 'Accepted'], ['rejected', 'Rejected']]),
+            textRow('1st choice', 'committee_1', row.id, row.committee_1 || ''),
+            textRow('2nd choice', 'committee_2', row.id, row.committee_2 || ''),
+            textRow('3rd choice', 'committee_3', row.id, row.committee_3 || ''),
+            selectRow('Payment', 'payment_state', row.id, row.payment_state || 'unpaid',
+                [['unpaid', 'Unpaid'], ['partial', 'Partial'], ['paid_card', 'Card'],
+                 ['paid_transfer', 'Transfer'], ['paid_cash', 'Cash'], ['waived', 'Waived']])
         );
 
         card.append(head, meta, actions);
@@ -215,7 +215,7 @@
     }
 
     function statusLabel(status) {
-        return { pending: 'Bekliyor', accepted: 'Kabul edildi', rejected: 'Reddedildi' }[status] || status;
+        return { pending: 'Pending', accepted: 'Accepted', rejected: 'Rejected' }[status] || status;
     }
 
     // ---- writes ---------------------------------------------------------
@@ -237,7 +237,7 @@
             // than surfacing the code, and put the control back.
             control.value = previous ?? '';
             console.error('save failed', error);
-            alert('Kaydedilemedi. Yetkiniz olmayabilir ya da bağlantı koptu.');
+            alert('Could not save. You may not have permission, or the connection dropped.');
             return;
         }
 

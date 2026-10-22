@@ -27,8 +27,8 @@
     // cheap, whereas asking people to pick a role would leak which roles
     // exist and invite the wrong pick.
     const ACCOUNTS = [
-        { email: 'editor@ykmun.org', label: 'Editör' },
-        { email: 'viewer@ykmun.org', label: 'Görüntüleyici' }
+        { email: 'editor@ykmun.org', label: 'Editor' },
+        { email: 'viewer@ykmun.org', label: 'Viewer' }
     ];
 
     let client = null;
@@ -109,12 +109,12 @@
 
     function describe(error) {
         if (isRateLimited(error)) {
-            return 'Çok fazla deneme yapıldı. Birkaç dakika sonra tekrar dene.';
+            return 'Too many attempts. Try again in a few minutes.';
         }
         if (/sdk unavailable|failed to fetch|network/i.test(error.message || '')) {
-            return 'Bağlantı kurulamadı. İnternet bağlantını kontrol et.';
+            return 'Could not connect. Check your internet connection.';
         }
-        return 'Giriş yapılamadı.';
+        return 'Sign-in failed.';
     }
 
     // Builds the prompt on demand rather than keeping it in the markup, so it
@@ -136,11 +136,11 @@
 
         const title = document.createElement('h2');
         title.id = 'auth-title';
-        title.textContent = 'Yetkili girişi';
+        title.textContent = 'Staff sign-in';
 
         const label = document.createElement('label');
         label.htmlFor = 'auth-pass';
-        label.textContent = 'Şifre';
+        label.textContent = 'Password';
 
         const input = document.createElement('input');
         input.type = 'password';
@@ -158,12 +158,12 @@
         const cancel = document.createElement('button');
         cancel.type = 'button';
         cancel.className = 'auth-cancel';
-        cancel.textContent = 'Vazgeç';
+        cancel.textContent = 'Cancel';
 
         const submit = document.createElement('button');
         submit.type = 'submit';
         submit.className = 'auth-submit';
-        submit.textContent = 'Gir';
+        submit.textContent = 'Sign in';
 
         actions.append(cancel, submit);
         form.append(title, label, input, error, actions);
@@ -191,7 +191,7 @@
         function setBusy(busy) {
             submit.disabled = busy;
             input.disabled = busy;
-            submit.textContent = busy ? '…' : 'Gir';
+            submit.textContent = busy ? '…' : 'Sign in';
         }
 
         cancel.addEventListener('click', dismiss);
@@ -214,7 +214,7 @@
                 const account = await signIn(password);
 
                 if (!account) {
-                    error.textContent = 'Şifre hatalı.';
+                    error.textContent = 'Incorrect password.';
                     setBusy(false);
                     input.select();
                     return;

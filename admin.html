@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>YKMUN - Başvuru Yönetimi</title>
+    <title>YKMUN - Applications</title>
     <link rel="icon" type="image/png" sizes="256x256" href="icon.png">
     <link rel="apple-touch-icon" href="icon.png">
     <link rel="stylesheet" href="fonts.css">
@@ -22,27 +22,27 @@
     <header class="app-head">
         <div class="brand">
             <img src="icon.png" alt="YKMUN" width="40" height="40">
-            <span class="app-title">Başvurular</span>
+            <span class="app-title">Applications</span>
         </div>
         <div class="app-actions">
             <span class="user-badge" id="user-badge"></span>
-            <button class="submit outline" id="signout">Çıkış yap</button>
+            <button class="submit outline" id="signout">Sign out</button>
         </div>
     </header>
 
     <div class="toolbar">
-        <input type="search" id="search" placeholder="İsim, e-posta, telefon ara...">
+        <input type="search" id="search" placeholder="Search name, email, phone...">
         <select id="status-filter">
-            <option value="">Tüm durumlar</option>
-            <option value="pending">Bekleyen</option>
-            <option value="accepted">Kabul edildi</option>
-            <option value="rejected">Reddedildi</option>
+            <option value="">All statuses</option>
+            <option value="pending">Pending</option>
+            <option value="accepted">Accepted</option>
+            <option value="rejected">Rejected</option>
         </select>
-        <span class="count" id="count">0 başvuru</span>
+        <span class="count" id="count">0 applications</span>
     </div>
 
     <div class="list" id="list"></div>
-    <p class="empty" id="empty" style="display:none">Eşleşen başvuru yok.</p>
+    <p class="empty" id="empty" style="display:none">No matching applications.</p>
 </div>
 
 <script src="supabase-config.js"></script>
