@@ -316,6 +316,21 @@ body {
     font-size: 16px;
 }
 
+/* Viewers get the same cards with the controls locked, so the panel never
+   invites an edit it is going to refuse. */
+.edit-row select:disabled,
+.edit-row input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.readonly-note {
+    margin: 0 0 14px;
+    font-size: 12px;
+    letter-spacing: 0.03em;
+    color: rgba(242, 236, 224, 0.5);
+}
+
 @media (min-width: 640px) {
     .list {
         grid-template-columns: 1fr 1fr;

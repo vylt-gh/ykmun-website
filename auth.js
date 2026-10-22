@@ -27,8 +27,8 @@
     // cheap, whereas asking people to pick a role would leak which roles
     // exist and invite the wrong pick.
     const ACCOUNTS = [
-        { email: 'editor@ykmun.org', label: 'Editor' },
-        { email: 'viewer@ykmun.org', label: 'Viewer' }
+        { email: 'editor@ykmun.org', label: 'Editor', role: 'editor' },
+        { email: 'viewer@ykmun.org', label: 'Viewer', role: 'viewer' }
     ];
 
     let client = null;
@@ -105,6 +105,16 @@
         const email = session && session.user && session.user.email;
         const match = ACCOUNTS.find((account) => account.email === email);
         return match ? match.label : '';
+    }
+
+    // The panel already knows which account signed in, so it can render
+    // read-only for one of them. Without this a viewer gets editable controls
+    // that fail on save with a permission alert — which reads as a broken
+    // panel rather than a rule.
+    function role(session) {
+        const email = session && session.user && session.user.email;
+        const match = ACCOUNTS.find((account) => account.email === email);
+        return match ? match.role : '';
     }
 
     function describe(error) {
@@ -238,6 +248,7 @@
         signIn,
         signOut,
         roleLabel,
+        role,
         openPrompt
     };
 

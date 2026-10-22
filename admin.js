@@ -9,9 +9,11 @@
     const listEl = document.getElementById('list');
     const emptyEl = document.getElementById('empty');
     const countEl = document.getElementById('count');
+    const readonlyNote = document.getElementById('readonly-note');
 
     let client;
     let applications = [];
+    let canEdit = false;
 
     // ---- session --------------------------------------------------------
     //
@@ -50,7 +52,9 @@
         }
 
         app.style.display = 'block';
-        userBadge.textContent = window.YKMUNAuth.roleLabel(session) || 'Yetkili';
+        userBadge.textContent = window.YKMUNAuth.roleLabel(session) || 'Staff';
+        canEdit = window.YKMUNAuth.role(session) === 'editor';
+        readonlyNote.hidden = canEdit;
         loadApplications();
     }
 
@@ -194,6 +198,9 @@
         }
         select.addEventListener('change', () => save(column, id, select.value, select));
 
+        select.dataset.previous = value;
+        select.disabled = !canEdit;
+
         row.append(labelEl, select);
         return row;
     }
@@ -209,6 +216,9 @@
         input.type = 'text';
         input.value = value;
         input.addEventListener('change', () => save(column, id, input.value.trim(), input));
+
+        input.dataset.previous = value;
+        input.disabled = !canEdit;
 
         row.append(labelEl, input);
         return row;
@@ -230,7 +240,7 @@
             .update({ [column]: value })
             .eq('id', id);
 
-        control.disabled = false;
+        control.disabled = !canEdit;
 
         if (error) {
             // RLS rejects viewers with a policy error. Say so plainly rather
