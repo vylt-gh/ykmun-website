@@ -1,11 +1,6 @@
 (() => {
     'use strict';
 
-    const form = document.getElementById('login-form');
-    const lemail = document.getElementById('lemail');
-    const lpass = document.getElementById('lpass');
-    const loginErr = document.getElementById('login-err');
-    const loginScreen = document.getElementById('login');
     const app = document.getElementById('app');
     const userBadge = document.getElementById('user-badge');
     const signoutBtn = document.getElementById('signout');
@@ -18,66 +13,72 @@
     let client;
     let applications = [];
 
-    try {
-        const { url, publishableKey } = window.YKMUN_CONFIG;
-        client = window.supabase.createClient(url, publishableKey);
-    } catch (err) {
-        // Almost always the CDN script failing to load.
-        fail('Bağlantı kurulamadı. Lütfen sayfayı yenileyip tekrar dene.');
-        console.error('supabase client init failed', err);
-        return;
-    }
-
-    function fail(message) {
-        loginErr.textContent = message;
-    }
-
-    function clearLoginError() {
-        loginErr.textContent = '';
-    }
-
     // ---- session --------------------------------------------------------
+    //
+    // No login form lives on this page. auth.js owns the prompt, and the two
+    // shared passwords are what decide the role; the panel only ever knows
+    // which of the two accounts signed in.
 
-    client.auth.onAuthStateChange((_event, session) => {
-        if (session) showApp(session.user);
-        else showLogin();
-    });
+    let prompting = false;
 
-    client.auth.getSession().then(({ data: { session } }) => {
-        if (session) showApp(session.user);
-    });
-
-    function showLogin() {
-        loginScreen.style.display = 'flex';
+    function promptLogin() {
+        if (prompting) return;
+        prompting = true;
         app.style.display = 'none';
         applications = [];
+
+        window.YKMUNAuth.openPrompt({
+            onSuccess: async () => {
+                prompting = false;
+                await showApp();
+            },
+            // Backing out of the prompt sends you back to the public site:
+            // there is no sign-in page to fall back to.
+            onDismiss: () => {
+                prompting = false;
+                window.location.href = 'home';
+            }
+        });
     }
 
-    function showApp(user) {
-        loginScreen.style.display = 'none';
+    async function showApp() {
+        const session = await window.YKMUNAuth.getSession();
+
+        if (!session) {
+            promptLogin();
+            return;
+        }
+
         app.style.display = 'block';
-        userBadge.textContent = (user && user.email ? user.email : 'Yetkili');
+        userBadge.textContent = window.YKMUNAuth.roleLabel(session) || 'Yetkili';
         loadApplications();
     }
 
-    form.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        clearLoginError();
-        const { error } = await client.auth.signInWithPassword({
-            email: lemail.value.trim(),
-            password: lpass.value
-        });
-        if (error) {
-            // Supabase returns the same generic error for unknown-email and
-            // wrong-password on purpose; don't leak which one it was.
-            fail('E-posta veya şifre hatalı.');
+    (async function init() {
+        try {
+            client = await window.YKMUNAuth.getClient();
+        } catch (err) {
+            // Almost always the CDN script failing to load.
+            console.error('supabase client init failed', err);
+            app.style.display = 'block';
+            emptyEl.textContent = 'Bağlantı kurulamadı. Sayfayı yenileyip tekrar dene.';
+            emptyEl.style.display = 'block';
+            return;
         }
-    });
+
+        const session = await window.YKMUNAuth.getSession();
+        if (session) showApp();
+        else promptLogin();
+
+        // A token that expires beyond recovery, or a sign-out in another tab,
+        // drops straight back to the prompt.
+        client.auth.onAuthStateChange((event) => {
+            if (event === 'SIGNED_OUT') promptLogin();
+        });
+    })();
 
     signoutBtn.addEventListener('click', async () => {
-        await client.auth.signOut();
-        lemail.value = '';
-        lpass.value = '';
+        await window.YKMUNAuth.signOut();
     });
 
     // ---- data -----------------------------------------------------------

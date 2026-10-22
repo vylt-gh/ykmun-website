@@ -177,6 +177,33 @@ body {
        floating over the bare starfield with no plate behind them. */
 }
 
+/* Staff entrance, seated on the centre rivet of the sign's top ridge.
+
+   The coordinates are measured against the artwork, same as the digit windows
+   above: the rivet centre is at 733,2010 in a 1556x2783 image. The box is
+   larger than the rivet so it can be hit with a thumb, and it is transparent
+   with no cursor change, so it reads as part of the metal.
+
+   This is not a security control. auth.js explains why. */
+.secret {
+    position: absolute;
+    left: 47.11%;
+    top: 72.22%;
+    width: 44px;
+    height: 44px;
+    transform: translate(-50%, -50%);
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: default;
+    -webkit-tap-highlight-color: transparent;
+    z-index: 3;
+}
+
+.secret:focus {
+    outline: none;
+}
+
 /* Digit windows, positioned over the three painted cards. Centres measured by
    isolating the cream card regions in the artwork and taking each bounding box
    centre. cqw keeps the digit size tied to the plate. */

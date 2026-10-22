@@ -9,6 +9,7 @@
     <link rel="apple-touch-icon" href="icon.png">
     <link rel="stylesheet" href="fonts.css">
     <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="auth.css">
 </head>
 <body>
 
@@ -25,6 +26,13 @@
         <img class="counter-plate" src="counter.webp" alt="YKMUN'a kalan gün sayacı"
              width="1556" height="2783" fetchpriority="high">
 
+        <!-- Staff entrance, sitting exactly on a painted rivet and invisible
+             until pressed. Deliberately unnamed in the page: no label, no icon,
+             no hover state. See auth.js for what it opens, and note that the
+             hiding is not the security — the password is. -->
+        <button class="secret" id="staff-entry" type="button"
+                tabindex="-1" aria-hidden="true"></button>
+
         <div class="windows" aria-hidden="true">
             <span class="window" data-slot="0"></span>
             <span class="window" data-slot="1"></span>
@@ -38,6 +46,8 @@
 
 </main>
 
+<script src="supabase-config.js"></script>
+<script src="auth.js"></script>
 <script src="stars-data.js"></script>
 <script src="stars.js"></script>
 <script src="countdown.js"></script>

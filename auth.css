@@ -1,0 +1,119 @@
+/* Staff sign-in prompt.
+ *
+ * Loaded by both the landing page and the panel: the prompt can be opened from
+ * either, and duplicating it in two stylesheets would let the two drift.
+ * The palette matches home.css and admin.css, but is restated here so this
+ * sheet does not depend on which page loaded it. */
+
+.auth-overlay,
+.auth-overlay * {
+    box-sizing: border-box;
+}
+
+.auth-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 60;
+    display: grid;
+    place-items: center;
+    padding: 24px;
+    background: rgba(0, 8, 22, 0.74);
+}
+
+.auth-dialog {
+    display: grid;
+    gap: 13px;
+    width: min(100%, 20rem);
+    margin: 0;
+    padding: 24px 22px 20px;
+    border: 1px solid rgba(242, 236, 224, 0.2);
+    border-radius: 14px;
+    background: rgba(3, 12, 32, 0.95);
+    box-shadow: 0 18px 48px rgba(0, 0, 0, 0.55);
+    color: #f2ece0;
+    font-family: 'Liberation Serif', 'Times New Roman', Times, serif;
+}
+
+.auth-dialog h2 {
+    margin: 0;
+    font-size: 18px;
+    font-weight: normal;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: rgba(242, 236, 224, 0.8);
+}
+
+.auth-dialog label {
+    font-size: 13px;
+    color: rgba(242, 236, 224, 0.66);
+}
+
+.auth-dialog input {
+    width: 100%;
+    padding: 11px 13px;
+    border: 1px solid rgba(242, 236, 224, 0.26);
+    border-radius: 9px;
+    background: rgba(0, 0, 0, 0.3);
+    color: #f2ece0;
+    font: inherit;
+    /* 16px keeps iOS Safari from zooming the page on focus. */
+    font-size: 16px;
+}
+
+.auth-dialog input:focus {
+    outline: 2px solid rgba(215, 255, 250, 0.55);
+    outline-offset: 1px;
+}
+
+.auth-dialog input:disabled {
+    opacity: 0.6;
+}
+
+.auth-err {
+    min-height: 1.2em;
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.4;
+    color: #e8a99b;
+}
+
+.auth-actions {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+    margin-top: 2px;
+}
+
+.auth-actions button {
+    padding: 9px 18px;
+    border-radius: 999px;
+    font: inherit;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.auth-actions button:disabled {
+    cursor: default;
+    opacity: 0.55;
+}
+
+.auth-cancel {
+    border: 1px solid rgba(242, 236, 224, 0.2);
+    background: transparent;
+    color: rgba(242, 236, 224, 0.75);
+}
+
+.auth-cancel:hover {
+    background: rgba(242, 236, 224, 0.06);
+}
+
+.auth-submit {
+    border: 1px solid rgba(215, 255, 250, 0.4);
+    background: rgba(122, 226, 208, 0.07);
+    color: #eafffb;
+    box-shadow: inset 1px 1px 2px rgba(240, 255, 253, 0.4);
+}
+
+.auth-submit:hover {
+    background: rgba(122, 226, 208, 0.14);
+}
