@@ -35,11 +35,11 @@
     // elements. The list is not settled yet — replace this array and nothing
     // else needs to change.
     const COMMITTEES = [
-        'Güvenlik Kurulu',
-        'İnsan Hakları',
-        'Çevre',
-        'Ekonomik ve Finansal',
-        'Başbakanlık Konseyi'
+        'Security Council',
+        'Human Rights',
+        'Environment',
+        'Economic and Financial',
+        'Prime Minister\'s Council'
     ];
 
     for (const id of ['f-committee-1', 'f-committee-2', 'f-committee-3']) {
@@ -104,7 +104,7 @@
     } catch (err) {
         // Almost always the CDN script failing to load, which a real visitor on
         // a flaky connection can hit. Say so rather than failing on submit.
-        fail('Bağlantı kurulamadı. Lütfen sayfayı yenileyip tekrar dene.');
+        fail('Could not connect. Please refresh the page and try again.');
         disable();
         console.error('supabase client init failed', err);
     }
@@ -146,13 +146,13 @@
 
             let message = '';
             if (el.required && !el.value.trim()) {
-                message = 'Bu alan zorunlu.';
+                message = 'This field is required.';
             } else if (el.type === 'email' && el.value.trim() &&
                        !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(el.value.trim())) {
-                message = 'Geçerli bir e-posta adresi gir.';
+                message = 'Enter a valid email address.';
             } else if (el.minLength > 0 && el.value.trim() &&
                        el.value.trim().length < el.minLength) {
-                message = 'Biraz daha uzun yazmalısın.';
+                message = 'Please write a little more.';
             }
 
             if (message) flag(id, message);
@@ -161,7 +161,7 @@
         // Only once a number has been typed; an empty field has no checksum.
         const tcEl = document.getElementById('f-tc');
         if (tcEl && tcEl.value.trim() && !isValidTC(tcEl.value.trim())) {
-            flag('f-tc', 'T.C. Kimlik No geçersiz. 11 haneli ve algoritmik olarak doğru olmalı.');
+            flag('f-tc', 'Invalid T.C. Identity Number. It must be 11 digits and pass the checksum.');
         }
 
         // A repeated pick means one committee three times, not three preferences.
@@ -169,14 +169,14 @@
             .map((id) => (document.getElementById(id) || {}).value)
             .filter(Boolean);
         if (picks.length !== new Set(picks).size) {
-            flag('f-committee-1', 'Aynı komiteyi birden fazla kez seçemezsin.');
+            flag('f-committee-1', 'You cannot select the same committee more than once.');
         }
 
         // Art. 6 special-category data needs explicit consent; `required` alone
         // would block silently.
         const consentEl = document.getElementById(CONSENT_INPUT);
         if (consentEl && !consentEl.checked) {
-            flag(CONSENT_INPUT, 'Başvuru için açık rıza vermen gerekiyor.');
+            flag(CONSENT_INPUT, 'You must give explicit consent to apply.');
         }
 
         if (firstBad) firstBad.focus();
@@ -211,7 +211,7 @@
         if (!validate()) return;
 
         submitBtn.disabled = true;
-        status.textContent = 'Gönderiliyor…';
+        status.textContent = 'Submitting…';
         status.className = 'status';
 
         try {
@@ -223,11 +223,11 @@
                 // 23505 is the unique violation on email: the same address has
                 // already applied. Say so plainly instead of showing a code.
                 if (error.code === '23505') {
-                    fail('Bu e-posta adresiyle daha önce başvuru yapılmış.');
+                    fail('An application has already been made with this email address.');
                 } else if (error.code === '42501') {
-                    fail('Başvuru gönderilemedi. Lütfen daha sonra tekrar dene.');
+                    fail('Application could not be submitted. Please try again later.');
                 } else {
-                    fail('Bir hata oluştu: ' + error.message);
+                    fail('Something went wrong: ' + error.message);
                 }
                 console.error('insert failed', error);
                 submitBtn.disabled = false;
@@ -236,13 +236,13 @@
 
             form.reset();
             clearErrors();
-            status.textContent = 'Başvurun alındı. Teşekkürler!';
+            status.textContent = 'Your application has been received. Thank you!';
             status.className = 'status status-ok';
             submitBtn.disabled = true;
 
         } catch (err) {
             console.error('submit threw', err);
-            fail('Bağlantı hatası. Lütfen tekrar dene.');
+            fail('Connection error. Please try again.');
             submitBtn.disabled = false;
         }
     });

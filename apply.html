@@ -1,10 +1,10 @@
 <!DOCTYPE html>
-<html lang="tr">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>YKMUN - Apply</title>
-    <meta name="description" content="YKMUN başvuru formu.">
+    <meta name="description" content="YKMUN application form.">
     <link rel="icon" type="image/png" sizes="256x256" href="icon.png">
     <link rel="apple-touch-icon" href="icon.png">
     <link rel="stylesheet" href="fonts.css">
@@ -18,16 +18,12 @@
     would sit under the text and react to every scroll. The static starfield
     (.sky) stays, at the same 20% opacity as the landing page.
 
-    The form fields below are PROVISIONAL. They were chosen because nearly every
-    MUN application needs them, not because the committee has specified them.
+    Fields map to real columns (migration 0005). payment_state is deliberately
+    never asked for; the column default sets it. The committee list lives in
+    COMMITTEES in apply.js and is not final.
 
-    They are deliberately NOT database columns yet. Everything except the email
-    is submitted into the `details` jsonb column from 0001, so changing or
-    removing a field is a one-line edit in apply.js and needs no migration.
-    When the real fields are decided, promote the ones worth querying into real
-    columns in a new numbered migration and move them out of `details` there.
-
-    Database side: db/migrations/0001 (table), 0002 (staff roles and RLS).
+    Database side: db/migrations/0001 (table), 0002 (staff roles and RLS),
+    0005 (application fields).
 -->
 
 <div class="sky" aria-hidden="true"></div>
@@ -39,58 +35,58 @@
 <main class="page">
 
     <header class="head">
-        <h1><u><i>Başvuru</i></u></h1>
+        <h1><u><i>Apply</i></u></h1>
     </header>
 
     <form class="form" id="apply-form" novalidate>
 
         <div class="row">
-            <label for="f-name">Ad Soyad <span class="req" aria-hidden="true">*</span></label>
+            <label for="f-name">Full name <span class="req" aria-hidden="true">*</span></label>
             <input type="text" id="f-name" name="full_name" autocomplete="name"
                    required minlength="2" maxlength="120">
             <p class="err" data-err-for="f-name" role="alert"></p>
         </div>
 
         <div class="row">
-            <label for="f-email">E-posta <span class="req" aria-hidden="true">*</span></label>
+            <label for="f-email">Email <span class="req" aria-hidden="true">*</span></label>
             <input type="email" id="f-email" name="email" autocomplete="email"
                    required maxlength="200">
             <p class="err" data-err-for="f-email" role="alert"></p>
         </div>
 
         <div class="row">
-            <label for="f-phone">Telefon</label>
+            <label for="f-phone">Phone</label>
             <input type="tel" id="f-phone" name="phone" autocomplete="tel"
                    maxlength="40">
             <p class="err" data-err-for="f-phone" role="alert"></p>
         </div>
 
         <div class="row">
-            <label for="f-tc">T.C. Kimlik No <span class="req" aria-hidden="true">*</span></label>
+            <label for="f-tc">T.C. Identity Number <span class="req" aria-hidden="true">*</span></label>
             <input type="text" id="f-tc" name="tc_number" inputmode="numeric"
                    autocomplete="off" required maxlength="11" pattern="[0-9]*"
                    aria-describedby="hint-tc">
             <p class="hint" id="hint-tc">
-                Konferans öncesi imzalanacak katılım belgesi için gerekli.
-                <a href="kvkk.html" target="_blank" rel="noopener">Aydınlatma metni</a>
+                Required for the participation form signed before the conference.
+                <a href="kvkk.html" target="_blank" rel="noopener">Privacy notice</a>
             </p>
             <p class="err" data-err-for="f-tc" role="alert"></p>
         </div>
 
         <fieldset class="row prefs">
-            <legend>Tercih Edilen Komiteler</legend>
-            <p class="hint">En fazla üç tane seçebilirsin. Sıralaman öncelik belirtir.</p>
+            <legend>Preferred Committees</legend>
+            <p class="hint">Choose up to three. The order indicates your priority.</p>
             <div class="pref-grid">
-                <label for="f-committee-1">1. tercih</label>
+                <label for="f-committee-1">1st choice</label>
                 <!-- Options injected from COMMITTEES in apply.js -->
                 <select id="f-committee-1" name="committee_1">
                     <option value="">—</option></select>
 
-                <label for="f-committee-2">2. tercih</label>
+                <label for="f-committee-2">2nd choice</label>
                 <select id="f-committee-2" name="committee_2">
                     <option value="">—</option></select>
 
-                <label for="f-committee-3">3. tercih</label>
+                <label for="f-committee-3">3rd choice</label>
                 <select id="f-committee-3" name="committee_3">
                     <option value="">—</option></select>
             </div>
@@ -98,25 +94,26 @@
         </fieldset>
 
         <div class="row">
-            <label for="f-motivation">Neden Katılmak İstiyorsun?</label>
+            <label for="f-motivation">Why do you want to join?</label>
             <textarea id="f-motivation" name="motivation" rows="5"
                       maxlength="2000"></textarea>
-            <p class="hint">Komite dağıtımında işimize yarar.</p>
+            <p class="hint">This helps us with committee allocation.</p>
             <p class="err" data-err-for="f-motivation" role="alert"></p>
         </div>
 
         <div class="row consent">
             <input type="checkbox" id="f-consent" name="consent" required>
             <label for="f-consent">
-                <a href="kvkk" target="_blank" rel="noopener">Aydınlatma metnini</a>
-                okudum; T.C. Kimlik Numaramın, katılım belgesinin düzenlenmesi amacıyla
-                işlenmesine açık rıza veriyorum.
+                I have read the
+                <a href="kvkk" target="_blank" rel="noopener">privacy notice</a>
+                and consent to my T.C. Identity Number being processed for the purpose
+                of issuing the participation form.
             </label>
             <p class="err" data-err-for="f-consent" role="alert"></p>
         </div>
 
         <div class="actions">
-            <button class="submit" type="submit" id="submit-btn">Başvur</button>
+            <button class="submit" type="submit" id="submit-btn">Apply</button>
             <p class="status" id="status" role="status" aria-live="polite"></p>
         </div>
 
