@@ -387,6 +387,43 @@ textarea:-webkit-autofill {
     scroll-margin-top: 5rem;
 }
 
+/* Bilingual notice. The English copy is a courtesy translation, so it is
+   separated by a rule and opens with a disclaimer rather than sitting beside
+   the Turkish text as an equal. Its sections are h3 under the translation's
+   own h2 heading, hence the shared look. */
+.lang-sep {
+    margin: clamp(34px, 8vmin, 64px) 0 clamp(26px, 6vmin, 44px);
+    border: 0;
+    border-top: 1px solid rgba(242, 236, 224, 0.16);
+}
+
+.lang-title {
+    margin: 0 0 0.45em;
+    font-size: clamp(28px, 6.4vmin, 46px);
+    line-height: 1.1;
+    font-weight: normal;
+}
+
+.legal h3 {
+    margin: 0;
+    font-size: clamp(15px, 2.2vmin, 18px);
+    font-weight: normal;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(242, 236, 224, 0.72);
+}
+
+.disclaimer {
+    margin: 0;
+    padding: 0.85em 1.05em;
+    border-left: 2px solid rgba(215, 255, 250, 0.45);
+    background: rgba(122, 226, 208, 0.06);
+    border-radius: 0 6px 6px 0;
+    font-size: 0.9em;
+    line-height: 1.55;
+    color: rgba(242, 236, 224, 0.76);
+}
+
 /* Sea-glass submit, matching the landing CTA in home.css.
 
    Was opaque parchment with a dark label, like the landing pill it replaces.
