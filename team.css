@@ -82,6 +82,10 @@ h1 {
     list-style: none;
 }
 
+.member picture {
+    display: block;
+}
+
 .member img {
     display: block;
     width: 100%;
