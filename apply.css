@@ -118,6 +118,12 @@ h1 {
     gap: clamp(14px, 2.6vmin, 22px);
 }
 
+/* `display: grid` above beats the UA `[hidden]` rule, so the form would stay
+   on screen behind the confirmation without this. */
+.form[hidden] {
+    display: none;
+}
+
 .row {
     display: grid;
     gap: 0.4em;
@@ -489,12 +495,56 @@ textarea:-webkit-autofill {
     color: rgba(242, 236, 224, 0.8);
 }
 
-.status-ok {
-    color: #a8d5b5;
-}
-
 .status-error {
     color: #e79a86;
+}
+
+/* ---- confirmation screen ---------------------------------------------- */
+
+.done:focus {
+    outline: none;
+}
+
+.done-lead {
+    margin: 0 0 clamp(24px, 4.5vmin, 34px);
+    color: rgba(242, 236, 224, 0.84);
+}
+
+.done-block {
+    padding-top: clamp(18px, 3.4vmin, 26px);
+    border-top: 1px solid rgba(242, 236, 224, 0.14);
+}
+
+.done-block h2 {
+    margin: 0 0 0.85em;
+    font-size: 0.78em;
+    font-weight: normal;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: rgba(242, 236, 224, 0.55);
+}
+
+.done-steps {
+    display: grid;
+    gap: 0.65em;
+    margin: 0;
+    padding-left: 1.15em;
+    color: rgba(242, 236, 224, 0.9);
+}
+
+.done-steps li::marker {
+    color: rgba(242, 236, 224, 0.45);
+}
+
+.done-contact {
+    margin: clamp(24px, 4.5vmin, 34px) 0 0;
+    color: rgba(242, 236, 224, 0.72);
+}
+
+.done-home {
+    display: inline-block;
+    margin-top: clamp(16px, 3vmin, 24px);
+    color: var(--cream);
 }
 
 a {

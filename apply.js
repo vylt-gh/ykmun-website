@@ -4,6 +4,10 @@
     const form = document.getElementById('apply-form');
     const status = document.getElementById('status');
     const submitBtn = document.getElementById('submit-btn');
+    const headEl = document.getElementById('head');
+    const doneEl = document.getElementById('done');
+    const doneLead = document.getElementById('done-lead');
+    const doneEmail = document.getElementById('done-email');
 
     // Input id for the one field that has always had a real column.
     const EMAIL_INPUT = 'f-email';
@@ -118,6 +122,26 @@
         status.className = 'status status-error';
     }
 
+    // Replaces the form rather than resetting it. A cleared form left on screen
+    // with a disabled button reads as "did that work?", which is the one thing
+    // the screen after a submission must never ask.
+    function showDone(payload) {
+        const first = (payload.full_name || '').trim().split(/\s+/)[0];
+        if (first) {
+            doneLead.textContent =
+                'Thank you, ' + first + '. Your application is with the organizing team.';
+        }
+        if (payload.email) doneEmail.textContent = payload.email;
+
+        status.textContent = '';
+        headEl.hidden = true;
+        form.hidden = true;
+        doneEl.hidden = false;
+
+        window.scrollTo(0, 0);
+        doneEl.focus();
+    }
+
     function clearErrors() {
         for (const p of document.querySelectorAll('.err')) p.textContent = '';
         for (const el of form.querySelectorAll('.is-invalid')) {
@@ -215,9 +239,10 @@
         status.className = 'status';
 
         try {
+            const payload = collect();
             const { error } = await client
                 .from('applications')
-                .insert(collect());
+                .insert(payload);
 
             if (error) {
                 // 23505 is the unique violation on email: the same address has
@@ -234,11 +259,8 @@
                 return;
             }
 
-            form.reset();
             clearErrors();
-            status.textContent = 'Your application has been received. Thank you!';
-            status.className = 'status status-ok';
-            submitBtn.disabled = true;
+            showDone(payload);
 
         } catch (err) {
             console.error('submit threw', err);
