@@ -506,44 +506,25 @@ textarea:-webkit-autofill {
 }
 
 .done-lead {
-    margin: 0 0 clamp(24px, 4.5vmin, 34px);
-    color: rgba(242, 236, 224, 0.84);
+    margin: 0 0 clamp(22px, 4vmin, 32px);
+    font-size: clamp(19px, 2.7vmin, 24px);
+    line-height: 1.5;
+    color: var(--cream);
 }
 
-.done-block {
-    padding-top: clamp(18px, 3.4vmin, 26px);
-    border-top: 1px solid rgba(242, 236, 224, 0.14);
-}
-
-.done-block h2 {
-    margin: 0 0 0.85em;
-    font-size: 0.78em;
-    font-weight: normal;
-    letter-spacing: 0.12em;
-    text-transform: uppercase;
-    color: rgba(242, 236, 224, 0.55);
-}
-
-.done-steps {
-    display: grid;
-    gap: 0.65em;
-    margin: 0;
-    padding-left: 1.15em;
-    color: rgba(242, 236, 224, 0.9);
-}
-
-.done-steps li::marker {
-    color: rgba(242, 236, 224, 0.45);
+/* An address has no spaces to break on, so let it break anywhere rather than
+   push the page wider than a phone. */
+.done-email {
+    overflow-wrap: anywhere;
 }
 
 .done-contact {
-    margin: clamp(24px, 4.5vmin, 34px) 0 0;
+    margin: 0 0 clamp(20px, 3.6vmin, 28px);
     color: rgba(242, 236, 224, 0.72);
 }
 
 .done-home {
     display: inline-block;
-    margin-top: clamp(16px, 3vmin, 24px);
     color: var(--cream);
 }
 

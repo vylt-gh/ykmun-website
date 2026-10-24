@@ -120,35 +120,19 @@
 
     </form>
 
-    <!-- Shown in place of the form once a submission succeeds. The payment
-         instructions belong here, but only once the fee and its timing are
-         settled: a step saying "pay" with no amount reads worse than no step
-         at all, so the section is left as three statements that are true
-         today rather than a placeholder that would ship. -->
+    <!-- Shown in place of the form once a submission succeeds. Payment does
+         not belong here at all: it follows acceptance, not submission. -->
     <section class="done" id="done" hidden tabindex="-1" aria-labelledby="done-title">
 
-        <h1 id="done-title">Application received</h1>
+        <h1 id="done-title">Application submitted</h1>
 
-        <p class="done-lead" id="done-lead">
-            Thank you. Your application is with the organizing team.
+        <p class="done-lead">
+            We'll be in touch at
+            <span class="done-email" id="done-email">the address you gave us</span>.
         </p>
 
-        <div class="done-block">
-            <h2>What happens next</h2>
-            <ol class="done-steps">
-                <li>The organizing team reviews your application.</li>
-                <li>
-                    You'll receive an email at
-                    <span id="done-email">the address you gave us</span>
-                    with the outcome.
-                </li>
-                <li>That email will contain anything else we need from you.</li>
-            </ol>
-        </div>
-
         <p class="done-contact">
-            Something wrong? Write to
-            <a href="mailto:apply@ykmun.org">apply@ykmun.org</a>.
+            Questions? Write to <a href="mailto:apply@ykmun.org">apply@ykmun.org</a>.
         </p>
 
         <a class="done-home" href="home">Back to home</a>

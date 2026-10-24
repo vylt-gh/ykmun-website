@@ -6,7 +6,6 @@
     const submitBtn = document.getElementById('submit-btn');
     const headEl = document.getElementById('head');
     const doneEl = document.getElementById('done');
-    const doneLead = document.getElementById('done-lead');
     const doneEmail = document.getElementById('done-email');
 
     // Input id for the one field that has always had a real column.
@@ -126,11 +125,6 @@
     // with a disabled button reads as "did that work?", which is the one thing
     // the screen after a submission must never ask.
     function showDone(payload) {
-        const first = (payload.full_name || '').trim().split(/\s+/)[0];
-        if (first) {
-            doneLead.textContent =
-                'Thank you, ' + first + '. Your application is with the organizing team.';
-        }
         if (payload.email) doneEmail.textContent = payload.email;
 
         status.textContent = '';
