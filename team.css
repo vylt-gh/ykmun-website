@@ -73,10 +73,34 @@ h1 {
     color: rgba(242, 236, 224, 0.82);
 }
 
+/* ---- department sections ----------------------------------------------- */
+
+.dept + .dept {
+    margin-top: clamp(48px, 9vmin, 88px);
+}
+
+.dept-title {
+    margin: 0 0 0.6em;
+    font-size: clamp(20px, 3.4vmin, 28px);
+    font-weight: normal;
+    line-height: 1.15;
+}
+
+.dept-text {
+    max-width: 62ch;
+    margin: 0 0 clamp(22px, 4vmin, 34px);
+    line-height: 1.55;
+    color: rgba(242, 236, 224, 0.78);
+}
+
 .team {
     display: grid;
     gap: clamp(18px, 2.8vmin, 28px);
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    /* Capped rather than stretched: departments run from two people to three,
+       and a card that grows to fill an empty row looks different in every
+       section. */
+    grid-template-columns: repeat(auto-fill, minmax(150px, 200px));
+    justify-content: start;
     margin: 0;
     padding: 0;
     list-style: none;
@@ -84,6 +108,21 @@ h1 {
 
 .member picture {
     display: block;
+}
+
+/* Stands in for a photo that does not exist yet, matching its box exactly so
+   the grid does not lose its rhythm. */
+.member-photo {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    border: 1px solid rgba(242, 236, 224, 0.16);
+    border-radius: 12px;
+    background: rgba(3, 12, 32, 0.5);
+    font-size: clamp(22px, 3.2vmin, 30px);
+    letter-spacing: 0.08em;
+    color: rgba(242, 236, 224, 0.42);
 }
 
 .member img {
