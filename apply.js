@@ -230,6 +230,14 @@
         };
     }
 
+    // Lets the confirmation screen be inspected without writing a row to the
+    // table. Localhost only, so it cannot be reached on the deployed site.
+    const preview = new URLSearchParams(location.search).get('preview');
+    const isLocal = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
+    if (preview === 'done' && isLocal) {
+        showDone({ full_name: 'Deniz Yılmaz', email: 'deniz@example.com' });
+    }
+
     form.addEventListener('submit', async (event) => {
         event.preventDefault();
         if (!validate()) return;
