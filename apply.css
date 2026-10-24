@@ -501,6 +501,10 @@ textarea:-webkit-autofill {
 
 /* ---- confirmation screen ---------------------------------------------- */
 
+.done {
+    text-align: center;
+}
+
 .done:focus {
     outline: none;
 }
@@ -513,8 +517,11 @@ textarea:-webkit-autofill {
 }
 
 /* An address has no spaces to break on, so let it break anywhere rather than
-   push the page wider than a phone. */
+   push the page wider than a phone. Sea-glass, because it is the one piece of
+   the sentence that belongs to the applicant rather than to us — and it is not
+   a link, so it must not read as one. */
 .done-email {
+    color: #7ae2d0;
     overflow-wrap: anywhere;
 }
 
