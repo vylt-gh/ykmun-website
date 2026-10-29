@@ -11,6 +11,7 @@
     const LINKS = [
         { href: 'home', label: 'Home' },
         { href: 'apply', label: 'Apply' },
+        { href: 'delegation', label: 'Delegation' },
         { href: 'team', label: 'Team' },
         { href: 'kvkk', label: 'Privacy' }
     ];

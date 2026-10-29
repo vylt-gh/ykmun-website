@@ -122,6 +122,41 @@ body {
     background: transparent;
 }
 
+/* Delegations live in their own table, so the panel needs a way to say which
+   one it is showing. */
+.tabs {
+    display: flex;
+    gap: 6px;
+    margin-bottom: clamp(14px, 3vmin, 22px);
+}
+
+.tab {
+    padding: 0.5em 1.1em;
+    border: 1px solid rgba(242, 236, 224, 0.22);
+    border-radius: 999px;
+    background: transparent;
+    color: rgba(242, 236, 224, 0.7);
+    font: inherit;
+    font-size: 0.92em;
+    cursor: pointer;
+    transition: background-color 140ms ease, border-color 140ms ease;
+}
+
+.tab:hover {
+    border-color: rgba(242, 236, 224, 0.4);
+}
+
+.tab.is-active {
+    background: rgba(122, 226, 208, 0.07);
+    border-color: rgba(215, 255, 250, 0.4);
+    color: #eafffb;
+}
+
+.tab:focus-visible {
+    outline: 2px solid var(--cream);
+    outline-offset: 2px;
+}
+
 .toolbar {
     display: flex;
     flex-wrap: wrap;

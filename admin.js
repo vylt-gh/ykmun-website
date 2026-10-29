@@ -10,10 +10,40 @@
     const emptyEl = document.getElementById('empty');
     const countEl = document.getElementById('count');
     const readonlyNote = document.getElementById('readonly-note');
+    const tabsEl = document.querySelector('.tabs');
+
+    const STATUS_OPTIONS = [['pending', 'Pending'], ['accepted', 'Accepted'], ['rejected', 'Rejected']];
+    const PAYMENT_OPTIONS = [
+        ['unpaid', 'Unpaid'], ['partial', 'Partial'], ['paid_card', 'Card'],
+        ['paid_transfer', 'Transfer'], ['paid_cash', 'Cash'], ['waived', 'Waived']
+    ];
+
+    // Two tables, one panel. The card shape differs enough that each is built
+    // separately, but everything around the list — tabs, search, status filter,
+    // count, read-only note — is shared rather than duplicated per table.
+    const VIEWS = {
+        applications: {
+            table: 'applications',
+            noun: ['application', 'applications'],
+            placeholder: 'Search name, email, phone...',
+            searchKeys: ['full_name', 'email', 'phone'],
+            card: buildApplicationCard
+        },
+        delegations: {
+            table: 'delegations',
+            noun: ['delegation', 'delegations'],
+            placeholder: 'Search school, contact, email...',
+            searchKeys: ['organisation', 'contact_name', 'email', 'group_type'],
+            card: buildDelegationCard
+        }
+    };
+
+    const rows = { applications: [], delegations: [] };
+    const loadError = { applications: null, delegations: null };
 
     let client;
-    let applications = [];
     let canEdit = false;
+    let view = 'applications';
 
     // ---- session --------------------------------------------------------
     //
@@ -27,7 +57,8 @@
         if (prompting) return;
         prompting = true;
         app.style.display = 'none';
-        applications = [];
+        rows.applications = [];
+        rows.delegations = [];
 
         window.YKMUNAuth.openPrompt({
             onSuccess: async () => {
@@ -55,7 +86,7 @@
         userBadge.textContent = window.YKMUNAuth.roleLabel(session) || 'Staff';
         canEdit = window.YKMUNAuth.role(session) === 'editor';
         readonlyNote.hidden = canEdit;
-        loadApplications();
+        await loadAll();
     }
 
     (async function init() {
@@ -87,46 +118,77 @@
 
     // ---- data -----------------------------------------------------------
 
-    async function loadApplications() {
-        const { data, error } = await client
-            .from('applications')
-            .select('*')
-            .order('created_at', { ascending: false });
-
-        if (error) {
-            listEl.textContent = '';
-            emptyEl.textContent = 'Could not load applications.';
-            emptyEl.style.display = 'block';
-            console.error('load failed', error);
-            return;
-        }
-
-        applications = data || [];
+    async function loadAll() {
+        await Promise.all(Object.keys(VIEWS).map(load));
         render();
     }
 
+    async function load(name) {
+        const { data, error } = await client
+            .from(VIEWS[name].table)
+            .select('*')
+            .order('created_at', { ascending: false });
+
+        // Kept per table: if one is unreachable the other still works. This is
+        // the state a half-applied migration leaves behind, and it should read
+        // as "this tab is empty", not as a broken panel.
+        loadError[name] = error || null;
+        rows[name] = error ? [] : (data || []);
+
+        if (error) console.error('load ' + name + ' failed', error);
+    }
+
     function render() {
+        const source = VIEWS[view];
         const query = searchInput.value.trim().toLowerCase();
         const status = statusFilter.value;
 
-        const rows = applications.filter((row) => {
+        const visible = rows[view].filter((row) => {
             if (status && (row.status || 'pending') !== status) return false;
             if (!query) return true;
-            return ['full_name', 'email', 'phone'].some((key) =>
+            return source.searchKeys.some((key) =>
                 (row[key] || '').toLowerCase().includes(query)
             );
         });
 
-        countEl.textContent = rows.length + (rows.length === 1 ? ' application' : ' applications');
-        listEl.textContent = '';
-        emptyEl.style.display = rows.length ? 'none' : 'block';
+        countEl.textContent = visible.length + ' ' +
+            (visible.length === 1 ? source.noun[0] : source.noun[1]);
 
-        for (const row of rows) {
-            listEl.appendChild(buildCard(row));
+        listEl.textContent = '';
+        emptyEl.style.display = visible.length ? 'none' : 'block';
+        emptyEl.textContent = loadError[view]
+            ? 'Could not load ' + source.noun[1] + '.'
+            : 'No matching ' + source.noun[1] + '.';
+
+        for (const row of visible) {
+            listEl.appendChild(source.card(row));
         }
     }
 
-    function buildCard(row) {
+    // ---- tabs -----------------------------------------------------------
+
+    function setView(next) {
+        if (!VIEWS[next] || next === view) return;
+        view = next;
+
+        for (const tab of tabsEl.querySelectorAll('[data-view]')) {
+            const active = tab.dataset.view === next;
+            tab.classList.toggle('is-active', active);
+            tab.setAttribute('aria-pressed', String(active));
+        }
+
+        searchInput.placeholder = VIEWS[next].placeholder;
+        render();
+    }
+
+    tabsEl.addEventListener('click', (event) => {
+        const tab = event.target.closest('[data-view]');
+        if (tab) setView(tab.dataset.view);
+    });
+
+    // ---- cards ----------------------------------------------------------
+
+    function buildApplicationCard(row) {
         const card = document.createElement('article');
         card.className = 'card';
 
@@ -137,12 +199,7 @@
         name.className = 'card-name';
         name.textContent = row.full_name || '(no name)';
 
-        const pill = document.createElement('span');
-        const status = row.status || 'pending';
-        pill.className = 'status-pill status-' + status;
-        pill.textContent = statusLabel(status);
-
-        head.append(name, pill);
+        head.append(name, statusPill(row.status));
 
         const meta = document.createElement('div');
         meta.className = 'card-meta';
@@ -154,11 +211,7 @@
         const details = [row.email, row.phone].filter(Boolean);
         if (preferences.length) details.push('Preference: ' + preferences.join(' · '));
 
-        for (const value of details) {
-            const span = document.createElement('span');
-            span.textContent = value;
-            meta.appendChild(span);
-        }
+        for (const value of details) meta.appendChild(spanOf(value));
 
         const actions = document.createElement('div');
         actions.className = 'card-actions';
@@ -167,21 +220,71 @@
         // edits should be rare, but there is no reason one of the three should
         // be correctable while the other two are not.
         actions.append(
-            selectRow('Status', 'status', row.id, status,
-                [['pending', 'Pending'], ['accepted', 'Accepted'], ['rejected', 'Rejected']]),
-            textRow('1st choice', 'committee_1', row.id, row.committee_1 || ''),
-            textRow('2nd choice', 'committee_2', row.id, row.committee_2 || ''),
-            textRow('3rd choice', 'committee_3', row.id, row.committee_3 || ''),
-            selectRow('Payment', 'payment_state', row.id, row.payment_state || 'unpaid',
-                [['unpaid', 'Unpaid'], ['partial', 'Partial'], ['paid_card', 'Card'],
-                 ['paid_transfer', 'Transfer'], ['paid_cash', 'Cash'], ['waived', 'Waived']])
+            selectRow('applications', 'Status', 'status', row.id, row.status || 'pending', STATUS_OPTIONS),
+            textRow('applications', '1st choice', 'committee_1', row.id, row.committee_1 || ''),
+            textRow('applications', '2nd choice', 'committee_2', row.id, row.committee_2 || ''),
+            textRow('applications', '3rd choice', 'committee_3', row.id, row.committee_3 || ''),
+            selectRow('applications', 'Payment', 'payment_state', row.id, row.payment_state || 'unpaid', PAYMENT_OPTIONS)
         );
 
         card.append(head, meta, actions);
         return card;
     }
 
-    function selectRow(label, column, id, value, options) {
+    function buildDelegationCard(row) {
+        const card = document.createElement('article');
+        card.className = 'card';
+
+        const head = document.createElement('div');
+        head.className = 'card-head';
+
+        const name = document.createElement('div');
+        name.className = 'card-name';
+        name.textContent = row.organisation || '(no name)';
+
+        head.append(name, statusPill(row.status));
+
+        const meta = document.createElement('div');
+        meta.className = 'card-meta';
+
+        const details = [row.group_type, row.contact_name, row.email].filter(Boolean);
+        if (row.headcount) {
+            details.push(row.headcount + (row.headcount === 1 ? ' delegate' : ' delegates'));
+        }
+
+        for (const value of details) meta.appendChild(spanOf(value));
+
+        const actions = document.createElement('div');
+        actions.className = 'card-actions';
+
+        // Headcount is editable because schools revise it; it is the one number
+        // staff are likely to need to correct without opening the dashboard.
+        actions.append(
+            selectRow('delegations', 'Status', 'status', row.id, row.status || 'pending', STATUS_OPTIONS),
+            numberRow('delegations', 'Delegates', 'headcount', row.id, row.headcount)
+        );
+
+        card.append(head, meta, actions);
+        return card;
+    }
+
+    function statusPill(value) {
+        const status = value || 'pending';
+        const pill = document.createElement('span');
+        pill.className = 'status-pill status-' + status;
+        pill.textContent = statusLabel(status);
+        return pill;
+    }
+
+    function spanOf(value) {
+        const span = document.createElement('span');
+        span.textContent = value;
+        return span;
+    }
+
+    // ---- controls -------------------------------------------------------
+
+    function selectRow(table, label, column, id, value, options) {
         const row = document.createElement('div');
         row.className = 'edit-row';
 
@@ -196,7 +299,7 @@
             if (val === value) option.selected = true;
             select.appendChild(option);
         }
-        select.addEventListener('change', () => save(column, id, select.value, select));
+        select.addEventListener('change', () => save(table, column, id, select.value, select));
 
         select.dataset.previous = value;
         select.disabled = !canEdit;
@@ -205,7 +308,7 @@
         return row;
     }
 
-    function textRow(label, column, id, value) {
+    function textRow(table, label, column, id, value) {
         const row = document.createElement('div');
         row.className = 'edit-row';
 
@@ -215,9 +318,41 @@
         const input = document.createElement('input');
         input.type = 'text';
         input.value = value;
-        input.addEventListener('change', () => save(column, id, input.value.trim(), input));
+        input.addEventListener('change', () => save(table, column, id, input.value.trim(), input));
 
         input.dataset.previous = value;
+        input.disabled = !canEdit;
+
+        row.append(labelEl, input);
+        return row;
+    }
+
+    function numberRow(table, label, column, id, value) {
+        const row = document.createElement('div');
+        row.className = 'edit-row';
+
+        const labelEl = document.createElement('label');
+        labelEl.textContent = label;
+
+        const input = document.createElement('input');
+        input.type = 'number';
+        input.min = '1';
+        input.max = '500';
+        input.step = '1';
+        input.value = value == null ? '' : String(value);
+
+        input.addEventListener('change', () => {
+            const next = input.value.trim();
+            // The column is NOT NULL, so clearing the field reverts instead of
+            // sending "" and failing the integer cast server-side.
+            if (!next) {
+                input.value = input.dataset.previous;
+                return;
+            }
+            save(table, column, id, Number(next), input);
+        });
+
+        input.dataset.previous = input.value;
         input.disabled = !canEdit;
 
         row.append(labelEl, input);
@@ -230,13 +365,17 @@
 
     // ---- writes ---------------------------------------------------------
 
-    async function save(column, id, value, control) {
+    async function save(table, column, id, value, control) {
         const previous = control.dataset.previous;
-        if (value === previous) return;
+
+        // Compared as strings: a number field arrives as a number while its
+        // dataset copy is always a string, and 8 !== "8" would re-save an
+        // unchanged value every time the field lost focus.
+        if (String(value) === String(previous ?? '')) return;
 
         control.disabled = true;
         const { error } = await client
-            .from('applications')
+            .from(table)
             .update({ [column]: value })
             .eq('id', id);
 
@@ -252,7 +391,7 @@
         }
 
         control.dataset.previous = value;
-        const row = applications.find((r) => r.id === id);
+        const row = rows[table].find((r) => r.id === id);
         if (row) row[column] = value;
         render();
     }
