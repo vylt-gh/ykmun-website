@@ -46,7 +46,14 @@
             const script = document.createElement('script');
             script.src = SDK_URL;
             script.onload = resolve;
-            script.onerror = () => reject(new Error('sdk unavailable'));
+            script.onerror = () => {
+                // Drop the cached promise. Keeping it would mean every later
+                // attempt rejected with this same error without asking the CDN
+                // again, so one flaky request broke sign-in for the rest of
+                // the page's life.
+                sdkPromise = null;
+                reject(new Error('sdk unavailable'));
+            };
             document.head.appendChild(script);
         });
 

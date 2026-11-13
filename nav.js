@@ -8,10 +8,14 @@
 
     // Committees are deliberately absent until there is content for them; an
     // empty section in the menu is worse than no section.
+    //
+    // The group registration has its own entry because it is the one form
+    // people arrive looking for: it opens the application hub with the group
+    // form already chosen.
     const LINKS = [
         { href: 'home', label: 'Home' },
         { href: 'apply', label: 'Apply' },
-        { href: 'delegation', label: 'Delegation' },
+        { href: 'apply?as=group', label: 'Delegation' },
         { href: 'team', label: 'Team' },
         { href: 'kvkk', label: 'Privacy' }
     ];

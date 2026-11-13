@@ -1,34 +1,103 @@
 (() => {
     'use strict';
 
-    const form = document.getElementById('apply-form');
-    const status = document.getElementById('status');
-    const submitBtn = document.getElementById('submit-btn');
+    // ---- the four ways in ------------------------------------------------
+    //
+    // The first screen asks what the applicant is. The answer decides which
+    // form is shown, what it is called, and — for the three individual
+    // applications — the application_type written to the row (migration 0009).
+    //
+    // The group registration is the odd one out: it is a group registering,
+    // not a person applying, so it goes to a different table, collects none
+    // of the personal data an application does, and has no consent box.
+
+    const ROLES = {
+        delegate: {
+            key: 'delegate',
+            title: 'Delegate application',
+            note: 'Choose up to three committees. The order is your priority.',
+            button: 'Apply',
+            type: 'delegate',
+            committees: true
+        },
+        admin: {
+            key: 'admin',
+            title: 'Admin team application',
+            note: 'The admin team runs the conference behind the scenes.',
+            button: 'Apply',
+            type: 'admin',
+            committees: false
+        },
+        press: {
+            key: 'press',
+            title: 'Press team application',
+            note: 'The press team covers the conference.',
+            button: 'Apply',
+            type: 'press',
+            committees: false
+        },
+        group: {
+            key: 'group',
+            title: 'Delegation registration',
+            note: 'For a school or organisation bringing a group. Each delegate still applies individually.',
+            button: 'Submit',
+            type: null,
+            committees: false
+        }
+    };
+
+    const chooseEl = document.getElementById('choose');
+    const panelEl = document.getElementById('panel');
     const headEl = document.getElementById('head');
+    const headHint = document.getElementById('head-hint');
+    const formTitle = document.getElementById('form-title');
+    const formNote = document.getElementById('form-note');
+    const backBtn = document.getElementById('back');
+
+    const personForm = document.getElementById('apply-form');
+    const groupForm = document.getElementById('group-form');
+    const personStatus = document.getElementById('status-person');
+    const groupStatus = document.getElementById('status-group');
+    const personButton = document.getElementById('submit-btn');
+    const groupButton = document.getElementById('submit-group-btn');
+    const prefsEl = document.getElementById('prefs');
+
     const doneEl = document.getElementById('done');
+    const doneTitle = document.getElementById('done-title');
     const doneEmail = document.getElementById('done-email');
 
-    // Input id for the one field that has always had a real column.
-    const EMAIL_INPUT = 'f-email';
+    // Which role is on screen. Null means the first screen is showing.
+    let role = null;
 
-    // key -> column name (migration 0005). Keep stable.
-    const COLUMN_FIELDS = {
+    // ---- fields ----------------------------------------------------------
+
+    // Column name -> input id. Keep stable; these are the columns.
+    const PERSON_FIELDS = {
+        email: 'f-email',
         full_name: 'f-name',
         phone: 'f-phone',
         tc_number: 'f-tc',
-        committee_1: 'f-committee-1',
-        committee_2: 'f-committee-2',
-        committee_3: 'f-committee-3',
         motivation: 'f-motivation'
     };
 
-    // payment_state is absent on purpose: applicants are never asked for it.
+    const COMMITTEE_FIELDS = {
+        committee_1: 'f-committee-1',
+        committee_2: 'f-committee-2',
+        committee_3: 'f-committee-3'
+    };
 
-    // All validated inputs, for the validation pass.
-    const FIELDS = { email: EMAIL_INPUT, ...COLUMN_FIELDS };
+    const GROUP_FIELDS = {
+        group_type: 'f-group-type',
+        organisation: 'f-organisation',
+        contact_name: 'f-contact',
+        email: 'f-group-email',
+        headcount: 'f-headcount'
+    };
+
+    const MAX_HEADCOUNT = 500;
 
     // Bump when kvkk.html changes what is being consented to.
-    const CONSENT_VERSION = '2026-10-13';
+    const CONSENT_VERSION = '2026-11-13';
 
     const CONSENT_INPUT = 'f-consent';
 
@@ -113,40 +182,132 @@
     }
 
     function disable() {
-        if (submitBtn) submitBtn.disabled = true;
+        if (personButton) personButton.disabled = true;
+        if (groupButton) groupButton.disabled = true;
     }
 
-    function fail(message) {
-        status.textContent = message;
-        status.className = 'status status-error';
+    function fail(message, status) {
+        const el = status || personStatus;
+        if (!el) return;
+        el.textContent = message;
+        el.className = 'status status-error';
+    }
+
+    // ---- the first screen ------------------------------------------------
+
+    function showChoice() {
+        role = null;
+        panelEl.hidden = true;
+        chooseEl.hidden = false;
+        headHint.hidden = false;
+        headHint.textContent = 'Four ways to apply. Pick the one that describes you.';
+
+        // Drop the role from the address so a reload lands on the first
+        // screen rather than straight back into the form.
+        if (location.search) {
+            const url = new URL(location.href);
+            url.searchParams.delete('as');
+            history.replaceState(null, '', url);
+        }
+
+        window.scrollTo(0, 0);
+        const first = chooseEl.querySelector('.choose-card');
+        if (first) first.focus();
+    }
+
+    function showRole(next) {
+        const config = ROLES[next];
+        if (!config) return;
+
+        role = config;
+        chooseEl.hidden = true;
+        panelEl.hidden = false;
+
+        formTitle.textContent = config.title;
+        formNote.textContent = config.note;
+        headHint.hidden = true;
+
+        const isGroup = next === 'group';
+        personForm.hidden = isGroup;
+        groupForm.hidden = !isGroup;
+
+        // Admin and press are the committee, so there is nothing to pick.
+        prefsEl.hidden = !config.committees;
+
+        personButton.textContent = config.button;
+        groupButton.textContent = config.button;
+
+        clearErrors(personForm);
+        clearErrors(groupForm);
+        setStatus(personStatus, '');
+        setStatus(groupStatus, '');
+
+        const url = new URL(location.href);
+        url.searchParams.set('as', config.key);
+        history.replaceState(null, '', url);
+
+        window.scrollTo(0, 0);
+        const focus = isGroup
+            ? document.getElementById('f-group-type')
+            : document.getElementById('f-name');
+        if (focus) focus.focus();
+    }
+
+    for (const card of chooseEl.querySelectorAll('.choose-card')) {
+        card.addEventListener('click', () => showRole(card.dataset.role));
+    }
+
+    backBtn.addEventListener('click', showChoice);
+
+    // ---- shared form machinery -------------------------------------------
+
+    function setStatus(el, message) {
+        if (!el) return;
+        el.textContent = message;
+        el.className = 'status';
     }
 
     // Replaces the form rather than resetting it. A cleared form left on screen
     // with a disabled button reads as "did that work?", which is the one thing
     // the screen after a submission must never ask.
-    function showDone(payload) {
+    function showDone(payload, title) {
         if (payload.email) doneEmail.textContent = payload.email;
+        doneTitle.textContent = title;
 
-        status.textContent = '';
+        setStatus(personStatus, '');
+        setStatus(groupStatus, '');
+
         headEl.hidden = true;
-        form.hidden = true;
+        chooseEl.hidden = true;
+        panelEl.hidden = true;
         doneEl.hidden = false;
 
         window.scrollTo(0, 0);
         doneEl.focus();
     }
 
-    function clearErrors() {
-        for (const p of document.querySelectorAll('.err')) p.textContent = '';
+    function clearErrors(form) {
+        for (const p of form.querySelectorAll('.err')) p.textContent = '';
         for (const el of form.querySelectorAll('.is-invalid')) {
             el.classList.remove('is-invalid');
         }
     }
 
-    // Marks the offending field so the styling follows.
-    function validate() {
-        clearErrors();
+    // Validates one form and returns true when it is clean. `fields` maps a
+    // column name to an input id; the map decides what is looked at, so the
+    // person form and the group form share the code without sharing inputs.
+    //
+    // `extra` runs the checks that belong to one form only — the T.C. number,
+    // the committee picks and the consent box belong to the person form and
+    // must not be looked for while the group form is on screen, or an
+    // applicant who never ticked the hidden box could not submit at all.
+    function validate(form, fields, extra) {
+        clearErrors(form);
         let firstBad = null;
+
+        const markBad = (el) => {
+            if (el && !firstBad) firstBad = el;
+        };
 
         const flag = (id, message) => {
             const el = document.getElementById(id);
@@ -154,28 +315,44 @@
             if (err) err.textContent = message;
             if (el) {
                 el.classList.add('is-invalid');
-                if (!firstBad) firstBad = el;
+                markBad(el);
             }
         };
 
-        for (const [name, id] of Object.entries(FIELDS)) {
+        for (const [name, id] of Object.entries(fields)) {
             const el = document.getElementById(id);
             if (!el) continue;
 
+            const value = el.value.trim();
             let message = '';
-            if (el.required && !el.value.trim()) {
+
+            if (el.required && !value) {
                 message = 'This field is required.';
-            } else if (el.type === 'email' && el.value.trim() &&
-                       !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(el.value.trim())) {
+            } else if (el.type === 'email' && value &&
+                       !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value)) {
                 message = 'Enter a valid email address.';
-            } else if (el.minLength > 0 && el.value.trim() &&
-                       el.value.trim().length < el.minLength) {
+            } else if (el.type === 'number' && value) {
+                // Catches 0, 1.5 and "12e3" as well as pasting text into a
+                // number field, which some browsers allow.
+                const count = Number(value);
+                if (!Number.isInteger(count) || count < 1 || count > MAX_HEADCOUNT) {
+                    message = 'Enter a whole number between 1 and ' + MAX_HEADCOUNT + '.';
+                }
+            } else if (el.minLength > 0 && value && value.length < el.minLength) {
                 message = 'Please write a little more.';
             }
 
             if (message) flag(id, message);
         }
 
+        if (extra) extra(flag, markBad);
+
+        if (firstBad) firstBad.focus();
+        return !firstBad;
+    }
+
+    // The checks that belong to the person form alone.
+    function checkPerson(flag, markBad) {
         // Only once a number has been typed; an empty field has no checksum.
         const tcEl = document.getElementById('f-tc');
         if (tcEl && tcEl.value.trim() && !isValidTC(tcEl.value.trim())) {
@@ -183,11 +360,29 @@
         }
 
         // A repeated pick means one committee three times, not three preferences.
-        const picks = ['f-committee-1', 'f-committee-2', 'f-committee-3']
-            .map((id) => (document.getElementById(id) || {}).value)
-            .filter(Boolean);
-        if (picks.length !== new Set(picks).size) {
-            flag('f-committee-1', 'You cannot select the same committee more than once.');
+        // The three selects share one error line under the group, so the line
+        // carries the message and the select that repeats is the one marked
+        // and focused. Flagging the first one regardless used to send people
+        // to a choice that was perfectly fine.
+        const seen = new Set();
+        let repeated = null;
+        for (const id of ['f-committee-1', 'f-committee-2', 'f-committee-3']) {
+            const el = document.getElementById(id);
+            const value = el ? el.value : '';
+            if (!value) continue;
+            if (seen.has(value) && !repeated) repeated = id;
+            seen.add(value);
+        }
+        if (repeated) {
+            const err = document.getElementById('err-committees');
+            if (err) {
+                err.textContent = 'You cannot select the same committee more than once.';
+            }
+            const el = document.getElementById(repeated);
+            if (el) {
+                el.classList.add('is-invalid');
+                markBad(el);
+            }
         }
 
         // Art. 6 special-category data needs explicit consent; `required` alone
@@ -196,78 +391,118 @@
         if (consentEl && !consentEl.checked) {
             flag(CONSENT_INPUT, 'You must give explicit consent to apply.');
         }
-
-        if (firstBad) firstBad.focus();
-        return !firstBad;
     }
 
-    function collect() {
-        const emailEl = document.getElementById(EMAIL_INPUT);
+    // Empty optional fields are omitted rather than sent as "", so the admin
+    // table does not fill with blank-looking cells.
+    function collect(form, fields) {
         const row = {};
 
-        for (const [key, id] of Object.entries(COLUMN_FIELDS)) {
+        for (const [key, id] of Object.entries(fields)) {
             const el = document.getElementById(id);
             if (!el) continue;
             const value = el.value.trim();
-            // Empty optional fields are omitted rather than sent as "", so the
-            // admin table does not fill with blank-looking cells.
-            if (value) row[key] = value;
+            if (!value) continue;
+            // The column is an integer; PostgREST would accept "8" but sending
+            // the type the column actually declares keeps the value honest.
+            row[key] = key === 'headcount' ? Number(value) : value;
         }
 
-        // Stamped here, never read from the form.
-        row.consent_at = new Date().toISOString();
-        row.consent_version = CONSENT_VERSION;
-
-        return {
-            email: emailEl ? emailEl.value.trim() : '',
-            ...row
-        };
+        return row;
     }
 
-    // Lets the confirmation screen be inspected without writing a row to the
-    // table. Localhost only, so it cannot be reached on the deployed site.
-    const preview = new URLSearchParams(location.search).get('preview');
-    const isLocal = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
-    if (preview === 'done' && isLocal) {
-        showDone({ full_name: 'Deniz Yılmaz', email: 'deniz@example.com' });
-    }
-
-    form.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        if (!validate()) return;
-
-        submitBtn.disabled = true;
-        status.textContent = 'Submitting…';
-        status.className = 'status';
+    // The submit dance both forms share: disable the button, say what is
+    // happening, and either replace the form with the confirmation screen or
+    // say what went wrong.
+    async function send(form, table, payload, button, status, doneTitleText) {
+        button.disabled = true;
+        setStatus(status, 'Submitting…');
 
         try {
-            const payload = collect();
             const { error } = await client
-                .from('applications')
+                .from(table)
                 .insert(payload);
 
             if (error) {
                 // 23505 is the unique violation on email: the same address has
                 // already applied. Say so plainly instead of showing a code.
+                // 42501 is the RLS rejection.
                 if (error.code === '23505') {
-                    fail('An application has already been made with this email address.');
+                    fail('An application has already been made with this email address.', status);
                 } else if (error.code === '42501') {
-                    fail('Application could not be submitted. Please try again later.');
+                    fail('This could not be submitted. Please try again later.', status);
                 } else {
-                    fail('Something went wrong: ' + error.message);
+                    fail('Something went wrong. Please try again.', status);
                 }
                 console.error('insert failed', error);
-                submitBtn.disabled = false;
+                button.disabled = false;
                 return;
             }
 
-            clearErrors();
-            showDone(payload);
+            clearErrors(form);
+            showDone(payload, doneTitleText);
 
         } catch (err) {
             console.error('submit threw', err);
-            fail('Connection error. Please try again.');
-            submitBtn.disabled = false;
+            fail('Connection error. Please try again.', status);
+            button.disabled = false;
         }
+    }
+
+    // ---- the person form --------------------------------------------------
+
+    personForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        if (!validate(personForm, PERSON_FIELDS, checkPerson)) return;
+
+        const payload = collect(personForm, PERSON_FIELDS);
+
+        if (role && role.committees) {
+            for (const [key, id] of Object.entries(COMMITTEE_FIELDS)) {
+                const el = document.getElementById(id);
+                if (!el) continue;
+                const value = el.value.trim();
+                if (value) payload[key] = value;
+            }
+        }
+
+        // Stamped here, never read from the form.
+        payload.application_type = role ? role.type : 'delegate';
+        payload.consent_at = new Date().toISOString();
+        payload.consent_version = CONSENT_VERSION;
+        await send(personForm, 'applications', payload, personButton, personStatus,
+            'Application submitted');
     });
+
+    // ---- the group form ---------------------------------------------------
+
+    groupForm.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        if (!validate(groupForm, GROUP_FIELDS)) return;
+
+        const payload = collect(groupForm, GROUP_FIELDS);
+
+        await send(groupForm, 'delegations', payload, groupButton, groupStatus,
+            'Delegation submitted');
+    });
+
+    // ---- first paint ------------------------------------------------------
+
+    const params = new URLSearchParams(location.search);
+    const requested = params.get('as');
+
+    // Lets the confirmation screen be inspected without writing a row to the
+    // table. Localhost only, so it cannot be reached on the deployed site.
+    const preview = params.get('preview');
+    const isLocal = /^(localhost|127\.0\.0\.1|\[::1\])$/.test(location.hostname);
+
+    if (preview === 'done' && isLocal) {
+        const isGroup = requested === 'group';
+        showDone({ email: 'deniz@example.com' },
+            isGroup ? 'Delegation submitted' : 'Application submitted');
+    } else if (requested && ROLES[requested]) {
+        showRole(requested);
+    } else {
+        showChoice();
+    }
 })();

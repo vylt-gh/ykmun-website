@@ -40,10 +40,21 @@
 
     /* Space kept clear at the bottom for the CTA. */
     --cta-bottom: clamp(18px, 5vmin, 54px);
-    --cta-clear: clamp(64px, 15vmin, 130px);
+    --cta-clear: calc(
+        clamp(64px, 15vmin, 130px) + var(--meta-block) + var(--plate-gap)
+    );
     /* Gap between the plate's bottom edge and the CTA, in portrait where the
        CTA is seated under the plate rather than on the viewport floor. */
     --cta-gap: clamp(24px, 7vmin, 64px);
+
+    /* Height the date-and-venue line takes above the CTA. It sits in the
+       same reserved band as the CTA, so the plate's height budget grows by
+       this much and shrinks accordingly. */
+    --meta-block: clamp(26px, 4.6vmin, 46px);
+    /* Air between the bottom of the sign and the date line. In landscape the
+       foot is pinned to the viewport floor and the plate stops just above it,
+       so without this the line lands flush against the metal. */
+    --plate-gap: clamp(10px, 1.8vmin, 20px);
 
     --plate-gutter: 4vw;
 }
@@ -237,6 +248,35 @@ body {
     left: 59.74%;
     top: 78.55%;
 }
+/* The foot of the stage: when and where, then the way in.
+
+   The CTA used to be positioned absolutely against the viewport floor. It now
+   sits inside this container with the date line above it, because two
+   independently positioned pieces at the bottom of the screen eventually
+   collide — and the line has to be able to wrap on a narrow phone. */
+.stage-foot {
+    position: absolute;
+    left: 50%;
+    bottom: var(--cta-bottom);
+    transform: translateX(-50%);
+    display: grid;
+    justify-items: center;
+    gap: clamp(10px, 1.8vmin, 18px);
+    text-align: center;
+}
+
+.stage-meta {
+    margin: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 0.25em 0.9em;
+    font-size: clamp(13px, 2.1vmin, 21px);
+    line-height: 1.35;
+    letter-spacing: 0.07em;
+    color: rgba(242, 236, 224, 0.72);
+}
+
 /* Apply CTA: sea-glass pill.
 
    Previously an opaque aged-parchment pill with a dark label. Parchment was
@@ -262,10 +302,6 @@ body {
    readback were dropped for no visual change. */
 
 .cta {
-    position: absolute;
-    left: 50%;
-    bottom: var(--cta-bottom);
-    transform: translateX(-50%);
     display: inline-block;
     padding: clamp(9px, 1.9vmin, 20px) clamp(26px, 6.5vmin, 68px);
     border-radius: 999px;
@@ -287,14 +323,14 @@ body {
 .cta:hover,
 .cta:focus-visible {
     background: rgba(122, 226, 208, 0.14);
-    transform: translateX(-50%) translateY(-2px);
+    transform: translateY(-2px);
     box-shadow: 0 1.8vmin 4.2vmin rgba(0, 18, 28, 0.44),
         inset 1px 1px 2px rgba(240, 255, 253, 0.6),
         inset -1px -1px 2px rgba(110, 200, 190, 0.26);
 }
 
 .cta:active {
-    transform: translateX(-50%);
+    transform: none;
 }
 
 .cta:focus-visible {
@@ -309,7 +345,7 @@ body {
 
     .cta:hover,
     .cta:focus-visible {
-        transform: translateX(-50%);
+        transform: none;
     }
 }
 
@@ -340,9 +376,12 @@ body {
        closes a 200-300px gap that bottom-pinning left on tall screens. Landscape
        is untouched: it still uses --cta-bottom.
 
-       --plate-w comes from .stage, since .cta cannot see a property declared on
-       its sibling .counter. */
-    .cta {
+       The container is anchored rather than the button, because the date line
+       sits above the button and has to travel with it.
+
+       --plate-w comes from .stage, since .stage-foot cannot see a property
+       declared on its sibling .counter. */
+    .stage-foot {
         bottom: auto;
         top: calc(
             var(--focus-y) * 100dvh

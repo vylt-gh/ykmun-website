@@ -216,7 +216,44 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: baseline;
+    gap: 10px;
     margin-bottom: 8px;
+}
+
+/* The badges in the corner of a card: what they applied for, and where they
+   are in the review. */
+.card-pills {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    flex-shrink: 0;
+}
+
+.type-pill {
+    font-size: 0.78em;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.2em 0.7em;
+    border-radius: 999px;
+    border: 1px solid;
+}
+
+.type-delegate {
+    color: #c9d3e4;
+    border-color: rgba(201, 211, 228, 0.4);
+    background: rgba(201, 211, 228, 0.06);
+}
+
+.type-admin {
+    color: #a8d5b5;
+    border-color: rgba(168, 213, 181, 0.4);
+    background: rgba(168, 213, 181, 0.06);
+}
+
+.type-press {
+    color: #f0c98a;
+    border-color: rgba(240, 201, 138, 0.4);
+    background: rgba(240, 201, 138, 0.06);
 }
 
 .card-name {

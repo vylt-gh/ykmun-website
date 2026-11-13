@@ -499,6 +499,125 @@ textarea:-webkit-autofill {
     color: #e79a86;
 }
 
+/* ---------------------------------------------------------------------------
+   The first screen: what are you applying as?
+   --------------------------------------------------------------------------- */
+
+/* The heading above the cards. */
+.choose-heading {
+    margin: 0 0 clamp(12px, 2.4vmin, 18px);
+    font-size: clamp(15px, 2.2vmin, 18px);
+    font-weight: normal;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(242, 236, 224, 0.72);
+}
+
+/* Four cards, two up where there is room for it and one column on a phone. */
+.choose-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+    gap: clamp(12px, 2.4vmin, 18px);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.choose-card {
+    display: grid;
+    gap: 0.4em;
+    align-content: start;
+    width: 100%;
+    height: 100%;
+    padding: clamp(16px, 2.6vmin, 22px);
+    border: 1px solid rgba(242, 236, 224, 0.22);
+    border-radius: 12px;
+    background: rgba(3, 12, 32, 0.45);
+    color: var(--cream);
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: border-color 140ms ease, background-color 140ms ease, transform 140ms ease;
+}
+
+.choose-card:hover,
+.choose-card:focus-visible {
+    border-color: rgba(215, 255, 250, 0.55);
+    background: rgba(3, 12, 32, 0.62);
+    transform: translateY(-2px);
+}
+
+.choose-card:focus-visible {
+    outline: 2px solid rgba(215, 255, 250, 0.6);
+    outline-offset: 2px;
+}
+
+.choose-name {
+    font-size: clamp(17px, 2.9vmin, 21px);
+    letter-spacing: 0.02em;
+}
+
+.choose-note {
+    font-size: clamp(13px, 2.1vmin, 15px);
+    line-height: 1.45;
+    color: rgba(242, 236, 224, 0.7);
+}
+
+/* The head of the chosen form: a way back, then what this form is for. */
+.form-head {
+    display: grid;
+    justify-items: start;
+    gap: 0.45em;
+    margin-bottom: clamp(18px, 3.4vmin, 28px);
+}
+
+.form-head h2 {
+    margin: 0;
+    font-size: clamp(21px, 3.8vmin, 30px);
+    line-height: 1.15;
+    font-weight: normal;
+}
+
+.back {
+    padding: 0;
+    border: 0;
+    background: none;
+    color: rgba(242, 236, 224, 0.72);
+    font: inherit;
+    font-size: clamp(13px, 2.1vmin, 15px);
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    text-decoration: underline;
+    text-underline-offset: 0.2em;
+}
+
+.back:hover,
+.back:focus-visible {
+    color: #fff;
+}
+
+.back:focus-visible {
+    outline: 2px solid rgba(215, 255, 250, 0.6);
+    outline-offset: 2px;
+}
+
+/* The committee picks are hidden for admin and press, whose committee is the
+   team itself. `.row` sets display:grid, which beats the UA [hidden] rule. */
+.prefs[hidden] {
+    display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .choose-card {
+        transition: none;
+    }
+
+    .choose-card:hover,
+    .choose-card:focus-visible {
+        transform: none;
+    }
+}
+
 /* ---- confirmation screen ---------------------------------------------- */
 
 .done {

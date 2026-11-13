@@ -30,7 +30,7 @@
             });
             if (lastText !== 'done') {
                 lastText = 'done';
-                live.textContent = 'YKMUN başladı.';
+                live.textContent = 'YKMUN has begun.';
             }
             return;
         }
@@ -47,7 +47,7 @@
             slot.textContent = padded[i];
         });
 
-        live.textContent = days + ' gün kaldı.';
+        live.textContent = days + (days === 1 ? ' day left.' : ' days left.');
     }
 
     function tick() {

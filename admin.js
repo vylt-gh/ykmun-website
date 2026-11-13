@@ -18,6 +18,14 @@
         ['paid_transfer', 'Transfer'], ['paid_cash', 'Cash'], ['waived', 'Waived']
     ];
 
+    // What an applicant applied for. Mirrors the check constraint in migration
+    // 0009.
+    const TYPE_LABELS = {
+        delegate: 'Delegate',
+        admin: 'Admin',
+        press: 'Press'
+    };
+
     // Two tables, one panel. The card shape differs enough that each is built
     // separately, but everything around the list — tabs, search, status filter,
     // count, read-only note — is shared rather than duplicated per table.
@@ -25,8 +33,15 @@
         applications: {
             table: 'applications',
             noun: ['application', 'applications'],
-            placeholder: 'Search name, email, phone...',
-            searchKeys: ['full_name', 'email', 'phone'],
+            placeholder: 'Search name, email, phone, T.C. no...',
+            searchKeys: ['full_name', 'email', 'phone', 'tc_number',
+                'application_type'],
+            // Everything a card shows, in one list. Used to decide whether the
+            // cards on screen are already the right ones and can be left
+            // alone — see paint().
+            cardFields: ['id', 'full_name', 'status', 'email', 'phone',
+                'committee_1', 'committee_2', 'committee_3', 'payment_state',
+                'application_type'],
             card: buildApplicationCard
         },
         delegations: {
@@ -34,6 +49,8 @@
             noun: ['delegation', 'delegations'],
             placeholder: 'Search school, contact, email...',
             searchKeys: ['organisation', 'contact_name', 'email', 'group_type'],
+            cardFields: ['id', 'organisation', 'status', 'group_type',
+                'contact_name', 'email', 'headcount'],
             card: buildDelegationCard
         }
     };
@@ -52,6 +69,11 @@
     // which of the two accounts signed in.
 
     let prompting = false;
+
+    // Signing out on purpose leaves the panel, so it must not be mistaken for
+    // a session that expired: the SIGNED_OUT event that follows is on the
+    // way out, not a request to sign back in.
+    let leaving = false;
 
     function promptLogin() {
         if (prompting) return;
@@ -106,14 +128,21 @@
         else promptLogin();
 
         // A token that expires beyond recovery, or a sign-out in another tab,
-        // drops straight back to the prompt.
+        // drops straight back to the prompt. A sign-out from this panel is
+        // on its way to the home page instead, and must not be interrupted.
         client.auth.onAuthStateChange((event) => {
-            if (event === 'SIGNED_OUT') promptLogin();
+            if (event === 'SIGNED_OUT' && !leaving) promptLogin();
         });
     })();
 
     signoutBtn.addEventListener('click', async () => {
-        await window.YKMUNAuth.signOut();
+        leaving = true;
+        try {
+            await window.YKMUNAuth.signOut();
+        } catch (err) {
+            console.error('sign out failed', err);
+        }
+        window.location.href = 'home';
     });
 
     // ---- data -----------------------------------------------------------
@@ -138,7 +167,14 @@
         if (error) console.error('load ' + name + ' failed', error);
     }
 
-    function render() {
+    // The cards on screen, and the key they were painted from. A render that
+    // would produce the same cards leaves them alone.
+    let paintedKey = null;
+
+    // Which rows match, and what the count says. Split out from the painting
+    // because the two answer at different speeds: the count follows every
+    // keystroke, the cards do not.
+    function match() {
         const source = VIEWS[view];
         const query = searchInput.value.trim().toLowerCase();
         const status = statusFilter.value;
@@ -154,6 +190,25 @@
         countEl.textContent = visible.length + ' ' +
             (visible.length === 1 ? source.noun[0] : source.noun[1]);
 
+        return visible;
+    }
+
+    function paint(visible) {
+        const source = VIEWS[view];
+
+        // Every card carries five controls, so rebuilding the list is the
+        // expensive part of this page. Keyed on what the cards would show: if
+        // none of that changed, what is already on screen is correct and is
+        // left untouched. The separators are control characters, which cannot
+        // occur in the data, so two different lists cannot share a key.
+        const key = view + '|' + (loadError[view] ? 'error' : 'ok') + '|' +
+            visible.map((row) =>
+                source.cardFields.map((field) => row[field]).join('\u0000')
+            ).join('\u001f');
+
+        if (key === paintedKey) return;
+        paintedKey = key;
+
         listEl.textContent = '';
         emptyEl.style.display = visible.length ? 'none' : 'block';
         emptyEl.textContent = loadError[view]
@@ -163,6 +218,10 @@
         for (const row of visible) {
             listEl.appendChild(source.card(row));
         }
+    }
+
+    function render() {
+        paint(match());
     }
 
     // ---- tabs -----------------------------------------------------------
@@ -199,7 +258,14 @@
         name.className = 'card-name';
         name.textContent = row.full_name || '(no name)';
 
-        head.append(name, statusPill(row.status));
+        // What they applied for, next to where they are in the review. An
+        // admin or press applicant is not waiting for a committee seat, so
+        // the two badges answer different questions.
+        const pills = document.createElement('div');
+        pills.className = 'card-pills';
+        pills.append(typePill(row.application_type), statusPill(row.status));
+
+        head.append(name, pills);
 
         const meta = document.createElement('div');
         meta.className = 'card-meta';
@@ -219,11 +285,26 @@
         // All three preferences are editable. They are applicant-supplied so
         // edits should be rare, but there is no reason one of the three should
         // be correctable while the other two are not.
+        //
+        // They are only shown for delegates. An admin or press applicant is
+        // applying to a team, not to a committee, and committee_1 means a
+        // committee preference — so offering the fields would invite staff to
+        // write a preference the applicant never expressed.
+        const isDelegate = (row.application_type || 'delegate') === 'delegate';
+
         actions.append(
-            selectRow('applications', 'Status', 'status', row.id, row.status || 'pending', STATUS_OPTIONS),
-            textRow('applications', '1st choice', 'committee_1', row.id, row.committee_1 || ''),
-            textRow('applications', '2nd choice', 'committee_2', row.id, row.committee_2 || ''),
-            textRow('applications', '3rd choice', 'committee_3', row.id, row.committee_3 || ''),
+            selectRow('applications', 'Status', 'status', row.id, row.status || 'pending', STATUS_OPTIONS)
+        );
+
+        if (isDelegate) {
+            actions.append(
+                textRow('applications', '1st choice', 'committee_1', row.id, row.committee_1 || ''),
+                textRow('applications', '2nd choice', 'committee_2', row.id, row.committee_2 || ''),
+                textRow('applications', '3rd choice', 'committee_3', row.id, row.committee_3 || '')
+            );
+        }
+
+        actions.append(
             selectRow('applications', 'Payment', 'payment_state', row.id, row.payment_state || 'unpaid', PAYMENT_OPTIONS)
         );
 
@@ -273,6 +354,16 @@
         const pill = document.createElement('span');
         pill.className = 'status-pill status-' + status;
         pill.textContent = statusLabel(status);
+        return pill;
+    }
+
+    // Which kind of application this is. Rows written before migration 0009
+    // have no type and are delegates, which is what the column defaults to.
+    function typePill(value) {
+        const type = value || 'delegate';
+        const pill = document.createElement('span');
+        pill.className = 'type-pill type-' + type;
+        pill.textContent = TYPE_LABELS[type] || type;
         return pill;
     }
 
@@ -396,6 +487,15 @@
         render();
     }
 
-    searchInput.addEventListener('input', render);
+    // Typing in the search box matches against every row, and matching has to
+    // be immediate for the count to feel live. The cards are the expensive
+    // half, so they follow a short pause instead of every keystroke.
+    let searchTimer = null;
+
+    searchInput.addEventListener('input', () => {
+        match();
+        clearTimeout(searchTimer);
+        searchTimer = setTimeout(render, 150);
+    });
     statusFilter.addEventListener('change', render);
 })();
