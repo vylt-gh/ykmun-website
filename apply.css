@@ -602,7 +602,9 @@ textarea:-webkit-autofill {
 }
 
 /* The committee picks are hidden for admin and press, whose committee is the
-   team itself. `.row` sets display:grid, which beats the UA [hidden] rule. */
+   team itself; camera model is hidden except for press. `.row` sets
+   display:grid, which beats the UA [hidden] rule. */
+.row[hidden],
 .prefs[hidden] {
     display: none;
 }

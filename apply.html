@@ -22,18 +22,20 @@
       press     applying to the press team
       group     a school or organisation registering a group
 
-    The three individual applications share one form; only the committee picks
-    are hidden for admin and press, whose committee is the team itself. The
-    group registration is a separate form because it goes to a different table
-    and collects none of the personal data an application does.
+    The three individual applications share one form; committee picks are shown
+    for delegates, while press applicants are asked for their camera model. Admin
+    and press committee is the team itself. The group registration is a separate
+    form because it goes to a different table and collects none of the personal
+    data an application does.
 
-    Fields map to real columns (migration 0005). application_type is migration
+    Fields map to real columns (migration 0005, 0010). application_type is migration
     0009 and says which of the three the row is; payment_state is deliberately
     never asked for; the column default sets it. The committee list lives in
     COMMITTEES in apply.js and is not final.
 
     Database side: db/migrations/0001 (table), 0002 (staff roles and RLS),
-    0005 (application fields), 0008 (delegations), 0009 (application type).
+    0005 (application fields), 0008 (delegations), 0009 (application type),
+    0010 (camera model).
 
     The interactive canvas starfield is deliberately omitted on this page. It is
     a page for reading and filling in a form, and a pointer-reactive starfield
@@ -106,9 +108,9 @@
             <p class="hint" id="form-note"></p>
         </header>
 
-        <!-- The three individual applications. The committee picks are the only
-             thing that differs between them, and they are hidden for admin and
-             press, whose committee is the team itself. -->
+        <!-- The three individual applications. Delegate applications show committee
+             picks; press applications ask for a camera model; admin applications
+             ask for neither. -->
         <form class="form" id="apply-form" novalidate>
 
             <div class="row">
@@ -166,11 +168,19 @@
                 <p class="err" id="err-committees" role="alert"></p>
             </fieldset>
 
+            <div class="row" id="row-camera" hidden>
+                <label for="f-camera">Camera model</label>
+                <input type="text" id="f-camera" name="camera_model" autocomplete="off"
+                       maxlength="120">
+                <p class="hint">What model of camera do you use?</p>
+                <p class="err" data-err-for="f-camera" role="alert"></p>
+            </div>
+
             <div class="row">
-                <label for="f-motivation">Why do you want to join?</label>
+                <label for="f-motivation">Motivation Paragraph</label>
                 <textarea id="f-motivation" name="motivation" rows="5"
                           maxlength="2000"></textarea>
-                <p class="hint">This helps us with committee allocation.</p>
+                <p class="hint" id="hint-motivation">This helps us with committee allocation.</p>
                 <p class="err" data-err-for="f-motivation" role="alert"></p>
             </div>
 

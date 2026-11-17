@@ -18,7 +18,8 @@
             note: 'Choose up to three committees. The order is your priority.',
             button: 'Apply',
             type: 'delegate',
-            committees: true
+            committees: true,
+            camera: false
         },
         admin: {
             key: 'admin',
@@ -26,7 +27,8 @@
             note: 'The admin team runs the conference behind the scenes.',
             button: 'Apply',
             type: 'admin',
-            committees: false
+            committees: false,
+            camera: false
         },
         press: {
             key: 'press',
@@ -34,7 +36,8 @@
             note: 'The press team covers the conference.',
             button: 'Apply',
             type: 'press',
-            committees: false
+            committees: false,
+            camera: true
         },
         group: {
             key: 'group',
@@ -42,7 +45,8 @@
             note: 'For a school or organisation bringing a group. Each delegate still applies individually.',
             button: 'Submit',
             type: null,
-            committees: false
+            committees: false,
+            camera: false
         }
     };
 
@@ -61,6 +65,8 @@
     const personButton = document.getElementById('submit-btn');
     const groupButton = document.getElementById('submit-group-btn');
     const prefsEl = document.getElementById('prefs');
+    const cameraEl = document.getElementById('row-camera');
+    const motivationHint = document.getElementById('hint-motivation');
 
     const doneEl = document.getElementById('done');
     const doneTitle = document.getElementById('done-title');
@@ -97,7 +103,7 @@
     const MAX_HEADCOUNT = 500;
 
     // Bump when kvkk.html changes what is being consented to.
-    const CONSENT_VERSION = '2026-11-13';
+    const CONSENT_VERSION = '2026-11-17';
 
     const CONSENT_INPUT = 'f-consent';
 
@@ -232,7 +238,14 @@
         groupForm.hidden = !isGroup;
 
         // Admin and press are the committee, so there is nothing to pick.
+        // Press asks for a camera model instead.
         prefsEl.hidden = !config.committees;
+        if (cameraEl) cameraEl.hidden = !config.camera;
+        if (motivationHint) {
+            motivationHint.textContent = config.committees
+                ? 'This helps us with committee allocation.'
+                : 'This helps us review your application.';
+        }
 
         personButton.textContent = config.button;
         groupButton.textContent = config.button;
@@ -463,6 +476,14 @@
                 if (!el) continue;
                 const value = el.value.trim();
                 if (value) payload[key] = value;
+            }
+        }
+
+        if (role && role.camera) {
+            const el = document.getElementById('f-camera');
+            if (el) {
+                const value = el.value.trim();
+                if (value) payload.camera_model = value;
             }
         }
 

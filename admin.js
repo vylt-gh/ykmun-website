@@ -35,13 +35,13 @@
             noun: ['application', 'applications'],
             placeholder: 'Search name, email, phone, T.C. no...',
             searchKeys: ['full_name', 'email', 'phone', 'tc_number',
-                'application_type'],
+                'application_type', 'camera_model'],
             // Everything a card shows, in one list. Used to decide whether the
             // cards on screen are already the right ones and can be left
             // alone — see paint().
             cardFields: ['id', 'full_name', 'status', 'email', 'phone',
                 'committee_1', 'committee_2', 'committee_3', 'payment_state',
-                'application_type'],
+                'application_type', 'camera_model'],
             card: buildApplicationCard
         },
         delegations: {
@@ -276,6 +276,7 @@
         const preferences = [row.committee_1, row.committee_2, row.committee_3].filter(Boolean);
         const details = [row.email, row.phone].filter(Boolean);
         if (preferences.length) details.push('Preference: ' + preferences.join(' · '));
+        if (row.camera_model) details.push('Camera: ' + row.camera_model);
 
         for (const value of details) meta.appendChild(spanOf(value));
 
@@ -290,7 +291,9 @@
         // applying to a team, not to a committee, and committee_1 means a
         // committee preference — so offering the fields would invite staff to
         // write a preference the applicant never expressed.
+        // Press applicants have their camera model editable instead.
         const isDelegate = (row.application_type || 'delegate') === 'delegate';
+        const isPress = row.application_type === 'press';
 
         actions.append(
             selectRow('applications', 'Status', 'status', row.id, row.status || 'pending', STATUS_OPTIONS)
@@ -301,6 +304,10 @@
                 textRow('applications', '1st choice', 'committee_1', row.id, row.committee_1 || ''),
                 textRow('applications', '2nd choice', 'committee_2', row.id, row.committee_2 || ''),
                 textRow('applications', '3rd choice', 'committee_3', row.id, row.committee_3 || '')
+            );
+        } else if (isPress) {
+            actions.append(
+                textRow('applications', 'Camera', 'camera_model', row.id, row.camera_model || '')
             );
         }
 
