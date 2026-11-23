@@ -125,13 +125,18 @@
     }
 
     function describe(error) {
+        const isTr = (document.documentElement.lang || '').startsWith('tr');
         if (isRateLimited(error)) {
-            return 'Too many attempts. Try again in a few minutes.';
+            return isTr
+                ? 'Çok fazla deneme. Lütfen birkaç dakika sonra tekrar deneyin.'
+                : 'Too many attempts. Try again in a few minutes.';
         }
         if (/sdk unavailable|failed to fetch|network/i.test(error.message || '')) {
-            return 'Could not connect. Check your internet connection.';
+            return isTr
+                ? 'Bağlantı kurulamadı. İnternet bağlantınızı kontrol edin.'
+                : 'Could not connect. Check your internet connection.';
         }
-        return 'Sign-in failed.';
+        return isTr ? 'Giriş yapılamadı.' : 'Sign-in failed.';
     }
 
     // Builds the prompt on demand rather than keeping it in the markup, so it
@@ -141,6 +146,8 @@
             activeDialog.input.focus();
             return;
         }
+
+        const isTr = (document.documentElement.lang || '').startsWith('tr');
 
         const overlay = document.createElement('div');
         overlay.className = 'auth-overlay';
@@ -153,11 +160,11 @@
 
         const title = document.createElement('h2');
         title.id = 'auth-title';
-        title.textContent = 'Staff sign-in';
+        title.textContent = isTr ? 'Görevli girişi' : 'Staff sign-in';
 
         const label = document.createElement('label');
         label.htmlFor = 'auth-pass';
-        label.textContent = 'Password';
+        label.textContent = isTr ? 'Şifre' : 'Password';
 
         const input = document.createElement('input');
         input.type = 'password';
@@ -175,12 +182,12 @@
         const cancel = document.createElement('button');
         cancel.type = 'button';
         cancel.className = 'auth-cancel';
-        cancel.textContent = 'Cancel';
+        cancel.textContent = isTr ? 'İptal' : 'Cancel';
 
         const submit = document.createElement('button');
         submit.type = 'submit';
         submit.className = 'auth-submit';
-        submit.textContent = 'Sign in';
+        submit.textContent = isTr ? 'Giriş yap' : 'Sign in';
 
         actions.append(cancel, submit);
         form.append(title, label, input, error, actions);
@@ -208,7 +215,7 @@
         function setBusy(busy) {
             submit.disabled = busy;
             input.disabled = busy;
-            submit.textContent = busy ? '…' : 'Sign in';
+            submit.textContent = busy ? '…' : (isTr ? 'Giriş yap' : 'Sign in');
         }
 
         cancel.addEventListener('click', dismiss);
@@ -231,7 +238,7 @@
                 const account = await signIn(password);
 
                 if (!account) {
-                    error.textContent = 'Incorrect password.';
+                    error.textContent = isTr ? 'Hatalı şifre.' : 'Incorrect password.';
                     setBusy(false);
                     input.select();
                     return;

@@ -52,28 +52,36 @@
 <main class="page">
 
     <header class="head" id="head">
-        <h1><u><i>Application</i></u></h1>
-        <p class="hint" id="head-hint">
+        <h1><u data-en="Application" data-tr="Başvuru"><i>Application</i></u></h1>
+        <p class="hint" id="head-hint"
+           data-en="Four ways to apply. Pick the one that describes you."
+           data-tr="Dört başvuru yolu. Size uygun olanı seçin.">
             Four ways to apply. Pick the one that describes you.
         </p>
     </header>
 
     <!-- Step one: what are you applying as? -->
     <section id="choose">
-        <h2 class="choose-heading">What are you applying as?</h2>
+        <h2 class="choose-heading"
+            data-en="What are you applying as?"
+            data-tr="Ne olarak başvuruyorsunuz?">What are you applying as?</h2>
         <ul class="choose-grid">
             <li>
                 <button type="button" class="choose-card" data-role="delegate">
-                    <span class="choose-name">Delegate</span>
-                    <span class="choose-note">
+                    <span class="choose-name" data-en="Delegate" data-tr="Delege">Delegate</span>
+                    <span class="choose-note"
+                          data-en="Applying on your own, for a seat on a committee."
+                          data-tr="Bireysel başvuru, komite üyeliği için.">
                         Applying on your own, for a seat on a committee.
                     </span>
                 </button>
             </li>
             <li>
                 <button type="button" class="choose-card" data-role="admin">
-                    <span class="choose-name">Admin team</span>
-                    <span class="choose-note">
+                    <span class="choose-name" data-en="Admin team" data-tr="Admin ekibi">Admin team</span>
+                    <span class="choose-note"
+                          data-en="Applying to the admin team, which runs the conference behind the scenes."
+                          data-tr="Konferansın perde arkasını yöneten admin ekibine başvuru.">
                         Applying to the admin team, which runs the conference
                         behind the scenes.
                     </span>
@@ -81,16 +89,20 @@
             </li>
             <li>
                 <button type="button" class="choose-card" data-role="press">
-                    <span class="choose-name">Press team</span>
-                    <span class="choose-note">
+                    <span class="choose-name" data-en="Press team" data-tr="Basın ekibi">Press team</span>
+                    <span class="choose-note"
+                          data-en="Applying to the press team, which covers the conference."
+                          data-tr="Konferansı belgeleyen ve kayıt altına alan basın ekibine başvuru.">
                         Applying to the press team, which covers the conference.
                     </span>
                 </button>
             </li>
             <li>
                 <button type="button" class="choose-card" data-role="group">
-                    <span class="choose-name">School or organisation</span>
-                    <span class="choose-note">
+                    <span class="choose-name" data-en="School or organisation" data-tr="Okul veya organizasyon">School or organisation</span>
+                    <span class="choose-note"
+                          data-en="Bringing a group. Each delegate still applies individually."
+                          data-tr="Grup kaydı. Her delege ayrıca bireysel başvurur.">
                         Bringing a group. Each delegate still applies
                         individually.
                     </span>
@@ -103,7 +115,7 @@
     <section id="panel" hidden>
 
         <header class="form-head">
-            <button type="button" class="back" id="back">Something else</button>
+            <button type="button" class="back" id="back" data-en="Something else" data-tr="Geri dön">Something else</button>
             <h2 id="form-title">Delegate application</h2>
             <p class="hint" id="form-note"></p>
         </header>
@@ -114,28 +126,28 @@
         <form class="form" id="apply-form" novalidate>
 
             <div class="row">
-                <label for="f-name">Full name <span class="req" aria-hidden="true">*</span></label>
+                <label for="f-name" data-en="Full name" data-tr="Ad Soyad">Full name <span class="req" aria-hidden="true">*</span></label>
                 <input type="text" id="f-name" name="full_name" autocomplete="name"
                        required minlength="2" maxlength="120">
                 <p class="err" data-err-for="f-name" role="alert"></p>
             </div>
 
             <div class="row">
-                <label for="f-email">Email <span class="req" aria-hidden="true">*</span></label>
+                <label for="f-email" data-en="Email" data-tr="E-posta">Email <span class="req" aria-hidden="true">*</span></label>
                 <input type="email" id="f-email" name="email" autocomplete="email"
                        required maxlength="200">
                 <p class="err" data-err-for="f-email" role="alert"></p>
             </div>
 
             <div class="row">
-                <label for="f-phone">Phone</label>
+                <label for="f-phone" data-en="Phone" data-tr="Telefon">Phone</label>
                 <input type="tel" id="f-phone" name="phone" autocomplete="tel"
                        maxlength="40">
                 <p class="err" data-err-for="f-phone" role="alert"></p>
             </div>
 
             <div class="row">
-                <label for="f-tc">T.C. Identity Number <span class="req" aria-hidden="true">*</span></label>
+                <label for="f-tc" data-en="T.C. Identity Number" data-tr="T.C. Kimlik Numarası">T.C. Identity Number <span class="req" aria-hidden="true">*</span></label>
                 <input type="text" id="f-tc" name="tc_number" inputmode="numeric"
                        autocomplete="off" required maxlength="11" pattern="[0-9]*"
                        aria-describedby="hint-tc">
@@ -147,19 +159,19 @@
             </div>
 
             <fieldset class="row prefs" id="prefs">
-                <legend>Preferred Committees</legend>
+                <legend data-en="Preferred Committees" data-tr="Komite Tercihleri">Preferred Committees</legend>
                 <p class="hint">Choose up to three. The order indicates your priority.</p>
                 <div class="pref-grid">
-                    <label for="f-committee-1">1st choice</label>
+                    <label for="f-committee-1" data-en="1st choice" data-tr="1. Tercih">1st choice</label>
                     <!-- Options injected from COMMITTEES in apply.js -->
                     <select id="f-committee-1" name="committee_1">
                         <option value="">—</option></select>
 
-                    <label for="f-committee-2">2nd choice</label>
+                    <label for="f-committee-2" data-en="2nd choice" data-tr="2. Tercih">2nd choice</label>
                     <select id="f-committee-2" name="committee_2">
                         <option value="">—</option></select>
 
-                    <label for="f-committee-3">3rd choice</label>
+                    <label for="f-committee-3" data-en="3rd choice" data-tr="3. Tercih">3rd choice</label>
                     <select id="f-committee-3" name="committee_3">
                         <option value="">—</option></select>
                 </div>
@@ -169,7 +181,7 @@
             </fieldset>
 
             <div class="row" id="row-camera" hidden>
-                <label for="f-camera">Camera model</label>
+                <label for="f-camera" data-en="Camera model" data-tr="Kamera modeli">Camera model</label>
                 <input type="text" id="f-camera" name="camera_model" autocomplete="off"
                        maxlength="120">
                 <p class="hint">What model of camera do you use?</p>
@@ -177,7 +189,7 @@
             </div>
 
             <div class="row">
-                <label for="f-motivation">Motivation Paragraph</label>
+                <label for="f-motivation" data-en="Motivation Paragraph" data-tr="Motivasyon Paragrafı">Motivation Paragraph</label>
                 <textarea id="f-motivation" name="motivation" rows="5"
                           maxlength="2000"></textarea>
                 <p class="hint" id="hint-motivation">This helps us with committee allocation.</p>
@@ -210,7 +222,7 @@
         <form class="form" id="group-form" novalidate hidden>
 
             <div class="row">
-                <label for="f-group-type">Group type <span class="req" aria-hidden="true">*</span></label>
+                <label for="f-group-type" data-en="Group type" data-tr="Grup türü">Group type <span class="req" aria-hidden="true">*</span></label>
                 <select id="f-group-type" name="group_type" required>
                     <option value="">—</option>
                     <option>School</option>
@@ -222,14 +234,14 @@
             </div>
 
             <div class="row">
-                <label for="f-organisation">School or organisation <span class="req" aria-hidden="true">*</span></label>
+                <label for="f-organisation" data-en="School or organisation" data-tr="Okul veya organizasyon">School or organisation <span class="req" aria-hidden="true">*</span></label>
                 <input type="text" id="f-organisation" name="organisation"
                        autocomplete="organization" required minlength="2" maxlength="160">
                 <p class="err" data-err-for="f-organisation" role="alert"></p>
             </div>
 
             <div class="row">
-                <label for="f-contact">Contact name <span class="req" aria-hidden="true">*</span></label>
+                <label for="f-contact" data-en="Contact name" data-tr="İletişim kişisi">Contact name <span class="req" aria-hidden="true">*</span></label>
                 <input type="text" id="f-contact" name="contact_name"
                        autocomplete="name" required minlength="2" maxlength="120">
                 <p class="hint">The head delegate or advisor we should write to.</p>
@@ -237,14 +249,14 @@
             </div>
 
             <div class="row">
-                <label for="f-group-email">Email <span class="req" aria-hidden="true">*</span></label>
+                <label for="f-group-email" data-en="Email" data-tr="E-posta">Email <span class="req" aria-hidden="true">*</span></label>
                 <input type="email" id="f-group-email" name="email"
                        autocomplete="email" required maxlength="200">
                 <p class="err" data-err-for="f-group-email" role="alert"></p>
             </div>
 
             <div class="row">
-                <label for="f-headcount">Number of delegates <span class="req" aria-hidden="true">*</span></label>
+                <label for="f-headcount" data-en="Number of delegates" data-tr="Delege sayısı">Number of delegates <span class="req" aria-hidden="true">*</span></label>
                 <input type="number" id="f-headcount" name="headcount" inputmode="numeric"
                        min="1" max="500" step="1" required aria-describedby="hint-headcount">
                 <p class="hint" id="hint-headcount">
@@ -274,15 +286,15 @@
         <h1 id="done-title">Application submitted</h1>
 
         <p class="done-lead">
-            We'll be in touch at
+            <span data-en="We'll be in touch at" data-tr="Sizinle şu adresten iletişime geçeceğiz:">We'll be in touch at</span>
             <span class="done-email" id="done-email">the address you gave us</span>.
         </p>
 
         <p class="done-contact">
-            Questions? Write to <a href="mailto:apply@ykmun.org">apply@ykmun.org</a>.
+            <span data-en="Questions? Write to" data-tr="Sorularınız için:">Questions? Write to</span> <a href="mailto:apply@ykmun.org">apply@ykmun.org</a>.
         </p>
 
-        <a class="done-home" href="/home">Back to home</a>
+        <a class="done-home" href="/home" data-en="Back to home" data-tr="Ana sayfaya dön">Back to home</a>
 
     </section>
 

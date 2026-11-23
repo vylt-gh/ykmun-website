@@ -51,7 +51,7 @@ body {
 
 .page {
     position: relative;
-    z-index: 1;
+    z-index: 2;
     width: min(100% - 2 * clamp(16px, 5vw, 48px), 76rem);
     margin-inline: auto;
     padding: clamp(88px, 16vmin, 132px) 0 clamp(48px, 10vmin, 96px);
@@ -75,18 +75,152 @@ h1 {
     color: rgba(242, 236, 224, 0.82);
 }
 
-/* ---- department sections ----------------------------------------------- */
+/* ---- department sections (collapsible) --------------------------------- */
+
+.team-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: clamp(14px, 2.5vmin, 22px);
+    margin-bottom: clamp(24px, 4.5vmin, 38px);
+}
+
+.team-toggle-all {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 18px;
+    border: 1px solid rgba(242, 236, 224, 0.2);
+    border-radius: 999px;
+    background: rgba(3, 12, 32, 0.45);
+    color: rgba(242, 236, 224, 0.78);
+    font-family: inherit;
+    font-size: 14px;
+    letter-spacing: 0.04em;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: background 160ms ease, border-color 160ms ease, color 160ms ease;
+}
+
+.team-toggle-all:hover {
+    background: rgba(122, 226, 208, 0.12);
+    border-color: rgba(215, 255, 250, 0.45);
+    color: #eafffb;
+}
+
+.team-toggle-all:focus-visible {
+    outline: 2px solid rgba(215, 255, 250, 0.6);
+    outline-offset: 2px;
+}
+
+.dept {
+    border-radius: 14px;
+    transition: margin 200ms ease;
+}
 
 .dept + .dept {
-    margin-top: clamp(48px, 9vmin, 88px);
+    margin-top: clamp(10px, 1.8vmin, 16px);
+}
+
+.dept-summary {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: clamp(14px, 2.4vmin, 20px) clamp(18px, 3vmin, 28px);
+    background: rgba(3, 12, 32, 0.5);
+    border: 1px solid rgba(242, 236, 224, 0.16);
+    border-radius: 14px;
+    cursor: pointer;
+    user-select: none;
+    list-style: none;
+    transition: background 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.dept-summary::-webkit-details-marker,
+.dept-summary::marker {
+    display: none;
+    content: "";
+}
+
+.dept-summary:hover {
+    background: rgba(122, 226, 208, 0.08);
+    border-color: rgba(215, 255, 250, 0.4);
+    box-shadow: 0 4px 18px rgba(0, 18, 28, 0.35);
+}
+
+.dept-summary:focus-visible {
+    outline: 2px solid rgba(215, 255, 250, 0.6);
+    outline-offset: 2px;
 }
 
 .dept-title {
-    margin: 0 0 0.6em;
-    font-size: clamp(22px, 3.6vmin, 32px);
+    margin: 0;
+    font-size: clamp(20px, 3.2vmin, 28px);
     font-weight: normal;
-    line-height: 1.15;
-    text-align: center;
+    line-height: 1.2;
+    text-align: left;
+    color: var(--cream);
+    transition: color 180ms ease;
+}
+
+.dept-summary:hover .dept-title {
+    color: #eafffb;
+}
+
+.dept-arrow {
+    display: inline-block;
+    width: 9px;
+    height: 9px;
+    border-right: 2px solid rgba(215, 255, 250, 0.7);
+    border-bottom: 2px solid rgba(215, 255, 250, 0.7);
+    transform: rotate(-45deg);
+    flex-shrink: 0;
+    transition: transform 220ms ease, border-color 180ms ease;
+}
+
+.dept-summary:hover .dept-arrow {
+    border-color: #eafffb;
+}
+
+.dept[open] > .dept-summary {
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+    border-bottom-color: rgba(242, 236, 224, 0.08);
+    background: rgba(3, 12, 32, 0.72);
+}
+
+.dept[open] .dept-arrow {
+    transform: rotate(45deg);
+}
+
+.dept-body {
+    padding: clamp(20px, 3.8vmin, 36px) clamp(16px, 3vmin, 28px);
+    background: rgba(0, 8, 22, 0.38);
+    border: 1px solid rgba(242, 236, 224, 0.16);
+    border-top: none;
+    border-bottom-left-radius: 14px;
+    border-bottom-right-radius: 14px;
+    animation: deptReveal 220ms ease;
+}
+
+@keyframes deptReveal {
+    from {
+        opacity: 0;
+        transform: translateY(-6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .dept-body {
+        animation: none;
+    }
+    .dept-arrow {
+        transition: none;
+    }
 }
 
 .dept-text {

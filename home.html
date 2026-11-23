@@ -9,6 +9,7 @@
     <link rel="apple-touch-icon" href="icon.png">
     <link rel="stylesheet" href="fonts.css">
     <link rel="stylesheet" href="home.css">
+    <link rel="stylesheet" href="team.css">
     <link rel="stylesheet" href="nav.css">
     <link rel="stylesheet" href="auth.css">
 </head>
@@ -21,38 +22,307 @@
     <img src="icon.png" alt="YKMUN Logo" width="256" height="256">
 </a>
 
-<main class="stage">
+<main>
 
-    <div class="counter">
-        <img class="counter-plate" src="counter.webp" alt="Countdown to YKMUN"
-             width="1556" height="2783" fetchpriority="high">
+    <section class="stage">
 
-        <!-- Staff entrance, sitting exactly on a painted rivet and invisible
-             until pressed. Deliberately unnamed in the page: no label, no icon,
-             no hover state. See auth.js for what it opens, and note that the
-             hiding is not the security — the password is. -->
-        <button class="secret" id="staff-entry" type="button"
-                tabindex="-1" aria-hidden="true"></button>
+        <div class="counter">
+            <img class="counter-plate" src="counter.webp" alt="Countdown to YKMUN"
+                 width="1556" height="2783" fetchpriority="high">
 
-        <div class="windows" aria-hidden="true">
-            <span class="window" data-slot="0"></span>
-            <span class="window" data-slot="1"></span>
-            <span class="window" data-slot="2"></span>
+            <!-- Staff entrance, sitting exactly on a painted rivet and invisible
+                 until pressed. Deliberately unnamed in the page: no label, no icon,
+                 no hover state. See auth.js for what it opens, and note that the
+                 hiding is not the security — the password is. -->
+            <button class="secret" id="staff-entry" type="button"
+                    tabindex="-1" aria-hidden="true"></button>
+
+            <div class="windows" aria-hidden="true">
+                <span class="window" data-slot="0"></span>
+                <span class="window" data-slot="1"></span>
+                <span class="window" data-slot="2"></span>
+            </div>
+
+            <p class="sr-only" id="countdown-text" role="status" aria-live="polite"></p>
         </div>
 
-        <p class="sr-only" id="countdown-text" role="status" aria-live="polite"></p>
-    </div>
+        <div class="stage-foot">
+            <!-- When and where, then the way in. The countdown plate answers "how
+                 long until it starts"; this answers "when is it, and where". -->
+            <p class="stage-meta">
+                <span>15–17 January 2027</span>
+                <span>Yönelt Koleji, Muğla</span>
+            </p>
 
-    <div class="stage-foot">
-        <!-- When and where, then the way in. The countdown plate answers "how
-             long until it starts"; this answers "when is it, and where". -->
-        <p class="stage-meta">
-            <span>15–17 January 2027</span>
-            <span>Yönelt Koleji, Muğla</span>
-        </p>
+            <a class="cta" href="apply">Apply</a>
+        </div>
 
-        <a class="cta" href="apply">Apply</a>
-    </div>
+    </section>
+
+    <section class="page" id="team">
+
+        <header class="head">
+            <h1>Our Team</h1>
+            <p class="note">The people behind YKMUN.</p>
+        </header>
+
+        <div class="team-actions">
+            <button type="button" class="team-toggle-all" id="team-toggle-all" aria-expanded="false" data-en="Expand all" data-tr="Tümünü aç">Expand all</button>
+        </div>
+
+        <details class="dept" id="admin">
+            <summary class="dept-summary">
+                <h2 class="dept-title" data-en="Admin" data-tr="Admin">Admin</h2>
+                <span class="dept-arrow" aria-hidden="true"></span>
+            </summary>
+            <div class="dept-body">
+                <p class="dept-text">Need anything during the conference? They'll be there to help before you even have to ask! While you enjoy an unforgettable conference experience and make memories to cherish, they work behind the scenes to make sure everything runs smoothly and seamlessly. With their hardworking team and the leaders guiding them, they strive every day to make your experience even better. They are the unsung heroes of our conference and the backbone of our organization.</p>
+                <ul class="team">
+                    <li class="member">
+                        <picture>
+                            <source srcset="team/alaz-ada-ozturk.jxl" type="image/jxl">
+                            <img src="team/alaz-ada-ozturk.jpg" alt="Alaz Ada Öztürk"
+                                 width="720" height="960" loading="lazy">
+                        </picture>
+                        <p class="member-name">Alaz Ada Öztürk</p>
+                        <p class="member-role">Head of Admin</p>
+                    </li>
+                    <li class="member">
+                        <picture>
+                            <source srcset="team/oyku-ela-navruz.jxl" type="image/jxl">
+                            <img src="team/oyku-ela-navruz.jpg" alt="Öykü Ela Navruz"
+                                 width="720" height="960" loading="lazy">
+                        </picture>
+                        <p class="member-name">Öykü Ela Navruz</p>
+                        <p class="member-role">Deputy Head of Admin</p>
+                    </li>
+                </ul>
+            </div>
+        </details>
+        <details class="dept" id="finance">
+            <summary class="dept-summary">
+                <h2 class="dept-title" data-en="Finance" data-tr="Finans">Finance</h2>
+                <span class="dept-arrow" aria-hidden="true"></span>
+            </summary>
+            <div class="dept-body">
+                <p class="dept-text">Meet the people who prove that finance is about much more than numbers: it's about leadership, strategy, and success! With their sharp attention to detail, dedication, and strong sense of responsibility, they work tirelessly to ensure that every plan is built on a solid foundation. Always striving to make every goal achievable and sustainable, their endless effort and support play a vital role in bringing our conference to life.</p>
+                <ul class="team">
+                    <li class="member">
+                        <picture>
+                            <source srcset="team/zeliha-koyneksiz.jxl" type="image/jxl">
+                            <img src="team/zeliha-koyneksiz.jpg" alt="Zeliha Köyneksiz"
+                                 width="720" height="960" loading="lazy">
+                        </picture>
+                        <p class="member-name">Zeliha Köyneksiz</p>
+                        <p class="member-role">Co-Head of Finance</p>
+                    </li>
+                    <li class="member">
+                        <picture>
+                            <source srcset="team/ata-deniz-ozsoy.jxl" type="image/jxl">
+                            <img src="team/ata-deniz-ozsoy.jpg" alt="Ata Deniz Özsoy"
+                                 width="720" height="960" loading="lazy">
+                        </picture>
+                        <p class="member-name">Ata Deniz Özsoy</p>
+                        <p class="member-role">Co-Head of Finance</p>
+                    </li>
+                    <li class="member">
+                        <span class="member-photo" aria-hidden="true">ÇE</span>
+                        <p class="member-name">Çınar Ertun</p>
+                        <p class="member-role">Deputy Head of Finance</p>
+                    </li>
+                </ul>
+            </div>
+        </details>
+        <details class="dept" id="it">
+            <summary class="dept-summary">
+                <h2 class="dept-title" data-en="IT" data-tr="IT">IT</h2>
+                <span class="dept-arrow" aria-hidden="true"></span>
+            </summary>
+            <div class="dept-body">
+                <p class="dept-text">Behind every seamless experience lies a brilliant mind working tirelessly to make it happen! With technical expertise, creativity, and a passion for innovation, our IT Heads ensure that every detail works flawlessly. From solving unexpected challenges to keeping everything running smoothly, they're always one step ahead, making sure nothing stands in the way of an unforgettable conference experience.</p>
+                <ul class="team">
+                    <li class="member">
+                        <picture>
+                            <source srcset="team/efe-tahca.jxl" type="image/jxl">
+                            <img src="team/efe-tahca.jpg" alt="Efe Tahça"
+                                 width="720" height="960" loading="lazy">
+                        </picture>
+                        <p class="member-name">Efe Tahça</p>
+                        <p class="member-role">Co-Head of IT</p>
+                    </li>
+                    <li class="member">
+                        <picture>
+                            <source srcset="team/toprak-dere.jxl" type="image/jxl">
+                            <img src="team/toprak-dere.jpg" alt="Toprak Dere"
+                                 width="720" height="960" loading="lazy">
+                        </picture>
+                        <p class="member-name">Toprak Dere</p>
+                        <p class="member-role">Co-Head of IT</p>
+                    </li>
+                </ul>
+            </div>
+        </details>
+        <details class="dept" id="public-relations">
+            <summary class="dept-summary">
+                <h2 class="dept-title" data-en="Public Relations" data-tr="Halkla İlişkiler">Public Relations</h2>
+                <span class="dept-arrow" aria-hidden="true"></span>
+            </summary>
+            <div class="dept-body">
+                <p class="dept-text">Do you have a question or need help? They're always just one step away! The unsung heroes behind every perfectly organized moment, they take our conference to the next level with their team spirit and experience. With their energy, warmth, and dedication, they're always ready to solve your problems and make sure everything runs smoothly. Working tirelessly to create a flawless conference, they're here for you whenever you need them!</p>
+                <ul class="team">
+                    <li class="member">
+                        <picture>
+                            <source srcset="team/lal-carikoglu.jxl" type="image/jxl">
+                            <img src="team/lal-carikoglu.jpg" alt="Lâl Çarıkoğlu"
+                                 width="720" height="960" loading="lazy">
+                        </picture>
+                        <p class="member-name">Lâl Çarıkoğlu</p>
+                        <p class="member-role">Co-Head of Public Relations</p>
+                    </li>
+                    <li class="member">
+                        <picture>
+                            <source srcset="team/esma-akcin.jxl" type="image/jxl">
+                            <img src="team/esma-akcin.jpg" alt="Esma Akçin"
+                                 width="720" height="960" loading="lazy">
+                        </picture>
+                        <p class="member-name">Esma Akçin</p>
+                        <p class="member-role">Co-Head of Public Relations</p>
+                    </li>
+                    <li class="member">
+                        <picture>
+                            <source srcset="team/gulsah-topal.jxl" type="image/jxl">
+                            <img src="team/gulsah-topal.jpg" alt="Gülşah Topal"
+                                 width="720" height="960" loading="lazy">
+                        </picture>
+                        <p class="member-name">Gülşah Topal</p>
+                        <p class="member-role">Deputy Head of Public Relations</p>
+                    </li>
+                </ul>
+            </div>
+        </details>
+        <details class="dept" id="media">
+            <summary class="dept-summary">
+                <h2 class="dept-title" data-en="Media" data-tr="Medya">Media</h2>
+                <span class="dept-arrow" aria-hidden="true"></span>
+            </summary>
+            <div class="dept-body">
+                <p class="dept-text">Meet the creative face of our conference! With their talent, unique perspective, and inspiring vision, they work tirelessly to capture our most unforgettable moments. Every detail matters to them, and their dedication ensures that the spirit of our conference is reflected in every frame. Thanks to their creativity and passion, we're ready to create memories worth sharing over and over again!</p>
+                <ul class="team">
+                    <li class="member">
+                        <picture>
+                            <source srcset="team/doruk-boyaci.jxl" type="image/jxl">
+                            <img src="team/doruk-boyaci.jpg" alt="Doruk Boyacı"
+                                 width="720" height="960" loading="lazy">
+                        </picture>
+                        <p class="member-name">Doruk Boyacı</p>
+                        <p class="member-role">Co-Head of Media</p>
+                    </li>
+                    <li class="member">
+                        <picture>
+                            <source srcset="team/masal-cenikli.jxl" type="image/jxl">
+                            <img src="team/masal-cenikli.jpg" alt="Masal Cenikli"
+                                 width="720" height="960" loading="lazy">
+                        </picture>
+                        <p class="member-name">Masal Cenikli</p>
+                        <p class="member-role">Co-Head of Media</p>
+                    </li>
+                </ul>
+            </div>
+        </details>
+        <details class="dept" id="press">
+            <summary class="dept-summary">
+                <h2 class="dept-title" data-en="Press" data-tr="Basın">Press</h2>
+                <span class="dept-arrow" aria-hidden="true"></span>
+            </summary>
+            <div class="dept-body">
+                <p class="dept-text">Behind every unforgettable moment, there is a team bringing it all to life. Leading our press team with dedication and passion, our Co-Heads of Press are ready to capture every moment. With their creativity and commitment, they will make sure that every highlight of our conference finds its way to the spotlight. Get ready to see our conference through their eyes! They work tirelessly to capture your most precious moments and bring them to you.</p>
+                <ul class="team">
+                    <li class="member">
+                        <picture>
+                            <source srcset="team/alp-akbulut.jxl" type="image/jxl">
+                            <img src="team/alp-akbulut.jpg" alt="Alp Akbulut"
+                                 width="720" height="960" loading="lazy">
+                        </picture>
+                        <p class="member-name">Alp Akbulut</p>
+                        <p class="member-role">Co-Head of Press</p>
+                    </li>
+                    <li class="member">
+                        <picture>
+                            <source srcset="team/goktug-efe-kolenoglu.jxl" type="image/jxl">
+                            <img src="team/goktug-efe-kolenoglu.jpg" alt="Göktuğ Efe Kolenoğlu"
+                                 width="720" height="960" loading="lazy">
+                        </picture>
+                        <p class="member-name">Göktuğ Efe Kolenoğlu</p>
+                        <p class="member-role">Co-Head of Press</p>
+                    </li>
+                </ul>
+            </div>
+        </details>
+        <details class="dept" id="security">
+            <summary class="dept-summary">
+                <h2 class="dept-title" data-en="Security" data-tr="Güvenlik">Security</h2>
+                <span class="dept-arrow" aria-hidden="true"></span>
+            </summary>
+            <div class="dept-body">
+                <p class="dept-text">Responsible for maintaining order and ensuring a safe environment throughout the conference, our Co-Heads of Security play an important role in keeping everything running smoothly. With their dedication and attention to detail, they are ready to ensure a secure and well-organized experience for all participants. With security as their priority, they are ready to keep the conference running at its best. We're fortunate to have a team that combines quick responses with the strength and dedication to ensure everyone's safety. Thanks to them, our conference becomes even more extraordinary.</p>
+                <ul class="team">
+                    <li class="member">
+                        <picture>
+                            <source srcset="team/egemen-kursat-savas.jxl" type="image/jxl">
+                            <img src="team/egemen-kursat-savas.jpg" alt="Egemen Kürşat Savaş"
+                                 width="720" height="960" loading="lazy">
+                        </picture>
+                        <p class="member-name">Egemen Kürşat Savaş</p>
+                        <p class="member-role">Co-Head of Security</p>
+                    </li>
+                    <li class="member">
+                        <span class="member-photo" aria-hidden="true">EE</span>
+                        <p class="member-name">Eymen Elemana</p>
+                        <p class="member-role">Co-Head of Security</p>
+                    </li>
+                    <li class="member">
+                        <picture>
+                            <source srcset="team/efe-ercan.jxl" type="image/jxl">
+                            <img src="team/efe-ercan.jpg" alt="Efe Ercan"
+                                 width="720" height="960" loading="lazy">
+                        </picture>
+                        <p class="member-name">Efe Ercan</p>
+                        <p class="member-role">Deputy Head of Security</p>
+                    </li>
+                </ul>
+            </div>
+        </details>
+        <details class="dept" id="entertainment">
+            <summary class="dept-summary">
+                <h2 class="dept-title" data-en="Entertainment" data-tr="Eğlence">Entertainment</h2>
+                <span class="dept-arrow" aria-hidden="true"></span>
+            </summary>
+            <div class="dept-body">
+                <p class="dept-text">Every great conference needs energy, and a little bit of fun — and our Entertainment team is here to bring it all with their creativity. Our Heads of Entertainment are ready to turn every moment into an exciting experience and keep the spirit of our conference alive. They are going to make sure there is never a dull moment. Get ready for the fun, because our Entertainment team is just getting started! While you take your success to the next level, they will do everything in their power to make your experience fun and unforgettable!</p>
+                <ul class="team">
+                    <li class="member">
+                        <picture>
+                            <source srcset="team/eylul-deniz-ekiz.jxl" type="image/jxl">
+                            <img src="team/eylul-deniz-ekiz.jpg" alt="Eylül Deniz Ekiz"
+                                 width="720" height="960" loading="lazy">
+                        </picture>
+                        <p class="member-name">Eylül Deniz Ekiz</p>
+                        <p class="member-role">Head of Entertainment</p>
+                    </li>
+                    <li class="member">
+                        <picture>
+                            <source srcset="team/neslisah-boyaci.jxl" type="image/jxl">
+                            <img src="team/neslisah-boyaci.jpg" alt="Neslişah Boyacı"
+                                 width="720" height="960" loading="lazy">
+                        </picture>
+                        <p class="member-name">Neslişah Boyacı</p>
+                        <p class="member-role">Head of Entertainment</p>
+                    </li>
+                </ul>
+            </div>
+        </details>
+
+    </section>
 
 </main>
 

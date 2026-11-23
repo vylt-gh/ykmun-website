@@ -14,41 +14,63 @@
     const ROLES = {
         delegate: {
             key: 'delegate',
-            title: 'Delegate application',
-            note: 'Choose up to three committees. The order is your priority.',
-            button: 'Apply',
+            title: { en: 'Delegate application', tr: 'Delege başvurusu' },
+            note: {
+                en: 'Choose up to three committees. The order is your priority.',
+                tr: 'En fazla üç komite seçin. Sıralama önceliğinizdir.'
+            },
+            button: { en: 'Apply', tr: 'Başvur' },
             type: 'delegate',
             committees: true,
             camera: false
         },
         admin: {
             key: 'admin',
-            title: 'Admin team application',
-            note: 'The admin team runs the conference behind the scenes.',
-            button: 'Apply',
+            title: { en: 'Admin team application', tr: 'Admin ekibi başvurusu' },
+            note: {
+                en: 'The admin team runs the conference behind the scenes.',
+                tr: 'Admin ekibi konferansın perde arkasını yönetir.'
+            },
+            button: { en: 'Apply', tr: 'Başvur' },
             type: 'admin',
             committees: false,
             camera: false
         },
         press: {
             key: 'press',
-            title: 'Press team application',
-            note: 'The press team covers the conference.',
-            button: 'Apply',
+            title: { en: 'Press team application', tr: 'Basın ekibi başvurusu' },
+            note: {
+                en: 'The press team covers the conference.',
+                tr: 'Basın ekibi konferansı belgeler ve kayıt altına alır.'
+            },
+            button: { en: 'Apply', tr: 'Başvur' },
             type: 'press',
             committees: false,
             camera: true
         },
         group: {
             key: 'group',
-            title: 'Delegation registration',
-            note: 'For a school or organisation bringing a group. Each delegate still applies individually.',
-            button: 'Submit',
+            title: { en: 'Delegation registration', tr: 'Delegasyon kaydı' },
+            note: {
+                en: 'For a school or organisation bringing a group. Each delegate still applies individually.',
+                tr: 'Grup getiren okul veya organizasyon için. Her delege ayrıca bireysel başvurur.'
+            },
+            button: { en: 'Submit', tr: 'Gönder' },
             type: null,
             committees: false,
             camera: false
         }
     };
+
+    function isTr() {
+        return (document.documentElement.lang || '').startsWith('tr');
+    }
+
+    function t(val) {
+        if (!val) return '';
+        if (typeof val === 'string') return val;
+        return isTr() ? (val.tr || val.en || '') : (val.en || val.tr || '');
+    }
 
     const chooseEl = document.getElementById('choose');
     const panelEl = document.getElementById('panel');
@@ -206,7 +228,9 @@
         panelEl.hidden = true;
         chooseEl.hidden = false;
         headHint.hidden = false;
-        headHint.textContent = 'Four ways to apply. Pick the one that describes you.';
+        headHint.textContent = isTr()
+            ? 'Dört başvuru yolu. Size uygun olanı seçin.'
+            : 'Four ways to apply. Pick the one that describes you.';
 
         // Drop the role from the address so a reload lands on the first
         // screen rather than straight back into the form.
@@ -229,8 +253,8 @@
         chooseEl.hidden = true;
         panelEl.hidden = false;
 
-        formTitle.textContent = config.title;
-        formNote.textContent = config.note;
+        formTitle.textContent = t(config.title);
+        formNote.textContent = t(config.note);
         headHint.hidden = true;
 
         const isGroup = next === 'group';
@@ -242,13 +266,19 @@
         prefsEl.hidden = !config.committees;
         if (cameraEl) cameraEl.hidden = !config.camera;
         if (motivationHint) {
-            motivationHint.textContent = config.committees
-                ? 'This helps us with committee allocation.'
-                : 'This helps us review your application.';
+            if (isTr()) {
+                motivationHint.textContent = config.committees
+                    ? 'Bu bilgi komite yerleşiminde bize yardımcı olur.'
+                    : 'Bu bilgi başvurunuzu değerlendirirken bize yardımcı olur.';
+            } else {
+                motivationHint.textContent = config.committees
+                    ? 'This helps us with committee allocation.'
+                    : 'This helps us review your application.';
+            }
         }
 
-        personButton.textContent = config.button;
-        groupButton.textContent = config.button;
+        personButton.textContent = t(config.button);
+        groupButton.textContent = t(config.button);
 
         clearErrors(personForm);
         clearErrors(groupForm);
@@ -340,19 +370,21 @@
             let message = '';
 
             if (el.required && !value) {
-                message = 'This field is required.';
+                message = isTr() ? 'Bu alan zorunlu.' : 'This field is required.';
             } else if (el.type === 'email' && value &&
                        !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(value)) {
-                message = 'Enter a valid email address.';
+                message = isTr() ? 'Geçerli bir e-posta adresi girin.' : 'Enter a valid email address.';
             } else if (el.type === 'number' && value) {
                 // Catches 0, 1.5 and "12e3" as well as pasting text into a
                 // number field, which some browsers allow.
                 const count = Number(value);
                 if (!Number.isInteger(count) || count < 1 || count > MAX_HEADCOUNT) {
-                    message = 'Enter a whole number between 1 and ' + MAX_HEADCOUNT + '.';
+                    message = isTr()
+                        ? '1 ile ' + MAX_HEADCOUNT + ' arasında bir tam sayı girin.'
+                        : 'Enter a whole number between 1 and ' + MAX_HEADCOUNT + '.';
                 }
             } else if (el.minLength > 0 && value && value.length < el.minLength) {
-                message = 'Please write a little more.';
+                message = isTr() ? 'Lütfen biraz daha uzun yazın.' : 'Please write a little more.';
             }
 
             if (message) flag(id, message);
@@ -369,7 +401,9 @@
         // Only once a number has been typed; an empty field has no checksum.
         const tcEl = document.getElementById('f-tc');
         if (tcEl && tcEl.value.trim() && !isValidTC(tcEl.value.trim())) {
-            flag('f-tc', 'Invalid T.C. Identity Number. It must be 11 digits and pass the checksum.');
+            flag('f-tc', isTr()
+                ? 'Geçersiz T.C. Kimlik Numarası. 11 haneli ve doğrulanabilir olmalı.'
+                : 'Invalid T.C. Identity Number. It must be 11 digits and pass the checksum.');
         }
 
         // A repeated pick means one committee three times, not three preferences.
@@ -389,7 +423,9 @@
         if (repeated) {
             const err = document.getElementById('err-committees');
             if (err) {
-                err.textContent = 'You cannot select the same committee more than once.';
+                err.textContent = isTr()
+                    ? 'Aynı komiteyi birden fazla kez seçemezsiniz.'
+                    : 'You cannot select the same committee more than once.';
             }
             const el = document.getElementById(repeated);
             if (el) {
@@ -402,7 +438,9 @@
         // would block silently.
         const consentEl = document.getElementById(CONSENT_INPUT);
         if (consentEl && !consentEl.checked) {
-            flag(CONSENT_INPUT, 'You must give explicit consent to apply.');
+            flag(CONSENT_INPUT, isTr()
+                ? 'Başvuru için açık rıza vermeniz gerekiyor.'
+                : 'You must give explicit consent to apply.');
         }
     }
 
@@ -429,7 +467,7 @@
     // say what went wrong.
     async function send(form, table, payload, button, status, doneTitleText) {
         button.disabled = true;
-        setStatus(status, 'Submitting…');
+        setStatus(status, isTr() ? 'Gönderiliyor…' : 'Submitting…');
 
         try {
             const { error } = await client
@@ -441,11 +479,17 @@
                 // already applied. Say so plainly instead of showing a code.
                 // 42501 is the RLS rejection.
                 if (error.code === '23505') {
-                    fail('An application has already been made with this email address.', status);
+                    fail(isTr()
+                        ? 'Bu e-posta adresiyle daha önce başvuru yapılmış.'
+                        : 'An application has already been made with this email address.', status);
                 } else if (error.code === '42501') {
-                    fail('This could not be submitted. Please try again later.', status);
+                    fail(isTr()
+                        ? 'Başvuru gönderilemedi. Lütfen daha sonra tekrar deneyin.'
+                        : 'This could not be submitted. Please try again later.', status);
                 } else {
-                    fail('Something went wrong. Please try again.', status);
+                    fail(isTr()
+                        ? 'Bir hata oluştu. Lütfen tekrar deneyin.'
+                        : 'Something went wrong. Please try again.', status);
                 }
                 console.error('insert failed', error);
                 button.disabled = false;
@@ -457,7 +501,9 @@
 
         } catch (err) {
             console.error('submit threw', err);
-            fail('Connection error. Please try again.', status);
+            fail(isTr()
+                ? 'Bağlantı hatası. Lütfen tekrar deneyin.'
+                : 'Connection error. Please try again.', status);
             button.disabled = false;
         }
     }
@@ -492,7 +538,7 @@
         payload.consent_at = new Date().toISOString();
         payload.consent_version = CONSENT_VERSION;
         await send(personForm, 'applications', payload, personButton, personStatus,
-            'Application submitted');
+            isTr() ? 'Başvuru alındı' : 'Application submitted');
     });
 
     // ---- the group form ---------------------------------------------------
@@ -504,7 +550,32 @@
         const payload = collect(groupForm, GROUP_FIELDS);
 
         await send(groupForm, 'delegations', payload, groupButton, groupStatus,
-            'Delegation submitted');
+            isTr() ? 'Delegasyon kaydedildi' : 'Delegation submitted');
+    });
+
+    // Language toggle updates on apply page
+    window.addEventListener('ykmun:lang', () => {
+        if (role) {
+            formTitle.textContent = t(role.title);
+            formNote.textContent = t(role.note);
+            personButton.textContent = t(role.button);
+            groupButton.textContent = t(role.button);
+            if (motivationHint) {
+                if (isTr()) {
+                    motivationHint.textContent = role.committees
+                        ? 'Bu bilgi komite yerleşiminde bize yardımcı olur.'
+                        : 'Bu bilgi başvurunuzu değerlendirirken bize yardımcı olur.';
+                } else {
+                    motivationHint.textContent = role.committees
+                        ? 'This helps us with committee allocation.'
+                        : 'This helps us review your application.';
+                }
+            }
+        } else if (headHint) {
+            headHint.textContent = isTr()
+                ? 'Dört başvuru yolu. Size uygun olanı seçin.'
+                : 'Four ways to apply. Pick the one that describes you.';
+        }
     });
 
     // ---- first paint ------------------------------------------------------

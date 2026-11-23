@@ -1,11 +1,28 @@
 /* Shared site menu.
  *
- * A hamburger in the top-right corner opening a full-screen drawer. The button
- * and drawer are injected by nav.js so the markup is not repeated in four
- * pages, and so adding a page later is one line rather than four edits.
+ * A hamburger in the top-right corner opening a full-screen drawer, accompanied
+ * by a Turkish/English language toggle. The controls and drawer are injected
+ * by nav.js so the markup is not repeated in four pages, and so adding a page
+ * later is one line rather than four edits.
  *
  * Loaded after each page's own stylesheet; the palette is restated here so the
  * menu does not depend on which page loaded it. */
+
+.nav-actions {
+    position: fixed;
+    top: clamp(12px, 2.4vmin, 28px);
+    right: clamp(12px, 2.4vmin, 28px);
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    gap: clamp(8px, 1.8vmin, 14px);
+}
+
+.nav-actions .nav-toggle {
+    position: relative;
+    top: auto;
+    right: auto;
+}
 
 .nav-toggle {
     position: fixed;
@@ -41,6 +58,71 @@
 .nav-toggle:focus-visible {
     outline: 2px solid rgba(215, 255, 250, 0.6);
     outline-offset: 2px;
+}
+
+/* Language toggle button in the top right */
+.lang-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    height: 36px;
+    padding: 0 12px;
+    border: 1px solid rgba(242, 236, 224, 0.22);
+    border-radius: 18px;
+    background: rgba(0, 12, 36, 0.55);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    color: rgba(242, 236, 224, 0.55);
+    font-family: 'Liberation Serif', 'Times New Roman', Times, serif;
+    font-size: 14px;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    transition: border-color 160ms ease, background 160ms ease, color 160ms ease;
+}
+
+.lang-toggle:hover {
+    border-color: rgba(215, 255, 250, 0.55);
+    background: rgba(122, 226, 208, 0.14);
+    color: #eafffb;
+    box-shadow: 0 4px 16px rgba(0, 18, 28, 0.42),
+        inset 1px 1px 2px rgba(240, 255, 253, 0.55),
+        inset -1px -1px 2px rgba(110, 200, 190, 0.22);
+}
+
+.lang-toggle:hover .lang-opt.is-active {
+    color: #eafffb;
+    text-shadow: 0 0 10px rgba(122, 226, 208, 0.55);
+}
+
+.lang-toggle:hover .lang-opt:not(.is-active) {
+    color: rgba(215, 255, 250, 0.65);
+}
+
+.lang-toggle:hover .lang-sep {
+    color: rgba(215, 255, 250, 0.4);
+}
+
+.lang-toggle:focus-visible {
+    outline: 2px solid rgba(215, 255, 250, 0.6);
+    outline-offset: 2px;
+}
+
+.lang-opt {
+    display: inline-block;
+    transition: color 140ms ease, font-weight 140ms ease;
+}
+
+.lang-opt.is-active {
+    color: #f2ece0;
+    font-weight: 700;
+}
+
+.lang-sep {
+    color: rgba(242, 236, 224, 0.28);
+    font-size: 12px;
 }
 
 .nav-drawer {
@@ -81,8 +163,55 @@
     text-decoration-color: rgba(215, 255, 250, 0.55);
 }
 
-/* Keep the button above the drawer so it can close it, and turn the bars into
+/* Language selection row inside drawer */
+.nav-drawer-lang {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-top: clamp(14px, 3vmin, 28px);
+}
+
+.drawer-lang-btn {
+    background: transparent;
+    border: 0;
+    color: rgba(242, 236, 224, 0.55);
+    font-family: 'Liberation Serif', 'Times New Roman', Times, serif;
+    font-size: clamp(18px, 4vmin, 24px);
+    cursor: pointer;
+    padding: 6px 12px;
+    letter-spacing: 0.04em;
+    border-radius: 6px;
+    transition: color 150ms ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.drawer-lang-btn:hover {
+    color: #eafffb;
+    text-shadow: 0 0 10px rgba(122, 226, 208, 0.55);
+}
+
+.drawer-lang-btn.is-active {
+    color: #f2ece0;
+    font-weight: 700;
+    text-decoration: underline;
+    text-underline-offset: 5px;
+    text-decoration-color: rgba(215, 255, 250, 0.55);
+}
+
+.drawer-lang-btn:focus-visible {
+    outline: 2px solid rgba(215, 255, 250, 0.6);
+    outline-offset: 2px;
+}
+
+.drawer-lang-sep {
+    color: rgba(242, 236, 224, 0.3);
+    font-size: clamp(18px, 4vmin, 24px);
+}
+
+/* Keep the controls above the drawer so they can close it, and turn the bars into
    a cross. The bar spacing is 5px gap + 2px height, so the offset is 7px. */
+body.nav-open .nav-actions,
 body.nav-open .nav-toggle {
     z-index: 46;
 }

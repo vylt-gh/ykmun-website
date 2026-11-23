@@ -10,6 +10,7 @@
     const live = document.getElementById('countdown-text');
 
     let lastText = '';
+    let lastLang = '';
 
     function midnight(date) {
         return new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
@@ -23,21 +24,24 @@
 
     function render(now) {
         const days = daysLeft(now);
+        const isTr = (document.documentElement.lang || '').startsWith('tr');
 
         if (days <= 0) {
             slots.forEach((slot) => {
                 slot.textContent = '0';
             });
-            if (lastText !== 'done') {
+            if (lastText !== 'done' || lastLang !== isTr) {
                 lastText = 'done';
-                live.textContent = 'YKMUN has begun.';
+                lastLang = isTr;
+                live.textContent = isTr ? 'YKMUN başladı.' : 'YKMUN has begun.';
             }
             return;
         }
 
         const text = String(days);
-        if (text === lastText) return;
+        if (text === lastText && lastLang === isTr) return;
         lastText = text;
+        lastLang = isTr;
 
         // The plate has three painted cards, so the day count is zero-padded to
         // three digits. A count above 999 would overflow the windows and needs
@@ -47,7 +51,9 @@
             slot.textContent = padded[i];
         });
 
-        live.textContent = days + (days === 1 ? ' day left.' : ' days left.');
+        live.textContent = isTr
+            ? (days + ' gün kaldı.')
+            : (days + (days === 1 ? ' day left.' : ' days left.'));
     }
 
     function tick() {
@@ -56,6 +62,12 @@
         // this keeps the page correct after a sleep or a clock change.
         setTimeout(tick, 60000 - (Date.now() % 60000));
     }
+
+    window.addEventListener('ykmun:lang', () => {
+        lastText = '';
+        lastLang = '';
+        render(new Date());
+    });
 
     tick();
 })();

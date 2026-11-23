@@ -64,11 +64,14 @@
 }
 
 html {
-    /* Single-viewport splash with nothing to scroll: suppress pull-to-refresh
-       and double-tap zoom, which would otherwise hijack a finger drag. */
-    overscroll-behavior: none;
-    touch-action: manipulation;
+    scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
 }
 
 body {
@@ -77,7 +80,6 @@ body {
     background: linear-gradient(45deg, var(--navy-1), var(--navy-2));
     color: var(--cream);
     font-family: 'Liberation Serif', 'Times New Roman', Times, serif;
-    overflow: hidden;
 }
 
 /* Static starfield plate behind the interactive canvas, at the brief's 20%. */
@@ -133,9 +135,12 @@ body {
 }
 
 .stage {
-    position: fixed;
-    inset: 0;
+    position: relative;
+    width: 100%;
+    min-height: 100vh;
+    min-height: 100dvh;
     z-index: 2;
+    overflow: hidden;
 
     /* Plate width, shared so .cta can position itself relative to the plate
        instead of the viewport floor. Declared here rather than on .counter
@@ -367,6 +372,15 @@ body {
 @media (orientation: portrait) {
     .stage {
         --plate-max-w: 100vw;
+        min-height: max(
+            100dvh,
+            calc(
+                var(--focus-y) * 100dvh
+                + (var(--body) / var(--plate-aspect)) * var(--plate-w)
+                + var(--cta-gap)
+                + 150px
+            )
+        );
     }
 
     /* Seat the CTA just under the plate instead of on the viewport floor.
@@ -398,4 +412,8 @@ body {
     .stage {
         --plate-max-w: var(--plate-max-w-narrow);
     }
+}
+
+#team.page {
+    padding-top: clamp(48px, 10vmin, 88px);
 }
