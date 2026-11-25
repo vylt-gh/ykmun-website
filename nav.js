@@ -193,11 +193,11 @@
         }
 
         // 2. Team section
-        const teamH1 = document.querySelector('#team .head h1, .page .head h1');
+        const teamH1 = document.querySelector('#team .head h1');
         if (teamH1) {
             teamH1.textContent = isTr ? 'Ekibimiz' : 'Our Team';
         }
-        const teamNote = document.querySelector('#team .head .note, .page .head .note');
+        const teamNote = document.querySelector('#team .head .note');
         if (teamNote) {
             teamNote.textContent = isTr ? "YKMUN'un arkasındaki ekip." : 'The people behind YKMUN.';
         }
