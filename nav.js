@@ -276,9 +276,17 @@
         const toggleAllBtns = Array.from(document.querySelectorAll('.team-toggle-all'));
         if (!depts.length) return null;
 
+        const prefersReduced = typeof window !== 'undefined' &&
+            window.matchMedia &&
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        function isExpanded(dept) {
+            return dept.open && !dept.classList.contains('is-closing');
+        }
+
         function updateToggleAll(lang = currentLang) {
             const isTr = lang === 'tr';
-            const allOpen = depts.every((dept) => dept.open);
+            const allOpen = depts.every(isExpanded);
             toggleAllBtns.forEach((btn) => {
                 btn.setAttribute('aria-expanded', allOpen ? 'true' : 'false');
                 btn.dataset.en = allOpen ? 'Collapse all' : 'Expand all';
@@ -287,20 +295,92 @@
             });
         }
 
-        toggleAllBtns.forEach((btn) => {
-            btn.addEventListener('click', () => {
-                const allOpen = depts.every((dept) => dept.open);
-                const nextState = !allOpen;
-                depts.forEach((dept) => {
-                    dept.open = nextState;
+        function setDeptOpen(dept, shouldOpen) {
+            const summary = dept.querySelector('.dept-summary');
+            if (!summary || prefersReduced || typeof dept.animate !== 'function') {
+                dept.classList.remove('is-closing');
+                dept.open = shouldOpen;
+                updateToggleAll();
+                return;
+            }
+
+            if (dept._anim) {
+                dept._anim.cancel();
+                dept._anim = null;
+            }
+
+            const startHeight = dept.offsetHeight;
+
+            if (shouldOpen) {
+                dept.classList.remove('is-closing');
+                dept.style.overflow = 'hidden';
+                dept.open = true;
+                const endHeight = dept.offsetHeight;
+                updateToggleAll();
+
+                dept._anim = dept.animate(
+                    { height: [startHeight + 'px', endHeight + 'px'] },
+                    { duration: 280, easing: 'cubic-bezier(0.25, 0.8, 0.25, 1)' }
+                );
+                dept._anim.onfinish = () => {
+                    dept._anim = null;
+                    dept.style.height = '';
+                    dept.style.overflow = '';
+                };
+                dept._anim.oncancel = () => {
+                    dept._anim = null;
+                    dept.style.height = '';
+                    dept.style.overflow = '';
+                };
+            } else {
+                if (!dept.open) return;
+                dept.classList.add('is-closing');
+                dept.style.overflow = 'hidden';
+                const endHeight = summary.offsetHeight;
+                updateToggleAll();
+
+                dept._anim = dept.animate(
+                    { height: [startHeight + 'px', endHeight + 'px'] },
+                    { duration: 240, easing: 'cubic-bezier(0.25, 0.8, 0.25, 1)' }
+                );
+                dept._anim.onfinish = () => {
+                    dept._anim = null;
+                    dept.open = false;
+                    dept.classList.remove('is-closing');
+                    dept.style.height = '';
+                    dept.style.overflow = '';
+                    updateToggleAll();
+                };
+                dept._anim.oncancel = () => {
+                    dept._anim = null;
+                    dept.classList.remove('is-closing');
+                    dept.style.height = '';
+                    dept.style.overflow = '';
+                };
+            }
+        }
+
+        depts.forEach((dept) => {
+            const summary = dept.querySelector('.dept-summary');
+            if (summary) {
+                summary.addEventListener('click', (event) => {
+                    event.preventDefault();
+                    setDeptOpen(dept, !isExpanded(dept));
                 });
+            }
+            dept.addEventListener('toggle', () => {
                 updateToggleAll();
             });
         });
 
-        depts.forEach((dept) => {
-            dept.addEventListener('toggle', () => {
-                updateToggleAll();
+        toggleAllBtns.forEach((btn) => {
+            btn.addEventListener('click', () => {
+                const nextState = !depts.every(isExpanded);
+                depts.forEach((dept) => {
+                    if (isExpanded(dept) !== nextState) {
+                        setDeptOpen(dept, nextState);
+                    }
+                });
             });
         });
 
@@ -310,6 +390,8 @@
                 const target = document.querySelector(window.location.hash);
                 if (target && target.matches('details.dept')) {
                     target.open = true;
+                    target.classList.remove('is-closing');
+                    updateToggleAll();
                     target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
                 }
             } catch (_) {}
