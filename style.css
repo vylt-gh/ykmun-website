@@ -3,6 +3,8 @@
 }
 
 html {
+    background-color: #011744;
+    color-scheme: dark;
     /* The page is a fixed splash with nothing to scroll, so suppress the
        browser gestures that would otherwise hijack a finger drag:
        overscroll = pull-to-refresh reload, touch-action = double-tap zoom. */
@@ -13,7 +15,8 @@ html {
 
 body {
     margin: 0;
-    background: linear-gradient(45deg, #012265, #000c24);
+    background-color: #000c24;
+    background-image: linear-gradient(45deg, #012265, #000c24);
     min-height: 100vh;
     color: white;
     font-family: 'Liberation Serif', 'Times New Roman', Times, serif;
