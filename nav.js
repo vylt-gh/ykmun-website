@@ -183,7 +183,7 @@
         if (homeCta) {
             homeCta.textContent = isTr ? 'Başvur' : 'Apply';
         }
-        const stageDate = document.querySelector('.stage-meta span:first-child');
+        const stageDate = document.querySelector('.meta-card .meta-card-text, .stage-meta span:first-child');
         if (stageDate) {
             stageDate.textContent = isTr ? '15–17 Ocak 2027' : '15–17 January 2027';
         }

@@ -38,23 +38,15 @@
        binds wherever it needs to, so this cannot overflow into the CTA. */
     --plate-max-w-narrow: 58vw;
 
-    /* Space kept clear at the bottom for the CTA. */
-    --cta-bottom: clamp(18px, 5vmin, 54px);
+    /* Space kept clear at the bottom for the CTA and cards. */
+    --cta-bottom: clamp(10px, 2vmin, 26px);
+    --meta-cards-h: clamp(74px, 12vmin, 98px);
     --cta-clear: calc(
-        clamp(64px, 15vmin, 130px) + var(--meta-block) + var(--plate-gap)
+        clamp(52px, 8vmin, 80px) + var(--meta-cards-h) + clamp(30px, 5vmin, 54px)
     );
     /* Gap between the plate's bottom edge and the CTA, in portrait where the
        CTA is seated under the plate rather than on the viewport floor. */
-    --cta-gap: clamp(24px, 7vmin, 64px);
-
-    /* Height the date-and-venue line takes above the CTA. It sits in the
-       same reserved band as the CTA, so the plate's height budget grows by
-       this much and shrinks accordingly. */
-    --meta-block: clamp(26px, 4.6vmin, 46px);
-    /* Air between the bottom of the sign and the date line. In landscape the
-       foot is pinned to the viewport floor and the plate stops just above it,
-       so without this the line lands flush against the metal. */
-    --plate-gap: clamp(10px, 1.8vmin, 20px);
+    --cta-gap: clamp(20px, 5vmin, 44px);
 
     --plate-gutter: 4vw;
 }
@@ -140,7 +132,7 @@ body {
     min-height: 100vh;
     min-height: 100dvh;
     z-index: 2;
-    overflow: hidden;
+    overflow-x: clip;
 
     /* Plate width, shared so .cta can position itself relative to the plate
        instead of the viewport floor. Declared here rather than on .counter
@@ -266,20 +258,135 @@ body {
     transform: translateX(-50%);
     display: grid;
     justify-items: center;
-    gap: clamp(10px, 1.8vmin, 18px);
+    gap: clamp(12px, 2vmin, 20px);
+    width: min(100% - 2 * clamp(14px, 3.5vw, 32px), 52rem);
     text-align: center;
+    z-index: 5;
 }
 
-.stage-meta {
-    margin: 0;
+/* Info cards: conference dates & venue */
+.meta-cards {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 0.25em 0.9em;
-    font-size: clamp(13px, 2.1vmin, 21px);
-    line-height: 1.35;
-    letter-spacing: 0.07em;
-    color: rgba(242, 236, 224, 0.72);
+    gap: clamp(10px, 1.8vmin, 16px);
+    width: min(100%, 46rem);
+}
+
+.meta-card {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: clamp(10px, 1.5vmin, 14px);
+    padding: clamp(9px, 1.4vmin, 12px) clamp(16px, 2.2vmin, 20px);
+    border-radius: 14px;
+    background: rgba(2, 12, 34, 0.58);
+    border: 1px solid rgba(215, 255, 250, 0.2);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: var(--cream);
+    text-decoration: none;
+    text-align: left;
+    box-shadow: 0 4px 18px rgba(0, 10, 24, 0.28),
+        inset 1px 1px 1px rgba(240, 255, 253, 0.1);
+    transition: background 180ms ease, border-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+    flex: 0 1 auto;
+}
+
+.meta-card--link {
+    cursor: pointer;
+}
+
+.meta-card--link:hover {
+    background: rgba(122, 226, 208, 0.1);
+    border-color: rgba(215, 255, 250, 0.45);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(0, 18, 32, 0.42),
+        inset 1px 1px 2px rgba(240, 255, 253, 0.2);
+}
+
+.meta-card--link:focus-visible {
+    outline: 2px solid rgba(215, 255, 250, 0.6);
+    outline-offset: 2px;
+}
+
+.meta-card-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(215, 255, 250, 0.78);
+    flex-shrink: 0;
+    transition: color 180ms ease;
+}
+
+.meta-card--link:hover .meta-card-icon {
+    color: #eafffb;
+}
+
+.meta-card-text {
+    font-family: 'Liberation Serif', 'Times New Roman', Times, serif;
+    font-size: clamp(15px, 2.1vmin, 19px);
+    font-weight: normal;
+    line-height: 1.25;
+    color: #f2ece0;
+    letter-spacing: 0.03em;
+    transition: color 180ms ease;
+}
+
+.meta-card--link:hover .meta-card-text {
+    color: #eafffb;
+}
+
+.meta-card-link-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: rgba(215, 255, 250, 0.45);
+    flex-shrink: 0;
+    transition: color 160ms ease, transform 160ms ease;
+}
+
+.meta-card--link:hover .meta-card-link-icon {
+    color: #eafffb;
+    transform: translate(2px, -2px);
+}
+
+/* Subtle scroll-down chevron */
+.scroll-cue {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 4px 10px;
+    color: rgba(215, 255, 250, 0.72);
+    text-decoration: none;
+    filter: drop-shadow(0 2px 6px rgba(0, 18, 28, 0.5));
+    transition: color 180ms ease, transform 180ms ease;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.scroll-cue:hover,
+.scroll-cue:focus-visible {
+    color: #eafffb;
+    transform: translateY(3px);
+}
+
+.scroll-cue:focus-visible {
+    outline: 2px solid rgba(215, 255, 250, 0.6);
+    outline-offset: 2px;
+    border-radius: 8px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .scroll-cue {
+        transition: none;
+    }
+
+    .scroll-cue:hover,
+    .scroll-cue:focus-visible {
+        transform: none;
+    }
 }
 
 /* Apply CTA: sea-glass pill.
@@ -378,7 +485,7 @@ body {
                 var(--focus-y) * 100dvh
                 + (var(--body) / var(--plate-aspect)) * var(--plate-w)
                 + var(--cta-gap)
-                + 150px
+                + clamp(260px, 38vmin, 330px)
             )
         );
     }
