@@ -84,25 +84,25 @@
 }
 
 .lang-toggle:hover {
-    border-color: rgba(215, 255, 250, 0.55);
-    background: rgba(122, 226, 208, 0.14);
+    border-color: rgba(215, 255, 250, 0.4);
+    background: rgba(122, 226, 208, 0.08);
     color: #eafffb;
-    box-shadow: 0 4px 16px rgba(0, 18, 28, 0.42),
-        inset 1px 1px 2px rgba(240, 255, 253, 0.55),
-        inset -1px -1px 2px rgba(110, 200, 190, 0.22);
+    box-shadow: 0 4px 14px rgba(0, 18, 28, 0.32),
+        inset 0.5px 0.5px 1px rgba(240, 255, 253, 0.35),
+        inset -0.5px -0.5px 1px rgba(110, 200, 190, 0.16);
 }
 
 .lang-toggle:hover .lang-opt.is-active {
     color: #eafffb;
-    text-shadow: 0 0 10px rgba(122, 226, 208, 0.55);
+    text-shadow: 0 1px 2px rgba(0, 20, 30, 0.5);
 }
 
 .lang-toggle:hover .lang-opt:not(.is-active) {
-    color: rgba(215, 255, 250, 0.65);
+    color: rgba(242, 236, 224, 0.68);
 }
 
 .lang-toggle:hover .lang-sep {
-    color: rgba(215, 255, 250, 0.4);
+    color: rgba(242, 236, 224, 0.35);
 }
 
 .lang-toggle:focus-visible {
@@ -188,7 +188,7 @@
 
 .drawer-lang-btn:hover {
     color: #eafffb;
-    text-shadow: 0 0 10px rgba(122, 226, 208, 0.55);
+    text-shadow: 0 1px 2px rgba(0, 20, 30, 0.5);
 }
 
 .drawer-lang-btn.is-active {
