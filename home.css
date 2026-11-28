@@ -174,8 +174,31 @@ body {
         var(--focus-y) * 100dvh - (var(--seam) / var(--plate-aspect)) * var(--plate-w)
     );
     transform: translateX(-50%);
+    transform-origin: 50% 0;
+    animation: counter-sway 7s ease-in-out infinite;
     width: var(--plate-w);
     container-type: inline-size;
+}
+
+@keyframes counter-sway {
+    0%, 100% {
+        transform: translateX(-50%) rotate(-0.9deg);
+    }
+    35% {
+        transform: translateX(-50%) rotate(1.1deg);
+    }
+    65% {
+        transform: translateX(-50%) rotate(-0.6deg);
+    }
+    85% {
+        transform: translateX(-50%) rotate(0.7deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .counter {
+        animation: none;
+    }
 }
 
 .counter-plate {
