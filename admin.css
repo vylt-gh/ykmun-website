@@ -263,6 +263,12 @@ h1, h2, h3, h4 {
     background: rgba(240, 201, 138, 0.06);
 }
 
+.type-trainee {
+    color: #b7c8ff;
+    border-color: rgba(183, 200, 255, 0.4);
+    background: rgba(183, 200, 255, 0.06);
+}
+
 .card-name {
     font-size: 17px;
     font-weight: normal;

@@ -15,28 +15,30 @@
 <body>
 
 <!--
-    One page, four ways in. The first screen asks what the applicant is, and
+    One page, five ways in. The first screen asks what the applicant is, and
     the second screen is the form for that answer:
 
       delegate  applying on their own, for a committee seat
       admin     applying to the admin team
       press     applying to the press team
+      trainee   applying to the academic trainee team
       group     a school or organisation registering a group
 
-    The three individual applications share one form; committee picks are shown
-    for delegates, while press applicants are asked for their camera model. Admin
-    and press committee is the team itself. The group registration is a separate
-    form because it goes to a different table and collects none of the personal
-    data an application does.
+    The individual applications share one form; committee picks and delegate
+    profile fields are shown for delegates, press applicants are asked for
+    their camera model, and trainee applicants answer three scenario questions.
+    Admin and press committee is the team itself. The group registration is a
+    separate form because it goes to a different table and collects none of
+    the personal data an application does.
 
-    Fields map to real columns (migration 0005, 0010). application_type is migration
-    0009 and says which of the three the row is; payment_state is deliberately
-    never asked for; the column default sets it. The committee list lives in
-    COMMITTEES in apply.js and is not final.
+    Fields map to real columns (migration 0005, 0010, 0011). application_type is
+    migration 0009/0011 and says which of the roles the row is; payment_state is
+    deliberately never asked for; the column default sets it. The committee list
+    lives in COMMITTEES in apply.js and is not final.
 
     Database side: db/migrations/0001 (table), 0002 (staff roles and RLS),
     0005 (application fields), 0008 (delegations), 0009 (application type),
-    0010 (camera model).
+    0010 (camera model), 0011 (delegate fields and trainee).
 
     The interactive canvas starfield is deliberately omitted on this page. It is
     a page for reading and filling in a form, and a pointer-reactive starfield
@@ -55,9 +57,9 @@
     <header class="head" id="head">
         <h1><u data-en="Application" data-tr="Başvuru"><i>Application</i></u></h1>
         <p class="hint" id="head-hint"
-           data-en="Four ways to apply. Pick the one that describes you."
-           data-tr="Dört başvuru yolu. Size uygun olanı seçin.">
-            Four ways to apply. Pick the one that describes you.
+           data-en="Five ways to apply. Pick the one that describes you."
+           data-tr="Beş başvuru yolu. Size uygun olanı seçin.">
+            Five ways to apply. Pick the one that describes you.
         </p>
     </header>
 
@@ -99,6 +101,16 @@
                 </button>
             </li>
             <li>
+                <button type="button" class="choose-card" data-role="trainee">
+                    <span class="choose-name" data-en="Trainee" data-tr="Trainee">Trainee</span>
+                    <span class="choose-note"
+                          data-en="Applying to the academic trainee team."
+                          data-tr="Akademik trainee ekibine başvuru.">
+                        Applying to the academic trainee team.
+                    </span>
+                </button>
+            </li>
+            <li>
                 <button type="button" class="choose-card" data-role="group">
                     <span class="choose-name" data-en="School or organisation" data-tr="Okul veya organizasyon">School or organisation</span>
                     <span class="choose-note"
@@ -133,6 +145,12 @@
                 <p class="err" data-err-for="f-name" role="alert"></p>
             </div>
 
+            <div class="row" id="row-birth-date" hidden>
+                <label for="f-birth-date" data-en="Date of birth" data-tr="Doğum tarihi">Date of birth <span class="req" aria-hidden="true">*</span></label>
+                <input type="date" id="f-birth-date" name="birth_date" autocomplete="bday">
+                <p class="err" data-err-for="f-birth-date" role="alert"></p>
+            </div>
+
             <div class="row">
                 <label for="f-email" data-en="Email" data-tr="E-posta">Email <span class="req" aria-hidden="true">*</span></label>
                 <input type="email" id="f-email" name="email" autocomplete="email"
@@ -157,6 +175,31 @@
                     <a href="kvkk" target="_blank" rel="noopener">Privacy notice</a>
                 </p>
                 <p class="err" data-err-for="f-tc" role="alert"></p>
+            </div>
+
+            <div class="row" id="row-gender" hidden>
+                <label for="f-gender" data-en="Gender" data-tr="Cinsiyet">Gender <span class="req" aria-hidden="true">*</span></label>
+                <select id="f-gender" name="gender">
+                    <option value="">—</option>
+                    <option value="female" data-en="Female" data-tr="Kadın">Female</option>
+                    <option value="male" data-en="Male" data-tr="Erkek">Male</option>
+                    <option value="unspecified" data-en="Prefer not to say" data-tr="Belirtmek istemiyorum">Prefer not to say</option>
+                </select>
+                <p class="err" data-err-for="f-gender" role="alert"></p>
+            </div>
+
+            <div class="row" id="row-school" hidden>
+                <label for="f-school" data-en="School and grade" data-tr="Okul ve sınıf">School and grade <span class="req" aria-hidden="true">*</span></label>
+                <input type="text" id="f-school" name="school_grade" autocomplete="organization"
+                       maxlength="160">
+                <p class="err" data-err-for="f-school" role="alert"></p>
+            </div>
+
+            <div class="row" id="row-experience" hidden>
+                <label for="f-experience" data-en="MUN Experience" data-tr="MUN Deneyimi">MUN Experience</label>
+                <textarea id="f-experience" name="experience" rows="4"
+                          maxlength="2000"></textarea>
+                <p class="err" data-err-for="f-experience" role="alert"></p>
             </div>
 
             <fieldset class="row prefs" id="prefs">
@@ -189,11 +232,50 @@
                 <p class="err" data-err-for="f-camera" role="alert"></p>
             </div>
 
-            <div class="row">
-                <label for="f-motivation" data-en="Motivation Paragraph" data-tr="Motivasyon Paragrafı">Motivation Paragraph</label>
+            <div class="row" id="row-motivation" hidden>
+                <label for="f-motivation" data-en="Motivation Letter" data-tr="Motivasyon Mektubu">Motivation Letter</label>
                 <textarea id="f-motivation" name="motivation" rows="5"
                           maxlength="2000"></textarea>
                 <p class="err" data-err-for="f-motivation" role="alert"></p>
+            </div>
+
+            <div class="row" id="row-notes" hidden>
+                <label for="f-notes" data-en="Anything else you would like to add" data-tr="Eklemek istedikleriniz">Anything else you would like to add</label>
+                <textarea id="f-notes" name="notes" rows="3"
+                          maxlength="2000"></textarea>
+                <p class="err" data-err-for="f-notes" role="alert"></p>
+            </div>
+
+            <div class="row" id="row-trainee" hidden>
+                <div class="row">
+                    <label for="f-trainee-q1"
+                           data-en="1. The committee you were appointed to is a beginner-friendly one, so most of the delegates — even the allocations that are crucial to the debate — are first-timers with limited language skills. There are no motions at the moment and the delegates are also refusing to speak on the GSL. Your upper academy lets you make the decision on how to make the debate flow. What would you do?"
+                           data-tr="1. Atandığınız komite başlangıç seviyesinde; bu nedenle tartışma için kritik öneme sahip delegasyonlar dahil çoğu delege ilk kez katılıyor ve dil becerileri sınırlı. Şu anda hiçbir önerge (motion) yok ve delegeler GSL'de konuşmayı da reddediyor. Üst akademiniz tartışmanın akışını nasıl sağlayacağınıza karar vermeyi size bırakıyor. Ne yapardınız?">
+                        1. The committee you were appointed to is a beginner-friendly one, so most of the delegates — even the allocations that are crucial to the debate — are first-timers with limited language skills. There are no motions at the moment and the delegates are also refusing to speak on the GSL. Your upper academy lets you make the decision on how to make the debate flow. What would you do? <span class="req" aria-hidden="true">*</span>
+                    </label>
+                    <textarea id="f-trainee-q1" name="trainee_q1" rows="5" maxlength="3000"></textarea>
+                    <p class="err" data-err-for="f-trainee-q1" role="alert"></p>
+                </div>
+
+                <div class="row">
+                    <label for="f-trainee-q2"
+                           data-en="2. A delegate began to say hurtful things to another delegate. They claimed to be better and insisted that all of the other delegate's solutions were useless and wouldn't work with their country's resources and the current situation of their allocation. You saw this happen while the other members of the academy were on a break. The delegates shouted for a minute, and now they look ready to fight. You also heard many swear words and rude wishes. What would you do in this situation if your academy members were away and possibly out of your reach?"
+                           data-tr="2. Bir delege başka bir delegeye kırıcı sözler söylemeye başladı. Kendisinin daha iyi olduğunu iddia edip diğer delegenin tüm çözümlerinin işe yaramaz olduğunu, ülkesinin kaynakları ve mevcut durumuyla çalışmayacağını öne sürdü. Bunu diğer akademi üyeleri moladayken gördünüz. Delegeler bir dakika boyunca bağırdı ve şimdi kavga etmeye hazır görünüyorlar. Ayrıca birçok küfür ve kaba ifade duydunuz. Akademi üyeleriniz uzakta ve muhtemelen ulaşamayacağınız bir yerdeyken bu durumda ne yapardınız?">
+                        2. A delegate began to say hurtful things to another delegate. They claimed to be better and insisted that all of the other delegate's solutions were useless and wouldn't work with their country's resources and the current situation of their allocation. You saw this happen while the other members of the academy were on a break. The delegates shouted for a minute, and now they look ready to fight. You also heard many swear words and rude wishes. What would you do in this situation if your academy members were away and possibly out of your reach? <span class="req" aria-hidden="true">*</span>
+                    </label>
+                    <textarea id="f-trainee-q2" name="trainee_q2" rows="5" maxlength="3000"></textarea>
+                    <p class="err" data-err-for="f-trainee-q2" role="alert"></p>
+                </div>
+
+                <div class="row">
+                    <label for="f-trainee-q3"
+                           data-en="3. You are in the last few sessions of your committee and the ending document seems nowhere near done. You try to ask your upper academy members what to do and they can't give you a definitive answer. Your options seem to be limited and if you don't finish the document in a few hours, your committee will fail. What would you do?"
+                           data-tr="3. Komitenizin son birkaç oturumundasınız ve sonuç belgesi (ending document) bitmeye hiç yakın görünmüyor. Üst akademi üyelerinize ne yapacağınızı sormayı deniyorsunuz ancak kesin bir yanıt veremiyorlar. Seçenekleriniz sınırlı görünüyor ve belgeyi birkaç saat içinde bitiremezseniz komiteniz başarısız olacak. Ne yapardınız?">
+                        3. You are in the last few sessions of your committee and the ending document seems nowhere near done. You try to ask your upper academy members what to do and they can't give you a definitive answer. Your options seem to be limited and if you don't finish the document in a few hours, your committee will fail. What would you do? <span class="req" aria-hidden="true">*</span>
+                    </label>
+                    <textarea id="f-trainee-q3" name="trainee_q3" rows="5" maxlength="3000"></textarea>
+                    <p class="err" data-err-for="f-trainee-q3" role="alert"></p>
+                </div>
             </div>
 
             <div class="row consent">

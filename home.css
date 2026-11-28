@@ -485,6 +485,13 @@ h1, h2, h3, h4 {
     outline-offset: 3px;
 }
 
+@media (max-width: 40rem) {
+    .cta {
+        padding: 15px 46px;
+        font-size: 30px;
+    }
+}
+
 @media (prefers-reduced-motion: reduce) {
     .cta {
         transition: none;

@@ -19,6 +19,7 @@
                 { href: 'home', label: 'Home' },
                 { href: 'apply', label: 'Apply' },
                 { href: 'home#team', label: 'Team' },
+                { href: 'home#faq', label: 'FAQ' },
                 { href: 'kvkk', label: 'Privacy' }
             ],
             langAria: 'Switch language to Turkish',
@@ -29,6 +30,7 @@
                 { href: 'home', label: 'Ana Sayfa' },
                 { href: 'apply', label: 'Başvuru' },
                 { href: 'home#team', label: 'Ekip' },
+                { href: 'home#faq', label: 'SSS' },
                 { href: 'kvkk', label: 'Gizlilik' }
             ],
             langAria: 'Dili İngilizceye çevir',
@@ -299,6 +301,7 @@
 
     function setupTeamCollapsible() {
         const depts = Array.from(document.querySelectorAll('details.dept'));
+        const teamDepts = Array.from(document.querySelectorAll('#team details.dept'));
         const toggleAllBtns = Array.from(document.querySelectorAll('.team-toggle-all'));
         if (!depts.length) return null;
 
@@ -312,7 +315,7 @@
 
         function updateToggleAll(lang = currentLang) {
             const isTr = lang === 'tr';
-            const allOpen = depts.every(isExpanded);
+            const allOpen = teamDepts.length > 0 && teamDepts.every(isExpanded);
             toggleAllBtns.forEach((btn) => {
                 btn.setAttribute('aria-expanded', allOpen ? 'true' : 'false');
                 btn.dataset.en = allOpen ? 'Collapse all' : 'Expand all';
@@ -401,8 +404,8 @@
 
         toggleAllBtns.forEach((btn) => {
             btn.addEventListener('click', () => {
-                const nextState = !depts.every(isExpanded);
-                depts.forEach((dept) => {
+                const nextState = !teamDepts.every(isExpanded);
+                teamDepts.forEach((dept) => {
                     if (isExpanded(dept) !== nextState) {
                         setDeptOpen(dept, nextState);
                     }

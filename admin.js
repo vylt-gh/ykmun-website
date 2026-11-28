@@ -19,11 +19,12 @@
     ];
 
     // What an applicant applied for. Mirrors the check constraint in migration
-    // 0009.
+    // 0009 / 0011.
     const TYPE_LABELS = {
         delegate: 'Delegate',
         admin: 'Admin',
-        press: 'Press'
+        press: 'Press',
+        trainee: 'Trainee'
     };
 
     // Two tables, one panel. The card shape differs enough that each is built
@@ -35,13 +36,15 @@
             noun: ['application', 'applications'],
             placeholder: 'Search name, email, phone, T.C. no...',
             searchKeys: ['full_name', 'email', 'phone', 'tc_number',
-                'application_type', 'camera_model'],
+                'application_type', 'camera_model', 'school_grade'],
             // Everything a card shows, in one list. Used to decide whether the
             // cards on screen are already the right ones and can be left
             // alone — see paint().
             cardFields: ['id', 'full_name', 'status', 'email', 'phone',
-                'committee_1', 'committee_2', 'committee_3', 'payment_state',
-                'application_type', 'camera_model'],
+                'birth_date', 'gender', 'school_grade', 'experience',
+                'motivation', 'notes', 'committee_1', 'committee_2',
+                'committee_3', 'payment_state', 'application_type',
+                'camera_model', 'trainee_q1', 'trainee_q2', 'trainee_q3'],
             card: buildApplicationCard
         },
         delegations: {
@@ -274,9 +277,15 @@
         // ranked choices and committee allocation needs the whole ordering —
         // showing only committee_1 hid the applicant's second and third.
         const preferences = [row.committee_1, row.committee_2, row.committee_3].filter(Boolean);
-        const details = [row.email, row.phone].filter(Boolean);
+        const details = [row.email, row.phone, row.birth_date, row.gender, row.school_grade].filter(Boolean);
         if (preferences.length) details.push('Preference: ' + preferences.join(' · '));
         if (row.camera_model) details.push('Camera: ' + row.camera_model);
+        if (row.experience) details.push('Experience: ' + row.experience);
+        if (row.motivation) details.push('Motivation: ' + row.motivation);
+        if (row.notes) details.push('Notes: ' + row.notes);
+        if (row.trainee_q1) details.push('Q1: ' + row.trainee_q1);
+        if (row.trainee_q2) details.push('Q2: ' + row.trainee_q2);
+        if (row.trainee_q3) details.push('Q3: ' + row.trainee_q3);
 
         for (const value of details) meta.appendChild(spanOf(value));
 

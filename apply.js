@@ -22,7 +22,10 @@
             button: { en: 'Apply', tr: 'Başvur' },
             type: 'delegate',
             committees: true,
-            camera: false
+            camera: false,
+            motivation: true,
+            delegateProfile: true,
+            trainee: false
         },
         admin: {
             key: 'admin',
@@ -34,7 +37,10 @@
             button: { en: 'Apply', tr: 'Başvur' },
             type: 'admin',
             committees: false,
-            camera: false
+            camera: false,
+            motivation: false,
+            delegateProfile: false,
+            trainee: false
         },
         press: {
             key: 'press',
@@ -46,7 +52,25 @@
             button: { en: 'Apply', tr: 'Başvur' },
             type: 'press',
             committees: false,
-            camera: true
+            camera: true,
+            motivation: false,
+            delegateProfile: false,
+            trainee: false
+        },
+        trainee: {
+            key: 'trainee',
+            title: { en: 'Trainee application', tr: 'Trainee başvurusu' },
+            note: {
+                en: 'Applying to the academic trainee team. Answer the three scenarios below.',
+                tr: 'Akademik trainee ekibine başvuru. Aşağıdaki üç senaryoyu yanıtlayın.'
+            },
+            button: { en: 'Apply', tr: 'Başvur' },
+            type: 'trainee',
+            committees: false,
+            camera: false,
+            motivation: false,
+            delegateProfile: false,
+            trainee: true
         },
         group: {
             key: 'group',
@@ -58,7 +82,10 @@
             button: { en: 'Submit', tr: 'Gönder' },
             type: null,
             committees: false,
-            camera: false
+            camera: false,
+            motivation: false,
+            delegateProfile: false,
+            trainee: false
         }
     };
 
@@ -88,6 +115,16 @@
     const groupButton = document.getElementById('submit-group-btn');
     const prefsEl = document.getElementById('prefs');
     const cameraEl = document.getElementById('row-camera');
+    const motivationEl = document.getElementById('row-motivation');
+    const birthDateEl = document.getElementById('row-birth-date');
+    const genderEl = document.getElementById('row-gender');
+    const schoolEl = document.getElementById('row-school');
+    const experienceEl = document.getElementById('row-experience');
+    const notesEl = document.getElementById('row-notes');
+    const traineeEl = document.getElementById('row-trainee');
+
+    const DELEGATE_REQUIRED_IDS = ['f-birth-date', 'f-gender', 'f-school'];
+    const TRAINEE_REQUIRED_IDS = ['f-trainee-q1', 'f-trainee-q2', 'f-trainee-q3'];
 
     const doneEl = document.getElementById('done');
     const doneTitle = document.getElementById('done-title');
@@ -102,9 +139,17 @@
     const PERSON_FIELDS = {
         email: 'f-email',
         full_name: 'f-name',
+        birth_date: 'f-birth-date',
         phone: 'f-phone',
         tc_number: 'f-tc',
-        motivation: 'f-motivation'
+        gender: 'f-gender',
+        school_grade: 'f-school',
+        experience: 'f-experience',
+        motivation: 'f-motivation',
+        notes: 'f-notes',
+        trainee_q1: 'f-trainee-q1',
+        trainee_q2: 'f-trainee-q2',
+        trainee_q3: 'f-trainee-q3'
     };
 
     const COMMITTEE_FIELDS = {
@@ -228,8 +273,8 @@
         chooseEl.hidden = false;
         headHint.hidden = false;
         headHint.textContent = isTr()
-            ? 'Dört başvuru yolu. Size uygun olanı seçin.'
-            : 'Four ways to apply. Pick the one that describes you.';
+            ? 'Beş başvuru yolu. Size uygun olanı seçin.'
+            : 'Five ways to apply. Pick the one that describes you.';
 
         // Drop the role from the address so a reload lands on the first
         // screen rather than straight back into the form.
@@ -261,9 +306,26 @@
         groupForm.hidden = !isGroup;
 
         // Admin and press are the committee, so there is nothing to pick.
-        // Press asks for a camera model instead.
+        // Press asks for a camera model; trainee asks three scenario questions;
+        // delegate asks profile, experience, committees, motivation, and notes.
         prefsEl.hidden = !config.committees;
         if (cameraEl) cameraEl.hidden = !config.camera;
+        if (motivationEl) motivationEl.hidden = !config.motivation;
+        if (birthDateEl) birthDateEl.hidden = !config.delegateProfile;
+        if (genderEl) genderEl.hidden = !config.delegateProfile;
+        if (schoolEl) schoolEl.hidden = !config.delegateProfile;
+        if (experienceEl) experienceEl.hidden = !config.delegateProfile;
+        if (notesEl) notesEl.hidden = !config.delegateProfile;
+        if (traineeEl) traineeEl.hidden = !config.trainee;
+
+        for (const id of DELEGATE_REQUIRED_IDS) {
+            const el = document.getElementById(id);
+            if (el) el.required = Boolean(config.delegateProfile);
+        }
+        for (const id of TRAINEE_REQUIRED_IDS) {
+            const el = document.getElementById(id);
+            if (el) el.required = Boolean(config.trainee);
+        }
 
         personButton.textContent = t(config.button);
         groupButton.textContent = t(config.button);
@@ -352,7 +414,7 @@
 
         for (const [name, id] of Object.entries(fields)) {
             const el = document.getElementById(id);
-            if (!el) continue;
+            if (!el || el.closest('[hidden]')) continue;
 
             const value = el.value.trim();
             let message = '';
@@ -439,7 +501,7 @@
 
         for (const [key, id] of Object.entries(fields)) {
             const el = document.getElementById(id);
-            if (!el) continue;
+            if (!el || el.closest('[hidden]')) continue;
             const value = el.value.trim();
             if (!value) continue;
             // The column is an integer; PostgREST would accept "8" but sending
@@ -550,8 +612,8 @@
             groupButton.textContent = t(role.button);
         } else if (headHint) {
             headHint.textContent = isTr()
-                ? 'Dört başvuru yolu. Size uygun olanı seçin.'
-                : 'Four ways to apply. Pick the one that describes you.';
+                ? 'Beş başvuru yolu. Size uygun olanı seçin.'
+                : 'Five ways to apply. Pick the one that describes you.';
         }
     });
 
