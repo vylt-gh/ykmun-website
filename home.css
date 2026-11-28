@@ -74,6 +74,10 @@ body {
     background-color: var(--navy-2);
     background-image: linear-gradient(45deg, var(--navy-1), var(--navy-2));
     color: var(--cream);
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+h1, h2, h3, h4 {
     font-family: 'Liberation Serif', 'Times New Roman', Times, serif;
 }
 
@@ -352,7 +356,7 @@ body {
 }
 
 .meta-card-text {
-    font-family: 'Liberation Serif', 'Times New Roman', Times, serif;
+    font-family: inherit;
     font-size: clamp(15px, 2.1vmin, 19px);
     font-weight: normal;
     line-height: 1.25;
