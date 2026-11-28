@@ -88,7 +88,6 @@
     const groupButton = document.getElementById('submit-group-btn');
     const prefsEl = document.getElementById('prefs');
     const cameraEl = document.getElementById('row-camera');
-    const motivationHint = document.getElementById('hint-motivation');
 
     const doneEl = document.getElementById('done');
     const doneTitle = document.getElementById('done-title');
@@ -265,17 +264,6 @@
         // Press asks for a camera model instead.
         prefsEl.hidden = !config.committees;
         if (cameraEl) cameraEl.hidden = !config.camera;
-        if (motivationHint) {
-            if (isTr()) {
-                motivationHint.textContent = config.committees
-                    ? 'Bu bilgi komite yerleşiminde bize yardımcı olur.'
-                    : 'Bu bilgi başvurunuzu değerlendirirken bize yardımcı olur.';
-            } else {
-                motivationHint.textContent = config.committees
-                    ? 'This helps us with committee allocation.'
-                    : 'This helps us review your application.';
-            }
-        }
 
         personButton.textContent = t(config.button);
         groupButton.textContent = t(config.button);
@@ -560,17 +548,6 @@
             formNote.textContent = t(role.note);
             personButton.textContent = t(role.button);
             groupButton.textContent = t(role.button);
-            if (motivationHint) {
-                if (isTr()) {
-                    motivationHint.textContent = role.committees
-                        ? 'Bu bilgi komite yerleşiminde bize yardımcı olur.'
-                        : 'Bu bilgi başvurunuzu değerlendirirken bize yardımcı olur.';
-                } else {
-                    motivationHint.textContent = role.committees
-                        ? 'This helps us with committee allocation.'
-                        : 'This helps us review your application.';
-                }
-            }
         } else if (headHint) {
             headHint.textContent = isTr()
                 ? 'Dört başvuru yolu. Size uygun olanı seçin.'
