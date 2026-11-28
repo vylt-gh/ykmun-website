@@ -215,21 +215,20 @@ h1, h2, h3, h4 {
        floating over the bare starfield with no plate behind them. */
 }
 
-/* Staff entrance, seated on the centre rivet of the sign's top ridge.
+/* Staff entrance, sitting over the painted YKMUN plaque on the lower-right of
+   the sign. Five clicks open the sign-in prompt (see auth.js).
 
-   The coordinates are measured against the artwork, same as the digit windows
-   above: the rivet centre is at 733,2010 in a 1556x2783 image. The box is
-   larger than the rivet so it can be hit with a thumb, and it is transparent
-   with no cursor change, so it reads as part of the metal.
+   The coordinates are measured against the 1556x2783 artwork (red YKMUN text
+   spans 46.4%..86.7% horizontally and 89.7%..96.7% vertically). Transparent with
+   no cursor change so it reads as part of the plaque.
 
    This is not a security control. auth.js explains why. */
 .secret {
     position: absolute;
-    left: 47.11%;
-    top: 72.22%;
-    width: 44px;
-    height: 44px;
-    transform: translate(-50%, -50%);
+    left: 44%;
+    top: 88.5%;
+    width: 45%;
+    height: 9%;
     padding: 0;
     border: 0;
     background: none;

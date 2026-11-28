@@ -268,16 +268,30 @@
 
     // The landing page's hidden trigger. Wired here rather than with an inline
     // script so the page stays free of sign-in logic, and so a page without the
-    // element simply does nothing.
+    // element simply does nothing. Requires 5 clicks within a short window.
     const trigger = document.getElementById('staff-entry');
 
     if (trigger) {
+        let clicks = 0;
+        let resetTimer = null;
+
         trigger.addEventListener('click', () => {
-            openPrompt({
-                onSuccess: () => {
-                    window.location.href = 'admin';
-                }
-            });
+            clicks += 1;
+            clearTimeout(resetTimer);
+
+            if (clicks >= 5) {
+                clicks = 0;
+                openPrompt({
+                    onSuccess: () => {
+                        window.location.href = 'admin';
+                    }
+                });
+                return;
+            }
+
+            resetTimer = setTimeout(() => {
+                clicks = 0;
+            }, 2500);
         });
     }
 })();
