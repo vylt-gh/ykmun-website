@@ -310,3 +310,31 @@ h1 {
         gap: 16px;
     }
 }
+
+/* ---- FAQ overrides ----------------------------------------------------- */
+
+#faq.page {
+    padding-top: clamp(36px, 7vmin, 64px);
+}
+
+#faq .dept-summary {
+    padding: clamp(14px, 2.2vmin, 18px) clamp(18px, 3vmin, 26px);
+}
+
+#faq .dept-title {
+    font-size: clamp(17px, 2.4vmin, 21px);
+    line-height: 1.35;
+}
+
+#faq .dept-body {
+    padding: clamp(14px, 2.4vmin, 20px) clamp(18px, 3vmin, 26px);
+}
+
+#faq .dept-text {
+    max-width: none;
+    margin: 0;
+    font-size: 0.98rem;
+    line-height: 1.65;
+    color: rgba(242, 236, 224, 0.84);
+    text-align: left;
+}

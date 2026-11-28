@@ -301,13 +301,21 @@
 
     function setupTeamCollapsible() {
         const depts = Array.from(document.querySelectorAll('details.dept'));
-        const teamDepts = Array.from(document.querySelectorAll('#team details.dept'));
-        const toggleAllBtns = Array.from(document.querySelectorAll('.team-toggle-all'));
         if (!depts.length) return null;
 
         const prefersReduced = typeof window !== 'undefined' &&
             window.matchMedia &&
             window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        // Group each .team-toggle-all button with the details.dept inside its
+        // closest .page section so #team and #faq toggle independently.
+        const groups = Array.from(document.querySelectorAll('.team-toggle-all')).map((btn) => {
+            const scope = btn.closest('.page') || document;
+            return {
+                btn,
+                items: Array.from(scope.querySelectorAll('details.dept'))
+            };
+        });
 
         function isExpanded(dept) {
             return dept.open && !dept.classList.contains('is-closing');
@@ -315,8 +323,8 @@
 
         function updateToggleAll(lang = currentLang) {
             const isTr = lang === 'tr';
-            const allOpen = teamDepts.length > 0 && teamDepts.every(isExpanded);
-            toggleAllBtns.forEach((btn) => {
+            groups.forEach(({ btn, items }) => {
+                const allOpen = items.length > 0 && items.every(isExpanded);
                 btn.setAttribute('aria-expanded', allOpen ? 'true' : 'false');
                 btn.dataset.en = allOpen ? 'Collapse all' : 'Expand all';
                 btn.dataset.tr = allOpen ? 'Tümünü kapat' : 'Tümünü aç';
@@ -402,10 +410,10 @@
             });
         });
 
-        toggleAllBtns.forEach((btn) => {
+        groups.forEach(({ btn, items }) => {
             btn.addEventListener('click', () => {
-                const nextState = !teamDepts.every(isExpanded);
-                teamDepts.forEach((dept) => {
+                const nextState = !items.every(isExpanded);
+                items.forEach((dept) => {
                     if (isExpanded(dept) !== nextState) {
                         setDeptOpen(dept, nextState);
                     }
