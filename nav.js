@@ -18,7 +18,6 @@
             nav: [
                 { href: 'home', label: 'Home' },
                 { href: 'apply', label: 'Apply' },
-                { href: 'apply?as=group', label: 'Delegation' },
                 { href: 'home#team', label: 'Team' },
                 { href: 'kvkk', label: 'Privacy' }
             ],
@@ -29,7 +28,6 @@
             nav: [
                 { href: 'home', label: 'Ana Sayfa' },
                 { href: 'apply', label: 'Başvuru' },
-                { href: 'apply?as=group', label: 'Delegasyon' },
                 { href: 'home#team', label: 'Ekip' },
                 { href: 'kvkk', label: 'Gizlilik' }
             ],
