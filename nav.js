@@ -56,6 +56,20 @@
     const actions = document.createElement('div');
     actions.className = 'nav-actions';
 
+    const topNav = document.createElement('nav');
+    topNav.className = 'nav-bar';
+    topNav.setAttribute('aria-label', 'Main');
+
+    const topNavAnchors = [];
+    for (let i = 0; i < I18N.en.nav.length; i++) {
+        const item = I18N[currentLang].nav[i];
+        const anchor = document.createElement('a');
+        anchor.href = item.href;
+        anchor.textContent = item.label;
+        topNav.appendChild(anchor);
+        topNavAnchors.push(anchor);
+    }
+
     const langToggle = document.createElement('button');
     langToggle.type = 'button';
     langToggle.className = 'lang-toggle';
@@ -89,7 +103,7 @@
         toggle.appendChild(document.createElement('span'));
     }
 
-    actions.append(langToggle, toggle);
+    actions.append(topNav, langToggle, toggle);
 
     const drawer = document.createElement('div');
     drawer.className = 'nav-drawer';
@@ -156,6 +170,18 @@
     document.addEventListener('keydown', (event) => {
         if (event.key === 'Escape' && !drawer.hidden) setOpen(false);
     });
+
+    if (typeof window !== 'undefined' && window.matchMedia) {
+        const desktopMq = window.matchMedia('(min-width: 768px)');
+        const closeOnDesktop = (mq) => {
+            if (mq.matches && !drawer.hidden) setOpen(false);
+        };
+        if (desktopMq.addEventListener) {
+            desktopMq.addEventListener('change', closeOnDesktop);
+        } else if (desktopMq.addListener) {
+            desktopMq.addListener(closeOnDesktop);
+        }
+    }
 
     function applyTranslations(lang, { userInitiated = false } = {}) {
         const isTr = lang === 'tr';
@@ -247,7 +273,9 @@
         drawerTr.classList.toggle('is-active', lang === 'tr');
 
         for (let i = 0; i < navAnchors.length; i++) {
-            navAnchors[i].textContent = I18N[lang].nav[i].label;
+            const label = I18N[lang].nav[i].label;
+            navAnchors[i].textContent = label;
+            topNavAnchors[i].textContent = label;
         }
 
         applyTranslations(lang, options);

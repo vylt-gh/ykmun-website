@@ -18,6 +18,38 @@
     gap: clamp(8px, 1.8vmin, 14px);
 }
 
+/* Desktop topbar links (hidden on mobile where the hamburger drawer is used) */
+.nav-bar {
+    display: none;
+    align-items: center;
+    gap: 2px;
+}
+
+.nav-bar a {
+    color: rgba(242, 236, 224, 0.92);
+    text-decoration: none;
+    font-family: 'Liberation Serif', 'Times New Roman', Times, serif;
+    font-size: 16px;
+    letter-spacing: 0.04em;
+    line-height: 1;
+    padding: 9px 12px;
+    border-radius: 17px;
+    white-space: nowrap;
+    transition: color 160ms ease, background 160ms ease;
+}
+
+.nav-bar a:hover,
+.nav-bar a:focus-visible {
+    color: #eafffb;
+    background: rgba(122, 226, 208, 0.14);
+    text-shadow: 0 1px 2px rgba(0, 20, 30, 0.5);
+}
+
+.nav-bar a:focus-visible {
+    outline: 2px solid rgba(215, 255, 250, 0.6);
+    outline-offset: 1px;
+}
+
 .nav-actions .nav-toggle {
     position: relative;
     top: auto;
@@ -60,22 +92,25 @@
     outline-offset: 2px;
 }
 
-/* Language toggle button in the top right */
+/* Language toggle button in the top right (desktop only; mobile uses the drawer) */
 .lang-toggle {
-    display: inline-flex;
+    display: none;
     align-items: center;
     justify-content: center;
-    gap: 5px;
-    height: 36px;
-    padding: 0 12px;
-    border: 1px solid rgba(242, 236, 224, 0.22);
-    border-radius: 18px;
-    background: rgba(0, 12, 36, 0.55);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    color: rgba(242, 236, 224, 0.55);
+    gap: 6px;
+    box-sizing: border-box;
+    height: 44px;
+    padding: 0 16px;
+    border: 1px solid rgba(215, 255, 250, 0.34);
+    border-radius: 22px;
+    background: rgba(0, 14, 42, 0.72);
+    box-shadow: 0 6px 20px rgba(0, 10, 24, 0.45),
+        inset 0 1px 0 rgba(240, 255, 253, 0.16);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    color: rgba(242, 236, 224, 0.65);
     font-family: 'Liberation Serif', 'Times New Roman', Times, serif;
-    font-size: 14px;
+    font-size: 16px;
     letter-spacing: 0.06em;
     cursor: pointer;
     user-select: none;
@@ -121,8 +156,64 @@
 }
 
 .lang-sep {
-    color: rgba(242, 236, 224, 0.28);
-    font-size: 12px;
+    color: rgba(242, 236, 224, 0.32);
+    font-size: 14px;
+}
+
+@media (min-width: 768px) {
+    .nav-actions {
+        box-sizing: border-box;
+        height: 44px;
+        padding: 0 5px;
+        gap: 2px;
+        border: 1px solid rgba(215, 255, 250, 0.34);
+        border-radius: 22px;
+        background: rgba(0, 14, 42, 0.72);
+        box-shadow: 0 6px 20px rgba(0, 10, 24, 0.45),
+            inset 0 1px 0 rgba(240, 255, 253, 0.16);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+    }
+
+    .nav-bar {
+        display: inline-flex;
+    }
+
+    .lang-toggle {
+        display: inline-flex;
+        position: relative;
+        height: 34px;
+        padding: 0 12px;
+        margin-left: 8px;
+        border: 0;
+        border-radius: 17px;
+        background: transparent;
+        box-shadow: none;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+
+    .lang-toggle::before {
+        content: '';
+        position: absolute;
+        left: -5px;
+        top: 50%;
+        width: 1px;
+        height: 18px;
+        transform: translateY(-50%);
+        background: rgba(242, 236, 224, 0.22);
+        pointer-events: none;
+    }
+
+    .lang-toggle:hover {
+        background: rgba(122, 226, 208, 0.14);
+        box-shadow: none;
+    }
+
+    .nav-actions .nav-toggle,
+    .nav-toggle {
+        display: none;
+    }
 }
 
 .nav-drawer {
