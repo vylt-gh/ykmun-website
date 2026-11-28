@@ -212,27 +212,31 @@ h1, h2, h3, h4 {
        the entire column instead of wrapping, pushing the whole page sideways
        on a phone. These two resets are what let long values wrap instead. */
     min-width: 0;
-    background: rgba(3, 12, 32, 0.55);
-    border: 1px solid rgba(242, 236, 224, 0.18);
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: rgba(3, 12, 32, 0.58);
+    border: 1px solid rgba(242, 236, 224, 0.16);
     border-radius: 14px;
     padding: 16px 18px;
-    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 2px 14px rgba(0, 0, 0, 0.3);
 }
 
 .card-head {
     display: flex;
     justify-content: space-between;
-    align-items: baseline;
+    align-items: flex-start;
     gap: 10px;
-    margin-bottom: 8px;
 }
 
 /* The badges in the corner of a card: what they applied for, and where they
    are in the review. */
 .card-pills {
     display: flex;
-    align-items: baseline;
-    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 6px;
     flex-shrink: 0;
 }
 
@@ -278,21 +282,80 @@ h1, h2, h3, h4 {
 }
 
 .card-meta {
-    display: flex;
-    gap: 12px;
-    flex-wrap: wrap;
+    display: grid;
+    gap: 4px;
     font-size: 13px;
-    color: rgba(242, 236, 224, 0.7);
-    margin-bottom: 8px;
+    line-height: 1.45;
+    color: rgba(242, 236, 224, 0.74);
     min-width: 0;
 }
 
 /* An email may legally be 200 characters, and a committee name may contain
    spaces or not. Both have to be allowed to break rather than push the card
    out past the viewport. */
-.card-meta > span {
+.card-meta > span,
+.card-meta-line {
     min-width: 0;
     max-width: 100%;
+    overflow-wrap: anywhere;
+}
+
+.paid-pill {
+    font-size: 0.76em;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.2em 0.65em;
+    border-radius: 999px;
+    border: 1px solid rgba(122, 226, 208, 0.45);
+    background: rgba(122, 226, 208, 0.1);
+    color: #9beee0;
+}
+
+.card-details {
+    border: 1px solid rgba(242, 236, 224, 0.12);
+    border-radius: 8px;
+    background: rgba(2, 10, 28, 0.45);
+}
+
+.card-details-toggle {
+    padding: 7px 11px;
+    font-size: 12px;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgba(215, 255, 250, 0.78);
+    cursor: pointer;
+    user-select: none;
+}
+
+.card-details-toggle:hover {
+    color: #eafffb;
+}
+
+.card-details-body {
+    display: grid;
+    gap: 10px;
+    padding: 10px 11px 12px;
+    border-top: 1px solid rgba(242, 236, 224, 0.1);
+}
+
+.detail-block {
+    display: grid;
+    gap: 3px;
+}
+
+.detail-label {
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: rgba(242, 236, 224, 0.5);
+}
+
+.detail-text {
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+    color: rgba(242, 236, 224, 0.86);
+    white-space: pre-wrap;
     overflow-wrap: anywhere;
 }
 
@@ -326,7 +389,80 @@ h1, h2, h3, h4 {
 .card-actions {
     display: grid;
     gap: 8px;
-    margin-top: 10px;
+    margin-top: auto;
+    padding-top: 8px;
+    border-top: 1px solid rgba(242, 236, 224, 0.1);
+}
+
+.action-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+}
+
+.action-bar .edit-row {
+    flex: 1;
+    min-width: 160px;
+}
+
+.edit-grid {
+    display: grid;
+    gap: 6px;
+}
+
+.check-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0.42em 0.75em;
+    border: 1px solid rgba(215, 255, 250, 0.24);
+    border-radius: 6px;
+    background: rgba(122, 226, 208, 0.05);
+    font-size: 0.85em;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: rgba(242, 236, 224, 0.86);
+    cursor: pointer;
+    user-select: none;
+}
+
+.check-row input[type="checkbox"] {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 1.2em;
+    height: 1.2em;
+    margin: 0;
+    border: 1px solid rgba(215, 255, 250, 0.42);
+    border-radius: 4px;
+    background: rgba(3, 12, 32, 0.7);
+    display: grid;
+    place-content: center;
+    cursor: pointer;
+}
+
+.check-row input[type="checkbox"]::after {
+    content: "";
+    width: 0.55em;
+    height: 0.28em;
+    border-left: 2px solid #eafffb;
+    border-bottom: 2px solid #eafffb;
+    transform: rotate(-45deg) scale(0);
+    transition: transform 110ms ease;
+}
+
+.check-row input[type="checkbox"]:checked {
+    background: rgba(122, 226, 208, 0.3);
+}
+
+.check-row input[type="checkbox"]:checked::after {
+    transform: rotate(-45deg) scale(1);
+}
+
+.check-row input[type="checkbox"]:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
 }
 
 .edit-row {

@@ -13,10 +13,11 @@
     const tabsEl = document.querySelector('.tabs');
 
     const STATUS_OPTIONS = [['pending', 'Pending'], ['accepted', 'Accepted'], ['rejected', 'Rejected']];
-    const PAYMENT_OPTIONS = [
-        ['unpaid', 'Unpaid'], ['partial', 'Partial'], ['paid_card', 'Card'],
-        ['paid_transfer', 'Transfer'], ['paid_cash', 'Cash'], ['waived', 'Waived']
-    ];
+
+    function isPaidState(state) {
+        return state === 'paid' || state === 'paid_card' || state === 'paid_transfer' ||
+            state === 'paid_cash' || state === 'waived';
+    }
 
     // What an applicant applied for. Mirrors the check constraint in migration
     // 0009 / 0011.
@@ -267,69 +268,99 @@
         // the two badges answer different questions.
         const pills = document.createElement('div');
         pills.className = 'card-pills';
+        const paid = isPaidState(row.payment_state);
         pills.append(typePill(row.application_type), statusPill(row.status));
+        if (paid) pills.append(paidPill());
 
         head.append(name, pills);
 
         const meta = document.createElement('div');
         meta.className = 'card-meta';
 
-        // All three preferences, not just the first. The form collects them as
-        // ranked choices and committee allocation needs the whole ordering —
-        // showing only committee_1 hid the applicant's second and third.
+        const contact = [row.email, row.phone].filter(Boolean);
+        if (contact.length) meta.appendChild(metaLine(contact.join(' · ')));
+
         const birthDate = row.birth_date && /^\d{4}-\d{2}-\d{2}$/.test(row.birth_date)
             ? row.birth_date.split('-').reverse().join('.')
             : row.birth_date;
-        const preferences = [row.committee_1, row.committee_2, row.committee_3].filter(Boolean);
-        const details = [row.email, row.phone, birthDate, row.gender, row.school_grade].filter(Boolean);
-        if (preferences.length) details.push('Preference: ' + preferences.join(' · '));
-        if (row.camera_model) details.push('Camera: ' + row.camera_model);
-        if (row.experience) details.push('Experience: ' + row.experience);
-        if (row.motivation) details.push('Motivation: ' + row.motivation);
-        if (row.notes) details.push('Notes: ' + row.notes);
-        if (row.trainee_q1) details.push('Q1: ' + row.trainee_q1);
-        if (row.trainee_q2) details.push('Q2: ' + row.trainee_q2);
-        if (row.trainee_q3) details.push('Q3: ' + row.trainee_q3);
-        if (row.trainee_q4) details.push('Q4 (Crisis): ' + row.trainee_q4);
+        const profile = [birthDate, row.gender, row.school_grade].filter(Boolean);
+        if (profile.length) meta.appendChild(metaLine(profile.join(' · ')));
 
-        for (const value of details) meta.appendChild(spanOf(value));
+        const preferences = [row.committee_1, row.committee_2, row.committee_3].filter(Boolean);
+        if (preferences.length) meta.appendChild(metaLine('Committees: ' + preferences.join(' · ')));
+        if (row.camera_model) meta.appendChild(metaLine('Camera: ' + row.camera_model));
+
+        // Long-form text lives in a collapsed drawer so cards stay uniform and
+        // scannable in the grid.
+        const longFields = [
+            ['Experience', row.experience],
+            ['Motivation', row.motivation],
+            ['Notes', row.notes],
+            ['Scenario 1', row.trainee_q1],
+            ['Scenario 2', row.trainee_q2],
+            ['Scenario 3', row.trainee_q3],
+            ['Scenario 4 (Crisis)', row.trainee_q4]
+        ].filter(([, val]) => Boolean(val));
+
+        let detailsEl = null;
+        if (longFields.length) {
+            detailsEl = document.createElement('details');
+            detailsEl.className = 'card-details';
+
+            const summary = document.createElement('summary');
+            summary.className = 'card-details-toggle';
+            summary.textContent = 'Responses (' + longFields.length + ')';
+            detailsEl.appendChild(summary);
+
+            const body = document.createElement('div');
+            body.className = 'card-details-body';
+            for (const [label, val] of longFields) {
+                const block = document.createElement('div');
+                block.className = 'detail-block';
+                const lbl = document.createElement('span');
+                lbl.className = 'detail-label';
+                lbl.textContent = label;
+                const txt = document.createElement('p');
+                txt.className = 'detail-text';
+                txt.textContent = val;
+                block.append(lbl, txt);
+                body.appendChild(block);
+            }
+            detailsEl.appendChild(body);
+        }
 
         const actions = document.createElement('div');
         actions.className = 'card-actions';
 
-        // All three preferences are editable. They are applicant-supplied so
-        // edits should be rare, but there is no reason one of the three should
-        // be correctable while the other two are not.
-        //
-        // They are only shown for delegates. An admin or press applicant is
-        // applying to a team, not to a committee, and committee_1 means a
-        // committee preference — so offering the fields would invite staff to
-        // write a preference the applicant never expressed.
-        // Press applicants have their camera model editable instead.
         const isDelegate = (row.application_type || 'delegate') === 'delegate';
         const isPress = row.application_type === 'press';
 
-        actions.append(
-            selectRow('applications', 'Status', 'status', row.id, row.status || 'pending', STATUS_OPTIONS)
+        const bar = document.createElement('div');
+        bar.className = 'action-bar';
+        bar.append(
+            selectRow('applications', 'Status', 'status', row.id, row.status || 'pending', STATUS_OPTIONS),
+            checkboxRow('applications', 'Paid', 'payment_state', row.id, paid, 'paid', 'unpaid')
         );
+        actions.appendChild(bar);
 
         if (isDelegate) {
-            actions.append(
-                textRow('applications', '1st choice', 'committee_1', row.id, row.committee_1 || ''),
-                textRow('applications', '2nd choice', 'committee_2', row.id, row.committee_2 || ''),
-                textRow('applications', '3rd choice', 'committee_3', row.id, row.committee_3 || '')
+            const prefs = document.createElement('div');
+            prefs.className = 'edit-grid';
+            prefs.append(
+                textRow('applications', '1st', 'committee_1', row.id, row.committee_1 || ''),
+                textRow('applications', '2nd', 'committee_2', row.id, row.committee_2 || ''),
+                textRow('applications', '3rd', 'committee_3', row.id, row.committee_3 || '')
             );
+            actions.appendChild(prefs);
         } else if (isPress) {
-            actions.append(
+            actions.appendChild(
                 textRow('applications', 'Camera', 'camera_model', row.id, row.camera_model || '')
             );
         }
 
-        actions.append(
-            selectRow('applications', 'Payment', 'payment_state', row.id, row.payment_state || 'unpaid', PAYMENT_OPTIONS)
-        );
-
-        card.append(head, meta, actions);
+        card.append(head, meta);
+        if (detailsEl) card.appendChild(detailsEl);
+        card.appendChild(actions);
         return card;
     }
 
@@ -388,6 +419,20 @@
         return pill;
     }
 
+    function paidPill() {
+        const pill = document.createElement('span');
+        pill.className = 'paid-pill';
+        pill.textContent = 'Paid';
+        return pill;
+    }
+
+    function metaLine(text) {
+        const line = document.createElement('div');
+        line.className = 'card-meta-line';
+        line.textContent = text;
+        return line;
+    }
+
     function spanOf(value) {
         const span = document.createElement('span');
         span.textContent = value;
@@ -395,6 +440,28 @@
     }
 
     // ---- controls -------------------------------------------------------
+
+    function checkboxRow(table, label, column, id, checked, onValue, offValue) {
+        const row = document.createElement('label');
+        row.className = 'check-row';
+
+        const input = document.createElement('input');
+        input.type = 'checkbox';
+        input.checked = checked;
+        input.dataset.previous = checked ? onValue : offValue;
+        input.dataset.onValue = onValue;
+        input.disabled = !canEdit;
+
+        input.addEventListener('change', () => {
+            save(table, column, id, input.checked ? onValue : offValue, input);
+        });
+
+        const text = document.createElement('span');
+        text.textContent = label;
+
+        row.append(input, text);
+        return row;
+    }
 
     function selectRow(table, label, column, id, value, options) {
         const row = document.createElement('div');
@@ -496,7 +563,11 @@
         if (error) {
             // RLS rejects viewers with a policy error. Say so plainly rather
             // than surfacing the code, and put the control back.
-            control.value = previous ?? '';
+            if (control.type === 'checkbox') {
+                control.checked = previous === control.dataset.onValue;
+            } else {
+                control.value = previous ?? '';
+            }
             console.error('save failed', error);
             alert('Could not save. You may not have permission, or the connection dropped.');
             return;
