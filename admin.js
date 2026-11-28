@@ -44,7 +44,8 @@
                 'birth_date', 'gender', 'school_grade', 'experience',
                 'motivation', 'notes', 'committee_1', 'committee_2',
                 'committee_3', 'payment_state', 'application_type',
-                'camera_model', 'trainee_q1', 'trainee_q2', 'trainee_q3'],
+                'camera_model', 'trainee_q1', 'trainee_q2', 'trainee_q3',
+                'trainee_q4'],
             card: buildApplicationCard
         },
         delegations: {
@@ -286,6 +287,7 @@
         if (row.trainee_q1) details.push('Q1: ' + row.trainee_q1);
         if (row.trainee_q2) details.push('Q2: ' + row.trainee_q2);
         if (row.trainee_q3) details.push('Q3: ' + row.trainee_q3);
+        if (row.trainee_q4) details.push('Q4 (Crisis): ' + row.trainee_q4);
 
         for (const value of details) meta.appendChild(spanOf(value));
 

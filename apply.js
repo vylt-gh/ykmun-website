@@ -61,8 +61,8 @@
             key: 'trainee',
             title: { en: 'Trainee application', tr: 'Trainee başvurusu' },
             note: {
-                en: 'Applying to the academic trainee team. Answer the three scenarios below.',
-                tr: 'Akademik trainee ekibine başvuru. Aşağıdaki üç senaryoyu yanıtlayın.'
+                en: 'Applying to the academic trainee team. Answer the scenarios below.',
+                tr: 'Akademik trainee ekibine başvuru. Aşağıdaki senaryoları yanıtlayın.'
             },
             button: { en: 'Apply', tr: 'Başvur' },
             type: 'trainee',
@@ -149,7 +149,8 @@
         notes: 'f-notes',
         trainee_q1: 'f-trainee-q1',
         trainee_q2: 'f-trainee-q2',
-        trainee_q3: 'f-trainee-q3'
+        trainee_q3: 'f-trainee-q3',
+        trainee_q4: 'f-trainee-q4'
     };
 
     const COMMITTEE_FIELDS = {

@@ -15,7 +15,8 @@ alter table public.applications
     add column if not exists notes        text,
     add column if not exists trainee_q1   text,
     add column if not exists trainee_q2   text,
-    add column if not exists trainee_q3   text;
+    add column if not exists trainee_q3   text,
+    add column if not exists trainee_q4   text;
 
 alter table public.applications
     drop constraint if exists applications_application_type_check;
@@ -47,6 +48,9 @@ comment on column public.applications.trainee_q2 is
 
 comment on column public.applications.trainee_q3 is
     'Trainee application scenario 3 response.';
+
+comment on column public.applications.trainee_q4 is
+    'Trainee application scenario 4 (crisis) response.';
 
 comment on column public.applications.application_type is
     'What the person applied for: delegate, admin, press, or trainee. Written by the form; staff do not edit it.';

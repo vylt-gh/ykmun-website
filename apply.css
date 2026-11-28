@@ -616,6 +616,87 @@ textarea:-webkit-autofill {
     display: none;
 }
 
+/* Trainee scenario cards. */
+.trainee-list {
+    display: grid;
+    gap: clamp(16px, 3vmin, 24px);
+}
+
+.scenario-card {
+    display: grid;
+    gap: 0.75em;
+    padding: clamp(16px, 2.8vmin, 22px);
+    border: 1px solid rgba(215, 255, 250, 0.22);
+    border-radius: 12px;
+    background: rgba(3, 12, 32, 0.45);
+}
+
+.scenario-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.5em;
+}
+
+.scenario-badge {
+    font-family: 'Liberation Serif', 'Times New Roman', Times, serif;
+    font-size: clamp(16px, 2.6vmin, 20px);
+    color: #eafffb;
+    letter-spacing: 0.02em;
+}
+
+.scenario-badge--crisis {
+    font-family: inherit;
+    font-size: 0.78em;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    padding: 0.2em 0.7em;
+    border-radius: 999px;
+    border: 1px solid rgba(240, 201, 138, 0.45);
+    background: rgba(240, 201, 138, 0.08);
+    color: #f0c98a;
+}
+
+.scenario-note {
+    margin: 0;
+    padding: 0.6em 0.85em;
+    border-left: 2px solid rgba(240, 201, 138, 0.55);
+    background: rgba(240, 201, 138, 0.06);
+    border-radius: 0 6px 6px 0;
+    font-size: 0.88em;
+    line-height: 1.5;
+    color: rgba(242, 236, 224, 0.86);
+}
+
+.scenario-prompt {
+    margin: 0;
+    font-size: 0.95em;
+    line-height: 1.6;
+    color: rgba(242, 236, 224, 0.86);
+}
+
+.scenario-list {
+    margin: 0;
+    padding-left: 1.25em;
+    display: grid;
+    gap: 0.3em;
+    font-size: 0.9em;
+    line-height: 1.5;
+    color: rgba(242, 236, 224, 0.78);
+}
+
+.scenario-list li::marker {
+    color: rgba(215, 255, 250, 0.55);
+}
+
+.scenario-reply-label {
+    font-size: 0.88em;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: rgba(242, 236, 224, 0.68);
+}
+
 @media (prefers-reduced-motion: reduce) {
     .choose-card {
         transition: none;

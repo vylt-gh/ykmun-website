@@ -246,35 +246,93 @@
                 <p class="err" data-err-for="f-notes" role="alert"></p>
             </div>
 
-            <div class="row" id="row-trainee" hidden>
-                <div class="row">
-                    <label for="f-trainee-q1"
-                           data-en="1. The committee you were appointed to is a beginner-friendly one, so most of the delegates — even the allocations that are crucial to the debate — are first-timers with limited language skills. There are no motions at the moment and the delegates are also refusing to speak on the GSL. Your upper academy lets you make the decision on how to make the debate flow. What would you do?"
-                           data-tr="1. Atandığınız komite başlangıç seviyesinde; bu nedenle tartışma için kritik öneme sahip delegasyonlar dahil çoğu delege ilk kez katılıyor ve dil becerileri sınırlı. Şu anda hiçbir önerge (motion) yok ve delegeler GSL'de konuşmayı da reddediyor. Üst akademiniz tartışmanın akışını nasıl sağlayacağınıza karar vermeyi size bırakıyor. Ne yapardınız?">
-                        1. The committee you were appointed to is a beginner-friendly one, so most of the delegates — even the allocations that are crucial to the debate — are first-timers with limited language skills. There are no motions at the moment and the delegates are also refusing to speak on the GSL. Your upper academy lets you make the decision on how to make the debate flow. What would you do? <span class="req" aria-hidden="true">*</span>
+            <div class="row trainee-list" id="row-trainee" hidden>
+                <div class="scenario-card">
+                    <div class="scenario-head">
+                        <span class="scenario-badge" data-en="Scenario 1" data-tr="Senaryo 1">Scenario 1</span>
+                    </div>
+                    <p class="scenario-prompt"
+                       data-en="The committee you were appointed to is a beginner-friendly one, so most of the delegates — even the allocations that are crucial to the debate — are first-timers with limited language skills. There are no motions at the moment and the delegates are also refusing to speak on the GSL. Your upper academy lets you make the decision on how to make the debate flow. What would you do?"
+                       data-tr="Atandığınız komite başlangıç seviyesinde; bu nedenle tartışma için kritik öneme sahip delegasyonlar dahil çoğu delege ilk kez katılıyor ve dil becerileri sınırlı. Şu anda hiçbir önerge (motion) yok ve delegeler GSL'de konuşmayı da reddediyor. Üst akademiniz tartışmanın akışını nasıl sağlayacağınıza karar vermeyi size bırakıyor. Ne yapardınız?">
+                        The committee you were appointed to is a beginner-friendly one, so most of the delegates — even the allocations that are crucial to the debate — are first-timers with limited language skills. There are no motions at the moment and the delegates are also refusing to speak on the GSL. Your upper academy lets you make the decision on how to make the debate flow. What would you do?
+                    </p>
+                    <label class="scenario-reply-label" for="f-trainee-q1">
+                        <span data-en="Your response" data-tr="Yanıtınız">Your response</span> <span class="req" aria-hidden="true">*</span>
                     </label>
                     <textarea id="f-trainee-q1" name="trainee_q1" rows="5" maxlength="3000"></textarea>
                     <p class="err" data-err-for="f-trainee-q1" role="alert"></p>
                 </div>
 
-                <div class="row">
-                    <label for="f-trainee-q2"
-                           data-en="2. A delegate began to say hurtful things to another delegate. They claimed to be better and insisted that all of the other delegate's solutions were useless and wouldn't work with their country's resources and the current situation of their allocation. You saw this happen while the other members of the academy were on a break. The delegates shouted for a minute, and now they look ready to fight. You also heard many swear words and rude wishes. What would you do in this situation if your academy members were away and possibly out of your reach?"
-                           data-tr="2. Bir delege başka bir delegeye kırıcı sözler söylemeye başladı. Kendisinin daha iyi olduğunu iddia edip diğer delegenin tüm çözümlerinin işe yaramaz olduğunu, ülkesinin kaynakları ve mevcut durumuyla çalışmayacağını öne sürdü. Bunu diğer akademi üyeleri moladayken gördünüz. Delegeler bir dakika boyunca bağırdı ve şimdi kavga etmeye hazır görünüyorlar. Ayrıca birçok küfür ve kaba ifade duydunuz. Akademi üyeleriniz uzakta ve muhtemelen ulaşamayacağınız bir yerdeyken bu durumda ne yapardınız?">
-                        2. A delegate began to say hurtful things to another delegate. They claimed to be better and insisted that all of the other delegate's solutions were useless and wouldn't work with their country's resources and the current situation of their allocation. You saw this happen while the other members of the academy were on a break. The delegates shouted for a minute, and now they look ready to fight. You also heard many swear words and rude wishes. What would you do in this situation if your academy members were away and possibly out of your reach? <span class="req" aria-hidden="true">*</span>
+                <div class="scenario-card">
+                    <div class="scenario-head">
+                        <span class="scenario-badge" data-en="Scenario 2" data-tr="Senaryo 2">Scenario 2</span>
+                    </div>
+                    <p class="scenario-prompt"
+                       data-en="A delegate began to say hurtful things to another delegate. They claimed to be better and insisted that all of the other delegate's solutions were useless and wouldn't work with their country's resources and the current situation of their allocation. You saw this happen while the other members of the academy were on a break. The delegates shouted for a minute, and now they look ready to fight. You also heard many swear words and rude wishes. What would you do in this situation if your academy members were away and possibly out of your reach?"
+                       data-tr="Bir delege başka bir delegeye kırıcı sözler söylemeye başladı. Kendisinin daha iyi olduğunu iddia edip diğer delegenin tüm çözümlerinin işe yaramaz olduğunu, ülkesinin kaynakları ve mevcut durumuyla çalışmayacağını öne sürdü. Bunu diğer akademi üyeleri moladayken gördünüz. Delegeler bir dakika boyunca bağırdı ve şimdi kavga etmeye hazır görünüyorlar. Ayrıca birçok küfür ve kaba ifade duydunuz. Akademi üyeleriniz uzakta ve muhtemelen ulaşamayacağınız bir yerdeyken bu durumda ne yapardınız?">
+                        A delegate began to say hurtful things to another delegate. They claimed to be better and insisted that all of the other delegate's solutions were useless and wouldn't work with their country's resources and the current situation of their allocation. You saw this happen while the other members of the academy were on a break. The delegates shouted for a minute, and now they look ready to fight. You also heard many swear words and rude wishes. What would you do in this situation if your academy members were away and possibly out of your reach?
+                    </p>
+                    <label class="scenario-reply-label" for="f-trainee-q2">
+                        <span data-en="Your response" data-tr="Yanıtınız">Your response</span> <span class="req" aria-hidden="true">*</span>
                     </label>
                     <textarea id="f-trainee-q2" name="trainee_q2" rows="5" maxlength="3000"></textarea>
                     <p class="err" data-err-for="f-trainee-q2" role="alert"></p>
                 </div>
 
-                <div class="row">
-                    <label for="f-trainee-q3"
-                           data-en="3. You are in the last few sessions of your committee and the ending document seems nowhere near done. You try to ask your upper academy members what to do and they can't give you a definitive answer. Your options seem to be limited and if you don't finish the document in a few hours, your committee will fail. What would you do?"
-                           data-tr="3. Komitenizin son birkaç oturumundasınız ve sonuç belgesi (ending document) bitmeye hiç yakın görünmüyor. Üst akademi üyelerinize ne yapacağınızı sormayı deniyorsunuz ancak kesin bir yanıt veremiyorlar. Seçenekleriniz sınırlı görünüyor ve belgeyi birkaç saat içinde bitiremezseniz komiteniz başarısız olacak. Ne yapardınız?">
-                        3. You are in the last few sessions of your committee and the ending document seems nowhere near done. You try to ask your upper academy members what to do and they can't give you a definitive answer. Your options seem to be limited and if you don't finish the document in a few hours, your committee will fail. What would you do? <span class="req" aria-hidden="true">*</span>
+                <div class="scenario-card">
+                    <div class="scenario-head">
+                        <span class="scenario-badge" data-en="Scenario 3" data-tr="Senaryo 3">Scenario 3</span>
+                    </div>
+                    <p class="scenario-prompt"
+                       data-en="You are in the last few sessions of your committee and the ending document seems nowhere near done. You try to ask your upper academy members what to do and they can't give you a definitive answer. Your options seem to be limited and if you don't finish the document in a few hours, your committee will fail. What would you do?"
+                       data-tr="Komitenizin son birkaç oturumundasınız ve sonuç belgesi (ending document) bitmeye hiç yakın görünmüyor. Üst akademi üyelerinize ne yapacağınızı sormayı deniyorsunuz ancak kesin bir yanıt veremiyorlar. Seçenekleriniz sınırlı görünüyor ve belgeyi birkaç saat içinde bitiremezseniz komiteniz başarısız olacak. Ne yapardınız?">
+                        You are in the last few sessions of your committee and the ending document seems nowhere near done. You try to ask your upper academy members what to do and they can't give you a definitive answer. Your options seem to be limited and if you don't finish the document in a few hours, your committee will fail. What would you do?
+                    </p>
+                    <label class="scenario-reply-label" for="f-trainee-q3">
+                        <span data-en="Your response" data-tr="Yanıtınız">Your response</span> <span class="req" aria-hidden="true">*</span>
                     </label>
                     <textarea id="f-trainee-q3" name="trainee_q3" rows="5" maxlength="3000"></textarea>
                     <p class="err" data-err-for="f-trainee-q3" role="alert"></p>
+                </div>
+
+                <div class="scenario-card">
+                    <div class="scenario-head">
+                        <span class="scenario-badge" data-en="Scenario 4" data-tr="Senaryo 4">Scenario 4</span>
+                        <span class="scenario-badge--crisis" data-en="Crisis only" data-tr="Yalnızca Kriz">Crisis only</span>
+                    </div>
+                    <p class="scenario-note"
+                       data-en="Note: Only answer this question if you chose a crisis conference."
+                       data-tr="Not: Bu soruyu yalnızca kriz konferansı seçtiyseniz yanıtlayın.">
+                        Note: Only answer this question if you chose a crisis conference.
+                    </p>
+                    <p class="scenario-prompt"
+                       data-en="You are Christopher A. Wray, Director of the Federal Bureau of Investigation (FBI). There have been numerous allegations raised by multiple classified intelligence and whistleblower reports from various federal agencies regarding the conduct of Deputy Attorney General Lisa O. Monaco. Their validity has not been verified as yet."
+                       data-tr="Federal Soruşturma Bürosu (FBI) Direktörü Christopher A. Wray'siniz. Çeşitli federal kurumlardan gelen çok sayıda gizli istihbarat ve ihbarcı raporuyla Başsavcı Yardımcısı Lisa O. Monaco'nun tutumuna yönelik çeşitli iddialar ortaya atılmıştır. Bu iddiaların doğruluğu henüz teyit edilmemiştir.">
+                        You are Christopher A. Wray, Director of the Federal Bureau of Investigation (FBI). There have been numerous allegations raised by multiple classified intelligence and whistleblower reports from various federal agencies regarding the conduct of Deputy Attorney General Lisa O. Monaco. Their validity has not been verified as yet.
+                    </p>
+                    <p class="scenario-prompt"
+                       data-en="Available resources for this purpose:"
+                       data-tr="Bu amaçla kullanabileceğiniz mevcut kaynaklar:">
+                        Available resources for this purpose:
+                    </p>
+                    <ul class="scenario-list">
+                        <li data-en="One FBI Counterintelligence Division comprising about 120 counterintelligence agents" data-tr="Yaklaşık 120 karşı istihbarat ajanından oluşan bir FBI Karşı İstihbarat Birimi">One FBI Counterintelligence Division comprising about 120 counterintelligence agents</li>
+                        <li data-en="45 Digital Forensics Specialists, 30 Financial Crimes Investigators, and 20 DOJ Legal Advisers" data-tr="45 Dijital Adli Bilişim Uzmanı, 30 Mali Suçlar Müfettişi ve 20 Adalet Bakanlığı Hukuk Danışmanı">45 Digital Forensics Specialists, 30 Financial Crimes Investigators, and 20 DOJ Legal Advisers</li>
+                        <li data-en="Access to all FBI field offices and the FBI Digital Forensics Laboratory" data-tr="Tüm FBI saha ofislerine ve FBI Dijital Adli Bilişim Laboratuvarına erişim">Access to all FBI field offices and the FBI Digital Forensics Laboratory</li>
+                        <li data-en="Ability to set up a Joint Counterintelligence Task Force and SCIF facilities for classified meetings" data-tr="Ortak Karşı İstihbarat Görev Gücü kurma yetkisi ve gizli toplantılar için SCIF tesisleri">Ability to set up a Joint Counterintelligence Task Force and SCIF facilities for classified meetings</li>
+                        <li data-en="Classified communication networks (JWICS and SIPRNet) and federal chain-of-custody evidence management" data-tr="Gizli iletişim ağları (JWICS ve SIPRNet) ve federal yasalara uygun delil zinciri yönetim sistemi">Classified communication networks (JWICS and SIPRNet) and federal chain-of-custody evidence management</li>
+                        <li data-en="Cooperation protocols with the DOJ and other federal intelligence agencies, with adequate budget and logistics" data-tr="Adalet Bakanlığı ve diğer federal istihbarat kurumlarıyla iş birliği protokolleri, yeterli bütçe ve lojistik">Cooperation protocols with the DOJ and other federal intelligence agencies, with adequate budget and logistics</li>
+                    </ul>
+                    <p class="scenario-prompt"
+                       data-en="Your task is not to prove guilt, but rather to carry out the investigation according to the law: review email records, official correspondence, and digital records (within legal limits), interview witnesses and relevant public officials, determine whether federal laws or internal agency rules have been violated, and finally either expand the case file if there is sufficient evidence to bring charges or close the case. Use the stated resources and authority alone to conduct this operation and write the directive."
+                       data-tr="Göreviniz suçluluğu kanıtlamak değil, soruşturmayı hukuka uygun şekilde yürütmektir: yasal sınırlar içinde e-posta kayıtlarını, resmi yazışmaları ve dijital kayıtları inceleyin; tanıklarla ve ilgili kamu görevlileriyle görüşün; federal yasaların veya kurum içi kuralların ihlal edilip edilmediğini belirleyin ve son olarak dava açmak için yeterli delil varsa dosyayı genişletin, yoksa kapatın. Bu operasyonu yürütmek için yalnızca yukarıda belirtilen kaynakları ve yetkiyi kullanarak direktifinizi yazın.">
+                        Your task is not to prove guilt, but rather to carry out the investigation according to the law: review email records, official correspondence, and digital records (within legal limits), interview witnesses and relevant public officials, determine whether federal laws or internal agency rules have been violated, and finally either expand the case file if there is sufficient evidence to bring charges or close the case. Use the stated resources and authority alone to conduct this operation and write the directive.
+                    </p>
+                    <label class="scenario-reply-label" for="f-trainee-q4">
+                        <span data-en="Your directive (optional)" data-tr="Direktifiniz (isteğe bağlı)">Your directive (optional)</span>
+                    </label>
+                    <textarea id="f-trainee-q4" name="trainee_q4" rows="6" maxlength="4000"></textarea>
+                    <p class="err" data-err-for="f-trainee-q4" role="alert"></p>
                 </div>
             </div>
 
