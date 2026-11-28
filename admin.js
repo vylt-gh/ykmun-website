@@ -277,8 +277,11 @@
         // All three preferences, not just the first. The form collects them as
         // ranked choices and committee allocation needs the whole ordering —
         // showing only committee_1 hid the applicant's second and third.
+        const birthDate = row.birth_date && /^\d{4}-\d{2}-\d{2}$/.test(row.birth_date)
+            ? row.birth_date.split('-').reverse().join('.')
+            : row.birth_date;
         const preferences = [row.committee_1, row.committee_2, row.committee_3].filter(Boolean);
-        const details = [row.email, row.phone, row.birth_date, row.gender, row.school_grade].filter(Boolean);
+        const details = [row.email, row.phone, birthDate, row.gender, row.school_grade].filter(Boolean);
         if (preferences.length) details.push('Preference: ' + preferences.join(' · '));
         if (row.camera_model) details.push('Camera: ' + row.camera_model);
         if (row.experience) details.push('Experience: ' + row.experience);

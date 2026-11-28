@@ -447,8 +447,32 @@
         return !firstBad;
     }
 
+    // Parses DD.MM.YYYY (also accepting /, -, or plain DDMMYYYY) and returns
+    // ISO YYYY-MM-DD for the Postgres `date` column, or null if invalid.
+    function parseTurkishDate(raw) {
+        const match = raw.match(/^(\d{2})[./-]?(\d{2})[./-]?(\d{4})$/);
+        if (!match) return null;
+        const day = Number(match[1]);
+        const month = Number(match[2]);
+        const year = Number(match[3]);
+        const maxYear = new Date().getFullYear();
+        if (year < 1920 || year > maxYear) return null;
+        const date = new Date(year, month - 1, day);
+        if (date.getFullYear() !== year || date.getMonth() !== month - 1 || date.getDate() !== day) {
+            return null;
+        }
+        return `${String(year).padStart(4, '0')}-${String(month).padStart(2, '0')}-${String(day).padStart(2, '0')}`;
+    }
+
     // The checks that belong to the person form alone.
     function checkPerson(flag, markBad) {
+        const birthEl = document.getElementById('f-birth-date');
+        if (birthEl && !birthEl.closest('[hidden]') && birthEl.value.trim() && !parseTurkishDate(birthEl.value.trim())) {
+            flag('f-birth-date', isTr()
+                ? 'Geçerli bir tarih girin (GG.AA.YYYY).'
+                : 'Enter a valid date (DD.MM.YYYY).');
+        }
+
         // Only once a number has been typed; an empty field has no checksum.
         const tcEl = document.getElementById('f-tc');
         if (tcEl && tcEl.value.trim() && !isValidTC(tcEl.value.trim())) {
@@ -566,6 +590,10 @@
         if (!validate(personForm, PERSON_FIELDS, checkPerson)) return;
 
         const payload = collect(personForm, PERSON_FIELDS);
+
+        if (payload.birth_date) {
+            payload.birth_date = parseTurkishDate(payload.birth_date) || payload.birth_date;
+        }
 
         if (role && role.committees) {
             for (const [key, id] of Object.entries(COMMITTEE_FIELDS)) {

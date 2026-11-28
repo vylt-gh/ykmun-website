@@ -147,7 +147,14 @@
 
             <div class="row" id="row-birth-date" hidden>
                 <label for="f-birth-date" data-en="Date of birth" data-tr="Doğum tarihi">Date of birth <span class="req" aria-hidden="true">*</span></label>
-                <input type="date" id="f-birth-date" name="birth_date" autocomplete="bday">
+                <input type="text" id="f-birth-date" name="birth_date" inputmode="numeric"
+                       autocomplete="bday" placeholder="15.05.2009" maxlength="10"
+                       aria-describedby="hint-birth-date">
+                <p class="hint" id="hint-birth-date"
+                   data-en="Format: DD.MM.YYYY (e.g. 15.05.2009)"
+                   data-tr="Biçim: GG.AA.YYYY (ör. 15.05.2009)">
+                    Format: DD.MM.YYYY (e.g. 15.05.2009)
+                </p>
                 <p class="err" data-err-for="f-birth-date" role="alert"></p>
             </div>
 
